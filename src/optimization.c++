@@ -93,19 +93,20 @@ int main() {
     file << col_name.str() << " ";
   }
   file << std::endl;
-
   file << std::scientific;
 
   for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
     file << eb_no << " ";
+
+    std::cout << "Calculating for E_b/N_0 = " << eb_no << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     for (float alpha = 0.1; alpha < alpha_max;
          alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
       auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
-    const size_t N = num_samples(eb_no);
-    file << generate_overview(generator, f, N, eb_no) << " ";
-      // std::cout << eb_no << " " << alpha << std::endl;
+      const size_t N = num_samples(eb_no);
+      file << generate_overview(generator, f, N, eb_no) << " ";
+      std::cout << eb_no << " " << alpha << " " << N << std::endl;
     }
     auto end = std::chrono::high_resolution_clock::now();
     auto seconds =
