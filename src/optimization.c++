@@ -68,7 +68,7 @@ int main() {
   constexpr size_t max_iterations = 50;
   constexpr float eb_no_step = 0.1f;
   constexpr float alpha_step = 0.01f;
-  constexpr unsigned N = 10000;
+  constexpr unsigned base_trials = 10000;
 
   std::mt19937 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -94,6 +94,10 @@ int main() {
                        std::placeholders::_1);
     file << generate_overview(generator, f, N, eb_no) << " ";
     file << std::endl;
+  auto num_samples = [=](const double eb_no) {
+    return base_trials * pow(10, eb_no / 2);
+  };
+
   }
 
   for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
@@ -101,7 +105,8 @@ int main() {
     for (float alpha = 0; alpha < 1; alpha += alpha_step) {
       auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
-      file << generate_overview(generator, f, N, eb_no) << " ";
+    const size_t N = num_samples(eb_no);
+    file << generate_overview(generator, f, N, eb_no) << " ";
       // std::cout << eb_no << " " << alpha << std::endl;
     }
     file << std::endl;
