@@ -19,8 +19,8 @@ using decoder_t =
     std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(
         std::vector<float>)>;
 
-double generate_overview(std::mt19937 &generator, const decoder_t &decoder,
-                         const size_t samples, const float eb_n0) {
+std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
+                              const size_t samples, const float eb_n0) {
   constexpr int fk = 3;
   constexpr size_t length = 31;
   constexpr float R = 16.0 / length;
@@ -57,12 +57,14 @@ double generate_overview(std::mt19937 &generator, const decoder_t &decoder,
     }
   }
   /* word error rate */
+  std::ostringstream os;
+  os << std::scientific;
   // os << std::setprecision(4) << eb_n0 << " ";
-  // os << std::setprecision(9) << failures / (float)samples << " ";
   // os << std::setprecision(9) << fk_corr / (float)samples << " ";
-  // os << std::setprecision(9) << bit_errors / (float)(samples * length);
+  os << std::setprecision(12) << bit_errors / (double)(samples * length) << " ";
+  os << std::setprecision(12) << reconstruction_failures / (double)samples;
 
-  return bit_errors / (double)(samples * length);
+  return os.str();
 }
 
 int main() {
@@ -89,8 +91,9 @@ int main() {
   for (float alpha = 0; alpha < alpha_max;
        alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
     std::ostringstream col_name;
-    col_name << "alpha_" << alpha;
-    file << col_name.str() << " ";
+    col_name << "ber_" << alpha * 100 << " "
+             << "df_" << alpha * 100 << " ";
+    file << col_name.str();
   }
   file << std::endl;
   file << std::scientific;
