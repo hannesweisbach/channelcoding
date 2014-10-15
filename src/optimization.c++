@@ -66,6 +66,8 @@ double generate_overview(std::mt19937 &generator, const decoder_t &decoder,
 
 int main() {
   constexpr size_t max_iterations = 50;
+  constexpr float alpha_max = 1;
+  constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
   constexpr float alpha_step = 0.01f;
   constexpr unsigned base_trials = 10000;
