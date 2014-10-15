@@ -86,7 +86,8 @@ int main() {
 
   /* header */
   file << "eb_no ";
-  for (float alpha = 0; alpha < 1; alpha += alpha_step) {
+  for (float alpha = 0; alpha < alpha_max;
+       alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
     std::ostringstream col_name;
     col_name << "alpha_" << alpha;
     file << col_name.str() << " ";
@@ -95,11 +96,11 @@ int main() {
 
   file << std::scientific;
 
-
-  for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
+  for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
     file << eb_no << " ";
-    for (float alpha = 0; alpha < 1; alpha += alpha_step) {
     auto start = std::chrono::high_resolution_clock::now();
+    for (float alpha = 0.1; alpha < alpha_max;
+         alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
       auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
     const size_t N = num_samples(eb_no);
