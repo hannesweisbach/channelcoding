@@ -13,9 +13,11 @@ static double sigma(const double eb_n0, const double R) {
   return sqrt(1.0f / (2 * R * pow(10, eb_n0 / 10.0)));
 }
 
-double generate_overview(std::mt19937 &generator, const matrix<int> &H,
-                         const size_t samples, const float eb_n0,
-                         const float alpha) {
+double generate_overview(
+    std::mt19937 &generator,
+    std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(
+        std::vector<float>)> decoder,
+    const size_t samples, const float eb_n0) {
   constexpr int fk = 3;
   constexpr size_t length = 31;
   constexpr float R = 16.0 / length;
@@ -33,7 +35,7 @@ double generate_overview(std::mt19937 &generator, const matrix<int> &H,
   for (size_t sample = 0; sample < samples; sample++) {
     std::generate(std::begin(b), std::end(b), noise_gen);
     try {
-      auto result = min_sum<50, float>(H, b);
+      auto result = decoder(b);
       const auto &b_corr = std::get<0>(result);
       auto wrong_bits = std::count_if(std::cbegin(b_corr), std::cend(b_corr),
                                       [](const auto &bit) { return bit != 0; });
@@ -85,9 +87,19 @@ int main() {
 
   for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
     file << eb_no << " ";
+    auto f = std::bind(min_sum<1000, float, float>, std::cref(code.H()),
+                       std::placeholders::_1);
+    file << generate_overview(generator, f, N, eb_no) << " ";
+    file << std::endl;
+  }
+
+  for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
+    file << eb_no << " ";
     for (float alpha = 0; alpha < 1; alpha += alpha_step) {
-      file << generate_overview(generator, code.H(), N, eb_no, alpha) << " ";
-      std::cout << eb_no << " " << alpha << std::endl;
+      auto f = std::bind(nms<1000, float, float>, std::ref(code.H()),
+                         std::placeholders::_1, alpha);
+      file << generate_overview(generator, f, N, eb_no) << " ";
+      // std::cout << eb_no << " " << alpha << std::endl;
     }
     file << std::endl;
   }
