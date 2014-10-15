@@ -14,11 +14,12 @@ static double sigma(const double eb_n0, const double R) {
   return sqrt(1.0f / (2 * R * pow(10, eb_n0 / 10.0)));
 }
 
-double generate_overview(
-    std::mt19937 &generator,
+using decoder_t =
     std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(
-        std::vector<float>)> decoder,
-    const size_t samples, const float eb_n0) {
+        std::vector<float>)>;
+
+double generate_overview(std::mt19937 &generator, decoder_t decoder,
+                         const size_t samples, const float eb_n0) {
   constexpr int fk = 3;
   constexpr size_t length = 31;
   constexpr float R = 16.0 / length;
