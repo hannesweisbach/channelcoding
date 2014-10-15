@@ -8,6 +8,7 @@
 
 #include "bch.h"
 #include "iterative.h"
+#include "util.h"
 
 static double sigma(const double eb_n0, const double R) {
   return sqrt(1.0f / (2 * R * pow(10, eb_n0 / 10.0)));

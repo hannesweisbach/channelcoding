@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <clocale>
 
+#include "util.h"
 #include "bch.h"
 #include "cyclic.h"
 #include "center.h"

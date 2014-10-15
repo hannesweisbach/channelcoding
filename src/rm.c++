@@ -4,6 +4,8 @@
 #include <sstream>
 #include <algorithm>
 
+#include "util.h"
+
 void print_matrix(const std::vector<std::vector<int> > &matrix) {
   for (const auto &row : matrix) {
     for (const auto &e : row)

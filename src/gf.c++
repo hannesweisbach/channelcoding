@@ -6,6 +6,7 @@
 #include <sstream>
 #include <numeric>
 
+#include "util.h"
 #include "gf.h"
 
 gf::gf(unsigned q, uint64_t modular_polynomial)

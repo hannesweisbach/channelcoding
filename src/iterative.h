@@ -9,6 +9,7 @@
 #include <functional>
 
 #include "matrix.h"
+#include "util.h"
 
 #ifdef NDEBUG
 #define at(x) operator[](x)

@@ -10,6 +10,7 @@
 #include "rs.h"
 #include "cyclic.h"
 #include "center.h"
+#include "util.h"
 
 rs::rs(unsigned q, uint64_t modular_polynomial, unsigned dmin)
     : field(q, modular_polynomial), n((1 << q) - 1), k(dmin - 1),

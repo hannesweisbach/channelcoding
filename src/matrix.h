@@ -8,6 +8,8 @@
 #include <numeric>
 #include <iomanip>
 
+#include "util.h"
+
 template <typename T> class matrix;
 template <typename T>
 std::ostream &operator<<(std::ostream &, const matrix<T> &);

@@ -4,6 +4,7 @@
 #include "gf.h"
 #include "bch.h"
 #include "rs.h"
+#include "util.h"
 
 void expect_equal(const std::vector<int> &a, const std::vector<int> &b) {
   if (!std::equal(std::begin(b), std::end(b), std::begin(a), std::end(a))) {

@@ -2,6 +2,7 @@
 
 #include "bch.h"
 #include "iterative.h"
+#include "util.h"
 
 unsigned test_hard(const unsigned errors, const matrix<int>& H) {
   std::vector<std::vector<int>> wrong_reconstruction;

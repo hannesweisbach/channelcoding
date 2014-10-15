@@ -6,6 +6,7 @@
 
 #include "gf.h"
 #include "center.h"
+#include "util.h"
 
 static void protocol_euklid(const std::vector<gf_polynomial> &r,
                             const std::vector<gf_polynomial> &w) {

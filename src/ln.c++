@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "util.h"
 #include "bch.h"
 #include "iterative.h"
 
