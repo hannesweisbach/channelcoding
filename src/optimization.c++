@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <chrono>
 
 #include "bch.h"
 #include "iterative.h"
@@ -98,12 +99,18 @@ int main() {
   for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
     file << eb_no << " ";
     for (float alpha = 0; alpha < 1; alpha += alpha_step) {
+    auto start = std::chrono::high_resolution_clock::now();
       auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
     const size_t N = num_samples(eb_no);
     file << generate_overview(generator, f, N, eb_no) << " ";
       // std::cout << eb_no << " " << alpha << std::endl;
     }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto seconds =
+        std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+
+    std::cout << seconds << " s per iteration" << std::endl;
     file << std::endl;
   }
 }
