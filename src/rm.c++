@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
+#include <algorithm>
 
 void print_matrix(const std::vector<std::vector<int> > &matrix) {
   for (const auto &row : matrix) {
