@@ -5,6 +5,7 @@
 #include <sstream>
 #include <numeric>
 #include <algorithm>
+#include <tuple>
 
 #include <iomanip>
 #include <cstdlib>
