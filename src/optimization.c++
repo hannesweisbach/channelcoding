@@ -88,17 +88,6 @@ int main() {
 
   file << std::scientific;
 
-  for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
-    file << eb_no << " ";
-    auto f = std::bind(min_sum<max_iterations, float, float>, std::cref(code.H()),
-                       std::placeholders::_1);
-    file << generate_overview(generator, f, N, eb_no) << " ";
-    file << std::endl;
-  auto num_samples = [=](const double eb_no) {
-    return base_trials * pow(10, eb_no / 2);
-  };
-
-  }
 
   for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
     file << eb_no << " ";
