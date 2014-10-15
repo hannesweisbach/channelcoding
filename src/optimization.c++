@@ -65,7 +65,7 @@ double generate_overview(
 int main() {
   constexpr float eb_no_step = 0.1f;
   constexpr float alpha_step = 0.01f;
-  constexpr unsigned N = 1000;
+  constexpr unsigned N = 10000;
 
   std::mt19937 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
