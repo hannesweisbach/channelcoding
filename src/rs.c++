@@ -4,6 +4,8 @@
 #include <iomanip>
 #include <cstdlib>
 #include <clocale>
+#include <typeinfo>
+#include <stdexcept>
 
 #include "rs.h"
 #include "cyclic.h"
