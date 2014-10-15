@@ -8,6 +8,10 @@
 
 #include "matrix.h"
 
+#ifdef NDEBUG
+#define at(x) operator[](x)
+#endif
+
 template <typename T> constexpr int signum(const T &val) {
   return (T(0) < val) - (val < T(0));
 }
