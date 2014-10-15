@@ -26,9 +26,9 @@ inline auto syndrome(const matrix<T> &H, const std::vector<T> &b) {
 }
 
 /* check node update */
-template <typename Q, typename R>
+template <typename Q, typename R, typename Functor>
 void horizontal__(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
-                  std::function<R(const R &)> fn) {
+                  Functor &&fn) {
   const size_t rows = H.rows();
   const size_t cols = H.columns();
   for (auto row = 0; row < rows; row++) {
@@ -71,10 +71,9 @@ void horizontal_offset(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
 }
 
 /* symbol node update */
-template <typename Q, typename R>
+template <typename Q, typename R, typename Functor>
 void vertical__(const matrix<int> &H, const std::vector<R> L,
-                const matrix<R> &r, matrix<Q> &q,
-                std::function<R(const R &, const R &, const Q &)> fn) {
+                const matrix<R> &r, matrix<Q> &q, Functor &&fn) {
   const size_t rows = H.rows();
   const size_t cols = H.columns();
   for (auto row = 0; row < rows; row++) {
