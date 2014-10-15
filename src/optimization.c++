@@ -64,6 +64,7 @@ double generate_overview(
 }
 
 int main() {
+  constexpr size_t max_iterations = 50;
   constexpr float eb_no_step = 0.1f;
   constexpr float alpha_step = 0.01f;
   constexpr unsigned N = 10000;
@@ -88,7 +89,7 @@ int main() {
 
   for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
     file << eb_no << " ";
-    auto f = std::bind(min_sum<1000, float, float>, std::cref(code.H()),
+    auto f = std::bind(min_sum<max_iterations, float, float>, std::cref(code.H()),
                        std::placeholders::_1);
     file << generate_overview(generator, f, N, eb_no) << " ";
     file << std::endl;
@@ -97,7 +98,7 @@ int main() {
   for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
     file << eb_no << " ";
     for (float alpha = 0; alpha < 1; alpha += alpha_step) {
-      auto f = std::bind(nms<1000, float, float>, std::ref(code.H()),
+      auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
       file << generate_overview(generator, f, N, eb_no) << " ";
       // std::cout << eb_no << " " << alpha << std::endl;
