@@ -18,7 +18,7 @@ using decoder_t =
     std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(
         std::vector<float>)>;
 
-double generate_overview(std::mt19937 &generator, decoder_t decoder,
+double generate_overview(std::mt19937 &generator, const decoder_t &decoder,
                          const size_t samples, const float eb_n0) {
   constexpr int fk = 3;
   constexpr size_t length = 31;
