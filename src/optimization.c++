@@ -70,6 +70,10 @@ int main() {
   constexpr float alpha_step = 0.01f;
   constexpr unsigned base_trials = 10000;
 
+  auto num_samples = [=](const double eb_no) {
+    return base_trials * pow(10, eb_no / 2);
+  };
+
   std::mt19937 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
