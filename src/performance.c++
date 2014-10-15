@@ -64,7 +64,7 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
   const auto wrong_words = reconstruction_failures + reconstruction_errors;
   os << std::setprecision(12) << wrong_words / samples_ << " ";
   os << std::setprecision(12) << fk_corr / samples_ << " ";
-  os << std::setprecision(12) << bit_errors / samples_ * length;
+  os << std::setprecision(12) << bit_errors / (samples_ * length);
 
   return os.str();
 }
