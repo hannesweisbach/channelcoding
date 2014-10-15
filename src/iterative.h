@@ -5,6 +5,8 @@
 #include <limits>
 #include <numeric>
 #include <cmath>
+#include <tuple>
+#include <functional>
 
 #include "matrix.h"
 
