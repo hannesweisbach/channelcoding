@@ -350,7 +350,7 @@ gf_polynomial bch::pzg(std::vector<gf_element> syndromes) const {
   return gf_polynomial(field, { sigma });
 }
 
-std::vector<int> bch::correct_peterson(const std::vector<int> &b_) {
+std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
 
   gf_polynomial b(field, b_);
 

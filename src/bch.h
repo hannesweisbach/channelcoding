@@ -39,7 +39,7 @@ public:
   std::vector<gf_element> syndromes(const gf_polynomial &a) const;
   gf_polynomial pzg(std::vector<gf_element> syndromes) const;
 
-  std::vector<int> correct_peterson(const std::vector<int> &b);
+  std::vector<int> correct_peterson(const std::vector<int> &b) const;
   std::vector<int> decode(const std::vector<int> &b) const;
   //decode_mult
   //decode_div
