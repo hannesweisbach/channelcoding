@@ -44,7 +44,7 @@ void task_6_1() {
 void task_6_2() {
   std::cout << std::endl << "Task 6.2" << std::endl << std::endl;
   
-  bch code(4, 0x13, 5, bch::type::extended);
+  bch code(4, 0x13, 5);
   const std::vector<int> a({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
   std::vector<int> b({ 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0 });
 
@@ -67,7 +67,7 @@ void task_6_3() {
   std::cout << std::endl << "Task 6.3" << std::endl << std::endl;
 
   const std::vector<int> a({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
-  bch code(4, 0x13, 6, bch::type::extended);
+  bch code(4, 0x13, 6);
   std::vector<int> b1({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1 });
   std::vector<int> b2({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1 });
   std::vector<int> b3({ 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });

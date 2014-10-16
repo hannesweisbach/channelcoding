@@ -30,8 +30,7 @@ public:
     brute_force,
     chien
   };
-  bch(unsigned q, uint64_t modular_polynomial, unsigned d_e,
-      enum type type = type::normal);
+  bch(unsigned q, uint64_t modular_polynomial, unsigned d_e);
   bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n);
 
   std::vector<int> encode_div(const std::vector<int> &b) const;

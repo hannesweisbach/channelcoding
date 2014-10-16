@@ -87,9 +87,8 @@ std::vector<std::vector<unsigned int> > bch_cycles(unsigned int n) {
   return cycles;
 }
 
-bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, enum type type)
+bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e)
     : bch(q, modular_polynomial, d_e, (1 << q) - 1) {
-  this->type = type;
 }
 
 bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
