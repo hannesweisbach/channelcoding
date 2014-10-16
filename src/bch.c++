@@ -196,7 +196,7 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
   std::cout << "Generator polynomial g(x) = " << generator << std::endl;
 
   //f(x) = x^n - 1; 
-  const gf_polynomial x(field, { 0, 1 });
+  const gf_polynomial x(field, std::vector<int>({ 0, 1 }));
   for(unsigned i = 0; i < n; ++i)
     f *= x;
   f += gf_polynomial(field, { 1 });
@@ -244,7 +244,7 @@ std::vector<int> bch::encode_div(const std::vector<int> &a) const {
   }
 
   gf_polynomial b(field, a);
-  const gf_polynomial x(field, { 0, 1 });
+  const gf_polynomial x(field, std::vector<int>({ 0, 1 }));
 
   std::generate_n(std::back_inserter(b), l - a.size(),
                   [&]() { return field.zero(); });
