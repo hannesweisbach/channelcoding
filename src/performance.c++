@@ -101,9 +101,6 @@ int main(int argc, const char *const argv[]) {
       "scms2", std::bind(scms2<max_iterations, float, float>,
                          std::cref(code.H()), std::placeholders::_1));
   algorithms.emplace_back(
-      "scms3", std::bind(scms3<max_iterations, float, float>,
-                         std::cref(code.H()), std::placeholders::_1));
-  algorithms.emplace_back(
       "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
 
   auto num_samples = [=](const double eb_no) {

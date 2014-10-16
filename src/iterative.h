@@ -120,18 +120,6 @@ void vertical_sc_2(const matrix<int> &H, const std::vector<R> L,
   });
 }
 
-template <typename Q, typename R>
-void vertical_sc_3(const matrix<int> &H, const std::vector<R> L,
-                   const matrix<R> &r, matrix<Q> &q) {
-  vertical__<Q, R>(H, L, r, q, [](const R &L, const R &r, const Q &q) {
-    auto tmp = L - r;
-    if (signum(q) == signum(tmp))
-      return tmp;
-    else
-      return R(0);
-  });
-}
-
 template <typename Q, typename R,
           typename Result_t = decltype(std::declval<Q>() * std::declval<R>())>
 std::vector<Result_t> likelihood(const std::vector<Q> &y, const matrix<int> &H,
@@ -249,11 +237,4 @@ std::tuple<std::vector<int>, std::vector<R>, unsigned>
 scms2(const matrix<int> &H, const std::vector<Q> &y) {
   return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>,
                                      vertical_sc_2<Q, R>);
-}
-
-template <unsigned iterations, typename R, typename Q, typename... Args>
-std::tuple<std::vector<int>, std::vector<R>, unsigned>
-scms3(const matrix<int> &H, const std::vector<Q> &y) {
-  return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>,
-                                     vertical_sc_3<Q, R>);
 }
