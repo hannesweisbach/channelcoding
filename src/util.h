@@ -12,3 +12,10 @@ template <typename T> auto crend(const T &c) { return c.crend(); }
 }
 #endif
 
+#include <string>
+#include <sys/stat.h>
+
+inline bool file_exists(const std::string &fname) {
+  struct stat buf;
+  return (stat(fname.c_str(), &buf) != -1);
+}

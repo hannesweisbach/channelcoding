@@ -6,8 +6,6 @@
 #include <sstream>
 #include <chrono>
 
-#include <sys/stat.h>
-
 #include "bch.h"
 #include "iterative.h"
 #include "util.h"
@@ -111,13 +109,12 @@ int main(int argc, const char *const argv[]) {
   auto run_algorithm = [&](const auto &algorithm) {
     const auto &name = algorithm.first;
     const auto &decoder = algorithm.second;
-    {
-      struct stat buf;
-      if (stat(name.c_str(), &buf) != -1) {
-        std::cout << "File " << name << " already exists." << std::endl;
-        return;
-      }
+
+    if (file_exists(name)) {
+      std::cout << "File " << name << " already exists." << std::endl;
+      return;
     }
+
     std::ofstream file(name.c_str(), std::ofstream::out);
     file << "eb_no "
          << "reconstruction_failures "
