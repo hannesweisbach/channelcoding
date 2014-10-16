@@ -123,20 +123,21 @@ int main(int argc, const char *const argv[]) {
          << "fk_rate "
          << "ber" << std::endl;
     for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
-      std::cout << "Calculating for E_b/N_0 = " << eb_no << " … ";
+      auto samples = num_samples(eb_no);
+      std::cout << "Calculating for E_b/N_0 = " << eb_no << " with " << samples
+                << " … ";
       std::cout.flush();
       auto start = std::chrono::high_resolution_clock::now();
 
       file << eb_no << " ";
-      file << generate_overview(generator, decoder, num_samples(eb_no), eb_no)
-           << " ";
+      file << generate_overview(generator, decoder, samples, eb_no);
       file << std::endl;
 
       auto end = std::chrono::high_resolution_clock::now();
       auto seconds =
           std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
 
-      std::cout << "took " << seconds << " s" << std::endl;
+      std::cout << seconds << " s" << std::endl;
     }
   };
 
