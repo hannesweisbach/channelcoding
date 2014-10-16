@@ -69,6 +69,16 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
   return os.str();
 }
 
+std::tuple<std::vector<int>, std::vector<float>, unsigned>
+    pzg_wrapper(const bch &code, const std::vector<float> &b) {
+  std::vector<int> hard;
+  hard.reserve(b.size());
+  std::transform(std::cbegin(b), std::cend(b), std::back_inserter(hard),
+                 [](const auto &bit) { return -2 * bit + 1; });
+  auto b_corr = code.correct_peterson(hard);
+  return std::make_tuple(b_corr, std::vector<float>(), 0);
+}
+
 int main() {
   constexpr size_t max_iterations = 50;
   constexpr float eb_no_max = 10;
@@ -93,6 +103,8 @@ int main() {
   algorithms.emplace_back(
       "scms2", std::bind(scms2<max_iterations, float, float>,
                          std::cref(code.H()), std::placeholders::_1));
+  algorithms.emplace_back(
+      "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
 
   for (const auto &algorithm : algorithms) {
     const auto &name = algorithm.first;
