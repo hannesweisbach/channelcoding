@@ -95,6 +95,7 @@ void vertical(const matrix<int> &H, const std::vector<R> L, const matrix<R> &r,
                    [](const R &L, const R &r, const Q &) { return L - r; });
 }
 
+/* http://dud.inf.tu-dresden.de/LDPC/doc/scms/ */
 template <typename Q, typename R>
 void vertical_sc_1(const matrix<int> &H, const std::vector<R> L,
                                 const matrix<R> &r, matrix<Q> &q) {
@@ -116,6 +117,18 @@ void vertical_sc_2(const matrix<int> &H, const std::vector<R> L,
       return tmp;
     else
       return R(0.5) * (tmp + q);
+  });
+}
+
+template <typename Q, typename R>
+void vertical_sc_3(const matrix<int> &H, const std::vector<R> L,
+                   const matrix<R> &r, matrix<Q> &q) {
+  vertical__<Q, R>(H, L, r, q, [](const R &L, const R &r, const Q &q) {
+    auto tmp = L - r;
+    if (signum(q) == signum(tmp))
+      return tmp;
+    else
+      return R(0);
   });
 }
 
@@ -238,3 +251,9 @@ scms2(const matrix<int> &H, const std::vector<Q> &y) {
                                      vertical_sc_2<Q, R>);
 }
 
+template <unsigned iterations, typename R, typename Q, typename... Args>
+std::tuple<std::vector<int>, std::vector<R>, unsigned>
+scms3(const matrix<int> &H, const std::vector<Q> &y) {
+  return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>,
+                                     vertical_sc_3<Q, R>);
+}
