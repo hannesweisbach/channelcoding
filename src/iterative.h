@@ -201,7 +201,7 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
       std::cout << std::setw(2) << e << " ";
     std::cout << std::endl;
 #endif
-    history.push_back(b);
+    //history.push_back(b);
 
     if (syndrome(H, b))
       return std::make_tuple(b, L, iteration);
