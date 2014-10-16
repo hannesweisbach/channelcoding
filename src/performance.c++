@@ -53,6 +53,7 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
     }
     catch (...) {
       reconstruction_failures++;
+      bit_errors += length;
     }
   }
   /* word error rate */
