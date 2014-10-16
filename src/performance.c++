@@ -103,7 +103,7 @@ int main(int argc, const char *const argv[]) {
       "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
 
   auto num_samples = [=](const double eb_no) {
-    return base_trials * pow(10, eb_no / 3);
+    return std::min(base_trials * pow(10, eb_no / 3), 10e6);
   };
 
   auto run_algorithm = [&](const auto &algorithm) {
