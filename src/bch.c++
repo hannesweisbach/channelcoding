@@ -375,7 +375,7 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
   std::cout << std::endl;
 #endif
   
-  chien(field, solution);
+  //chien(field, solution);
   auto zeroes = solution.zeroes();
   if (zeroes.size() != solution.degree()) {
     std::ostringstream os;
