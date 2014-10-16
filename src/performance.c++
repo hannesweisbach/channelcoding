@@ -70,7 +70,7 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
 }
 
 std::tuple<std::vector<int>, std::vector<float>, unsigned>
-    pzg_wrapper(const bch &code, const std::vector<float> &b) {
+pzg_wrapper(const bch &code, const std::vector<float> &b) {
   std::vector<int> hard;
   hard.reserve(b.size());
   std::transform(std::cbegin(b), std::cend(b), std::back_inserter(hard),
@@ -79,7 +79,7 @@ std::tuple<std::vector<int>, std::vector<float>, unsigned>
   return std::make_tuple(b_corr, std::vector<float>(), 0);
 }
 
-int main() {
+int main(int argc, const char *const argv[]) {
   constexpr size_t max_iterations = 50;
   constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
@@ -88,10 +88,6 @@ int main() {
   bch code(5, 0x25, 7);
   std::mt19937 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
-
-  auto num_samples = [=](const double eb_no) {
-    return base_trials * pow(10, eb_no / 3);
-  };
 
   std::vector<std::pair<std::string, decoder_t> > algorithms;
   algorithms.emplace_back("ms", std::bind(min_sum<max_iterations, float, float>,
@@ -106,7 +102,11 @@ int main() {
   algorithms.emplace_back(
       "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
 
-  for (const auto &algorithm : algorithms) {
+  auto num_samples = [=](const double eb_no) {
+    return base_trials * pow(10, eb_no / 3);
+  };
+
+  auto run_algorithm = [&](const auto &algorithm) {
     const auto &name = algorithm.first;
     const auto &decoder = algorithm.second;
     std::ofstream file(name.c_str(), std::ofstream::out);
@@ -116,11 +116,38 @@ int main() {
          << "wer "
          << "fk_rate "
          << "ber" << std::endl;
-    for (double eb_no = 0; eb_no < 10; eb_no += eb_no_step) {
+    for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
+      std::cout << "Calculating for E_b/N_0 = " << eb_no << " … ";
+      std::cout.flush();
+      auto start = std::chrono::high_resolution_clock::now();
+
       file << eb_no << " ";
       file << generate_overview(generator, decoder, num_samples(eb_no), eb_no)
            << " ";
       file << std::endl;
+
+      auto end = std::chrono::high_resolution_clock::now();
+      auto seconds =
+          std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+
+      std::cout << "took " << seconds << " s" << std::endl;
+    }
+  };
+
+  if (argc < 2) {
+    std::cout << "Running all algorithms" << std::endl;
+    for (const auto &algorithm : algorithms) {
+      run_algorithm(algorithm);
+    }
+  } else {
+    unsigned long index = strtoul(argv[1], nullptr, 0);
+    if (index < algorithms.size()) {
+      std::cout << "Running algorithm " << algorithms.at(index).first
+                << std::endl;
+      run_algorithm(algorithms.at(index));
+    } else {
+      std::cout << "Index " << index << " is out of range. Choose from 0 to "
+                << algorithms.size() - 1 << std::endl;
     }
   }
 }
