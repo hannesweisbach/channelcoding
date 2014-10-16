@@ -6,6 +6,7 @@
 #include <sstream>
 #include <fstream>
 #include <chrono>
+#include <cstdlib>
 
 #include "bch.h"
 #include "iterative.h"
@@ -84,7 +85,11 @@ int main() {
 
   bch code(5, 0x25, 7);
 
-  std::ofstream file("test.output", std::ofstream::out);
+  char fname[] = "optimize.XXXXXX";
+  mktemp(fname);
+  std::ofstream file(fname, std::ofstream::out);
+
+  std::cout << "Writing to file " << fname << std::endl;
 
   /* header */
   file << "eb_no ";
