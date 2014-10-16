@@ -2,13 +2,23 @@
 
 #ifdef __linux__
 namespace std {
-template <typename T> auto rbegin(T &c) { return c.rbegin(); }
-template <typename T> auto rend(T &c) { return c.rend(); }
+template <typename T> auto rbegin(T &c) -> decltype(c.rbegin()) {
+  return c.rbegin();
+}
+template <typename T> auto rend(T &c) -> decltype(c.rend()) { return c.rend(); }
 
-template <typename T> auto cbegin(const T &c) { return c.cbegin(); }
-template <typename T> auto crbegin(const T &c) { return c.crbegin(); }
-template <typename T> auto cend(const T &c) { return c.cend(); }
-template <typename T> auto crend(const T &c) { return c.crend(); }
+template <typename T> auto cbegin(const T &c) -> decltype(c.cbegin()) {
+  return c.cbegin();
+}
+template <typename T> auto crbegin(const T &c) -> decltype(c.crbegin()) {
+  return c.crbegin();
+}
+template <typename T> auto cend(const T &c) -> decltype(c.cend()) {
+  return c.cend();
+}
+template <typename T> auto crend(const T &c) -> decltype(c.crend()) {
+  return c.crend();
+}
 }
 #endif
 
