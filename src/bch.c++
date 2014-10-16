@@ -66,7 +66,8 @@ static unsigned int next_missing(const std::vector<unsigned int> powers) {
 
 std::vector<std::vector<unsigned int> > bch_cycles(unsigned int n) {
   std::vector<unsigned int> powers(1, 0);
-  std::vector<std::vector<unsigned int> > cycles(1, { 0 });
+  std::vector<std::vector<unsigned int> > cycles(
+      1, std::vector<unsigned int>({ 0 }));
 
   for (; powers.size() < n;) {
     std::sort(std::begin(powers), std::end(powers));
