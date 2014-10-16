@@ -152,8 +152,11 @@ int main(int argc, const char *const argv[]) {
                 << std::endl;
       run_algorithm(algorithms.at(index));
     } else {
-      std::cout << "Index " << index << " is out of range. Choose from 0 to "
-                << algorithms.size() - 1 << std::endl;
+      unsigned index = 0;
+      std::cout << "Index " << index
+                << " is out of range. Choose from:" << std::endl;
+      for (const auto &algorithm : algorithms)
+        std::cout << "[" << index++ << "] " << algorithm.first << std::endl;
     }
   }
 }
