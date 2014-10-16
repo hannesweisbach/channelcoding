@@ -90,7 +90,7 @@ int main() {
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
   auto num_samples = [=](const double eb_no) {
-    return base_trials * pow(10, eb_no / 2);
+    return base_trials * pow(10, eb_no / 3);
   };
 
   std::vector<std::pair<std::string, decoder_t> > algorithms;
