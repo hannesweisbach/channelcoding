@@ -150,17 +150,19 @@ int main(int argc, const char *const argv[]) {
       run_algorithm(algorithm);
     }
   } else {
-    unsigned long index = strtoul(argv[1], nullptr, 0);
-    if (index < algorithms.size()) {
-      std::cout << "Running algorithm " << algorithms.at(index).first
-                << std::endl;
-      run_algorithm(algorithms.at(index));
-    } else {
-      unsigned index = 0;
-      std::cout << "Index " << index
-                << " is out of range. Choose from:" << std::endl;
-      for (const auto &algorithm : algorithms)
-        std::cout << "[" << index++ << "] " << algorithm.first << std::endl;
+    for (int arg = 1; arg < argc; arg++) {
+      unsigned long index = strtoul(argv[arg], nullptr, 0);
+      if (index < algorithms.size()) {
+        std::cout << "Running algorithm " << algorithms.at(index).first
+                  << std::endl;
+        run_algorithm(algorithms.at(index));
+      } else {
+        unsigned index = 0;
+        std::cout << "Index " << index
+                  << " is out of range. Choose from:" << std::endl;
+        for (const auto &algorithm : algorithms)
+          std::cout << "[" << index++ << "] " << algorithm.first << std::endl;
+      }
     }
   }
 }
