@@ -94,7 +94,7 @@ int main() {
 
   /* header */
   file << "eb_no ";
-  for (float alpha = 0; alpha < alpha_max;
+  for (float alpha = 0.1; alpha < alpha_max;
        alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
     std::ostringstream col_name;
     col_name << "ber_" << alpha * 100 << " "
