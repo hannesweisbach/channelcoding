@@ -78,7 +78,7 @@ int main() {
   constexpr unsigned base_trials = 10000;
 
   auto num_samples = [=](const double eb_no) {
-    return base_trials * pow(10, eb_no / 2);
+    return std::min(base_trials * pow(10, eb_no / 2), 10e6);
   };
 
   std::mt19937 generator(
