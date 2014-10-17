@@ -64,7 +64,7 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
   // os << std::setprecision(4) << eb_n0 << " ";
   // os << std::setprecision(9) << fk_corr / (float)samples << " ";
   os << std::setprecision(12) << bit_errors / (double)(samples * length) << " ";
-  os << std::setprecision(12) << reconstruction_failures / (double)samples;
+  //os << std::setprecision(12) << reconstruction_failures / (double)samples;
 
   return os.str();
 }
@@ -97,8 +97,7 @@ int main() {
   for (float alpha = 0.1; alpha < alpha_max;
        alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
     std::ostringstream col_name;
-    col_name << "ber_" << alpha * 100 << " "
-             << "df_" << alpha * 100 << " ";
+    col_name << "ber_" << alpha * 1000 << " ";
     file << col_name.str();
   }
   file << std::endl;
