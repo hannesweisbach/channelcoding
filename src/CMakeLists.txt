@@ -25,6 +25,9 @@ target_link_libraries(ms_fk bch gf)
 add_executable(optimization optimization.c++)
 target_link_libraries(optimization bch gf)
 
+add_executable(optimize_beta optimize_beta.c++)
+target_link_libraries(optimize_beta bch gf)
+
 add_executable(performance performance.c++)
 target_link_libraries(performance bch gf)
 
