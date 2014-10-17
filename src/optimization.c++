@@ -69,17 +69,22 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
   return os.str();
 }
 
-int main() {
+int main(int argc, const char *const argv[]) {
   constexpr size_t max_iterations = 50;
-  constexpr float alpha_max = 1;
   constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
-  constexpr float alpha_step = 0.01f;
   constexpr unsigned base_trials = 10000;
 
   auto num_samples = [=](const double eb_no) {
     return std::min(base_trials * pow(10, eb_no / 2), 10e6);
   };
+
+  float alpha_start = (argc > 1) ? strtof(argv[1], nullptr) : 0.1f;
+  float alpha_max = (argc > 2) ? strtof(argv[2], nullptr) : 1.0f;
+  float alpha_step = (argc > 3) ? strtof(argv[3], nullptr) : 0.01f;
+
+  std::cout << "Calculating from " << alpha_start << " to " << alpha_max
+            << " in " << alpha_step << " steps" << std::endl;
 
   std::mt19937 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -94,8 +99,7 @@ int main() {
 
   /* header */
   file << "eb_no ";
-  for (float alpha = 0.1; alpha < alpha_max;
-       alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
+  for (float alpha = alpha_start; alpha < alpha_max; alpha += alpha_step) {
     std::ostringstream col_name;
     col_name << "ber_" << alpha * 1000 << " ";
     file << col_name.str();
@@ -108,8 +112,7 @@ int main() {
 
     std::cout << "Calculating for E_b/N_0 = " << eb_no << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    for (float alpha = 0.1; alpha < alpha_max;
-         alpha += (alpha < 0.9) ? 0.1f : alpha_step) {
+    for (float alpha = alpha_start; alpha < alpha_max; alpha += alpha_step) {
       auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
       const size_t N = num_samples(eb_no);
