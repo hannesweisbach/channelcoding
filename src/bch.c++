@@ -444,15 +444,15 @@ std::vector<int> bch::decode(const std::vector<int> &b) const {
 }
 
 gf_polynomial bch::correct_bm(const gf_polynomial &b,
-                             const std::vector<gf_element> &erasures) const {
+                              const std::vector<gf_element> &erasures) const {
   std::vector<gf_element> syndromes;
 
-  std::cout << "Syndromes: ";
+//  std::cout << "Syndromes: ";
   for (unsigned power = mu; power < mu + dmin - 1; power++) {
     syndromes.push_back(b(field.power_to_polynomial(power)));
-    std::cout << syndromes.back() << " ";
+//    std::cout << syndromes.back() << " ";
   }
-  std::cout << std::endl;
+//  std::cout << std::endl;
 
   /* check if all syndrome values are zero - error free code word */
   const bool syndromes_zero =
@@ -462,6 +462,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
     return b;
 
   auto lambda = berlekamp_massey(field, syndromes, erasures).reverse();
+#if 0
   std::cout << "Λ(x) = ";
   for (size_t i = 0; i < lambda.degree() + 1; i++) {
     std::cout << "x^" << i << " " << lambda[i];
@@ -469,6 +470,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
       std::cout << " + ";
   }
   std::cout << std::endl;
+#endif
 
   auto lambda_euklid = ::euklid(field, fk, syndromes, erasures).reverse();
 
@@ -477,7 +479,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
     std::cout << "Λ(x)_bm = " << lambda << std::endl;
     std::cout << "Λ(x)_eu = " << lambda_euklid << std::endl;
   }
-  
+
   auto zeroes = lambda.zeroes();
   if (zeroes.size() != lambda.degree()) {
     std::ostringstream os;
@@ -486,10 +488,12 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
     throw std::logic_error(os.str());
   }
 
+#if 0
   std::cout << "Zeroes in Σ(x): ";
   for (const auto &zero : zeroes)
     std::cout << zero << " ";
   std::cout << std::endl;
+#endif
 
   gf_polynomial e(field);
   std::fill_n(std::back_inserter(e), b.size(), field.zero());
