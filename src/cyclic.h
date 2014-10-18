@@ -126,7 +126,7 @@ gf_polynomial euklid(const Field &field, const unsigned fk,
     r.push_back(next);
   }
 
-  protocol_euklid(r, w);
+  //protocol_euklid(r, w);
   return w.back() * w.back().at(0).inverse();
 }
 
@@ -135,7 +135,9 @@ gf_polynomial berlekamp_massey(const Field &field,
                                const std::vector<gf_element> &syndromes,
                                const std::vector<gf_element> &erasures =
                                    std::vector<gf_element>()) {
+#if 0
   std::cout << std::endl << "Calculating Λ(x) with BMA:" << std::endl;
+#endif
 
   const auto fk = syndromes.size() / 2;
   const auto rho = erasures.size();
@@ -148,7 +150,9 @@ gf_polynomial berlekamp_massey(const Field &field,
 
   b = lambda;
 
+#if 0
   std::cout << "b = " << b << ", lambda: " << lambda << std::endl;
+#endif
   for (int i = rho; i < 2 * fk; i++) {
     /* b = b * x; */
     // b *= gf_polynomial(field, { 0, 1 });
@@ -160,18 +164,20 @@ gf_polynomial berlekamp_massey(const Field &field,
 
     if (delta) {
       auto t = lambda + b * delta;
-      std::cout << "T(x) = " << t << std::endl;
+//      std::cout << "T(x) = " << t << std::endl;
       if (2 * l <= i + rho) {
         b = lambda * delta.inverse();
         l = i + rho - l + 1;
       }
       lambda = t;
     }
+#if 0
     std::cout << i << " | " << delta << " | " << lambda << " | " << l << " | "
               << b << " " << std::endl;
+#endif
   }
 
-  std::cout << "lambda: " << lambda << std::endl;
+  //std::cout << "lambda: " << lambda << std::endl;
   return lambda;
 }
 
