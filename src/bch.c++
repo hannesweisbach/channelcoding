@@ -394,22 +394,22 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
 
   std::cout << "Error vector     e (x) = ";
   for (const auto &i : e)
-    std::cout << i << " ";
+    std::cout << i;
   std::cout << std::endl;
 #endif
-  
+
   // Corrected vector in e (b_ is const)
-  std::transform(std::begin(e), std::end(e), std::begin(b_), std::begin(e),
+  std::transform(std::cbegin(e), std::cend(e), std::cbegin(b_), std::begin(e),
                  [](const int &lhs, const int &rhs) { return lhs ^ rhs; });
 #if 0
   std::cout << "Received vector  b (x) = ";
   for (const auto &i : b_)
-    std::cout << i << " ";
+    std::cout << i;
   std::cout << std::endl;
 
   std::cout << "Corrected vector b*(x) = ";
   for (const auto &i : e)
-    std::cout << i << " ";
+    std::cout << i;
   std::cout << std::endl;
 #endif
   return e;
