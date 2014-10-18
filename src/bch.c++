@@ -16,23 +16,22 @@
 #include "cyclic.h"
 #include "center.h"
 
-std::vector<gf_element> chien(const gf &field,
-                              gf_polynomial polynomial) {
+std::vector<gf_element> chien(const gf &field, gf_polynomial polynomial) {
   std::vector<gf_element> zeroes;
   std::vector<gf_element> factors(polynomial.size(), field.zero());
   std::iota(std::begin(factors), std::end(factors), field.one());
 
-  for(int i = 0; i < field.size(); i++) {
+  for (int i = 0; i < field.size(); i++) {
     auto result = std::accumulate(std::begin(polynomial), std::end(polynomial),
                                   field.zero());
-    if(result == field.zero()) {
+    if (result == field.zero()) {
       zeroes.push_back(field.power_to_polynomial(i));
     }
 
     /* multiply by alpha, alpha^2, ... */
     std::transform(
-        std::cbegin(polynomial), std::cend(polynomial), std::cbegin(factors)
-        , std::begin(polynomial),
+        std::cbegin(polynomial), std::cend(polynomial), std::cbegin(factors),
+        std::begin(polynomial),
         [](const gf_element &lhs, const gf_element &rhs) { return lhs * rhs; });
   }
 
@@ -42,12 +41,12 @@ std::vector<gf_element> chien(const gf &field,
 static unsigned consecutive_powers(std::vector<unsigned> powers) {
   std::sort(std::begin(powers), std::end(powers));
   unsigned l = 1;
-  
-  for(auto it = std::cbegin(powers); it != std::cend(powers) - 1; ++it) {
+
+  for (auto it = std::cbegin(powers); it != std::cend(powers) - 1; ++it) {
     if (((*it) + 1) == *(it + 1))
       l++;
     else
-      //TODO start new count
+      // TODO start new count
       break;
   }
 
@@ -55,7 +54,7 @@ static unsigned consecutive_powers(std::vector<unsigned> powers) {
 }
 
 static unsigned int next_missing(const std::vector<unsigned int> powers) {
-  //TODO: assert is sorted.
+  // TODO: assert is sorted.
   for (unsigned int i = 0; i < powers.size(); i++) {
     if (powers[i] != i)
       return i;
@@ -75,7 +74,7 @@ std::vector<std::vector<unsigned int> > bch_cycles(unsigned int n) {
     std::vector<unsigned int> cycle(1, i);
     powers.push_back(i);
 
-    for(i = (i * 2) % n; i != cycle[0]; i = (i*2) %n) {
+    for (i = (i * 2) % n; i != cycle[0]; i = (i * 2) % n) {
       cycle.push_back(i);
       powers.push_back(i);
     }
@@ -88,13 +87,12 @@ std::vector<std::vector<unsigned int> > bch_cycles(unsigned int n) {
 }
 
 bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e)
-    : bch(q, modular_polynomial, d_e, (1 << q) - 1) {
-}
+    : bch(q, modular_polynomial, d_e, (1 << q) - 1) {}
 
 bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
     : field(q, modular_polynomial), n(n), l(0), k(0), dmin(0),
-      type(type::shortened), generator(field, { 1 }), f(field, { 1 }),
-      h(field), control_matrix(0, 0) {
+      type(type::shortened), generator(field, { 1 }), f(field, { 1 }), h(field),
+      control_matrix(0, 0) {
   if (d_e > n)
     throw std::logic_error("d_e <= n required");
   // k = degree(g(x)) = sum_µ^µ+d-2 deg(m_i(x));
@@ -113,7 +111,7 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
     std::cout << "}; degree: " << cycle.size() << std::endl;
   }
 
-  std::vector<std::tuple<int, int, int, int>> codes;
+  std::vector<std::tuple<int, int, int, int> > codes;
   for (auto it = std::begin(cycles); it != std::end(cycles); ++it) {
     mu = it->front();
     std::vector<unsigned> powers;
@@ -146,13 +144,13 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
     }
   }
 
-  std::vector<std::tuple<int, int, int, int>> matching_codes;
+  std::vector<std::tuple<int, int, int, int> > matching_codes;
   for (const auto &code : codes) {
     std::tie(dmin, k, mu, std::ignore) = code;
-    
+
     if (dmin >= d_e)
       matching_codes.push_back(code);
-    
+
     l = n - k;
     std::cout << "(" << n << ", " << l << ", " << dmin
               << ") BCH code found with µ = " << mu << std::endl;
@@ -163,12 +161,11 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
 
   std::cout << std::endl << "Codes with dmin >= d_e:" << std::endl;
 
-  for(const auto&code : matching_codes) {
+  for (const auto &code : matching_codes) {
     std::tie(dmin, k, mu, std::ignore) = code;
     l = n - k;
     std::cout << "(" << n << ", " << l << ", " << dmin
               << ") BCH code found with µ = " << mu << std::endl;
-
   }
 
   std::sort(std::begin(matching_codes), std::end(matching_codes),
@@ -177,7 +174,7 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
   });
 
   int required_cycles;
-  const auto & code = matching_codes.front();
+  const auto &code = matching_codes.front();
   std::tie(dmin, k, mu, required_cycles) = code;
 
   l = n - k;
@@ -194,9 +191,9 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
   }
   std::cout << "Generator polynomial g(x) = " << generator << std::endl;
 
-  //f(x) = x^n - 1; 
+  // f(x) = x^n - 1;
   const gf_polynomial x(field, std::vector<int>({ 0, 1 }));
-  for(unsigned i = 0; i < n; ++i)
+  for (unsigned i = 0; i < n; ++i)
     f *= x;
   f += gf_polynomial(field, { 1 });
   std::cout << "f(x) = " << f << std::endl;
@@ -218,19 +215,19 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
 
   auto h_tmp(h);
   h_tmp.reverse();
-  
-  for(unsigned i = 0; i < k; ++i) {
+
+  for (unsigned i = 0; i < k; ++i) {
     std::vector<int> tmp;
-    for(const auto & coeff : h_tmp)
+    for (const auto &coeff : h_tmp)
       tmp.push_back(coeff ? 1 : 0);
     // add current f
     control_matrix.push_back(tmp);
     // cyclic rotation
     h_tmp *= x;
   }
-  
+
   control_matrix.resize(k, n);
-  //std::reverse(std::begin(control_matrix), std::end(control_matrix));
+  // std::reverse(std::begin(control_matrix), std::end(control_matrix));
 }
 
 const matrix<int> &bch::H() const { return control_matrix; }
@@ -254,7 +251,7 @@ std::vector<int> bch::encode_div(const std::vector<int> &a) const {
   b += r;
 
   std::cout << "Code word: " << b << std::endl;
-  
+
   std::vector<int> result;
   for (const auto &e : b)
     result.push_back((e) ? 1 : 0);
@@ -267,7 +264,7 @@ std::vector<gf_element> bch::syndromes(const gf_polynomial &b) const {
   const unsigned fk = (dmin - 1) / 2;
   unsigned t = fk * 2;
 
-  if(t != mu + dmin - 2) {
+  if (t != mu + dmin - 2) {
     std::ostringstream os;
     os << "t != µ + dmin - 2. t = " << t << ", µ = " << mu
        << ", dmin = " << dmin << ", µ + dmin - 2 = " << mu + dmin - 2
@@ -275,13 +272,13 @@ std::vector<gf_element> bch::syndromes(const gf_polynomial &b) const {
     throw std::runtime_error(os.str());
   }
 
-  //std::cout << "Syndrome values: ";
+  // std::cout << "Syndrome values: ";
   for (unsigned i = mu; i <= mu + dmin - 2; i++) {
     syndrome.push_back(b(field.power_to_polynomial(i)));
-    //std::cout << syndrome.back() << " ";
+    // std::cout << syndrome.back() << " ";
   }
 
-  //std::cout << std::endl;
+  // std::cout << std::endl;
 
   return syndrome;
 }
@@ -310,8 +307,8 @@ gf_polynomial bch::pzg(std::vector<gf_element> syndromes) const {
       eq_system.push_back(poly);
     }
 
-    //std::cout << "Linear equation system to be solved: " << std::endl;
-    //std::cout << eq_system << std::endl;
+    // std::cout << "Linear equation system to be solved: " << std::endl;
+    // std::cout << eq_system << std::endl;
 
     // TODO Check if the determinant is non-zero.
     try {
@@ -325,7 +322,7 @@ gf_polynomial bch::pzg(std::vector<gf_element> syndromes) const {
                 << std::endl;
 #endif
       auto solution = eq_system.solution();
-      //std::cout << solution << std::endl << std::endl;
+      // std::cout << solution << std::endl << std::endl;
 
       return solution;
     }
@@ -362,7 +359,6 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
   if (it == std::end(syndrome))
     return b_;
 
-
   auto solution = pzg(std::move(syndrome));
   solution.push_back(gf_element(field, 1));
 #if 0
@@ -374,8 +370,8 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
   }
   std::cout << std::endl;
 #endif
-  
-  //chien(field, solution);
+
+  // chien(field, solution);
   auto zeroes = solution.zeroes();
   if (zeroes.size() != solution.degree()) {
     std::ostringstream os;
