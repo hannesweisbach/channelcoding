@@ -472,6 +472,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
   std::cout << std::endl;
 #endif
 
+#if 0
   auto lambda_euklid = ::euklid(field, fk, syndromes, erasures).reverse();
 
   if (lambda != lambda_euklid) {
@@ -479,6 +480,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
     std::cout << "Λ(x)_bm = " << lambda << std::endl;
     std::cout << "Λ(x)_eu = " << lambda_euklid << std::endl;
   }
+#endif
 
   auto zeroes = lambda.zeroes();
   if (zeroes.size() != lambda.degree()) {
