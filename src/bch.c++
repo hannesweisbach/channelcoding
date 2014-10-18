@@ -474,8 +474,15 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
     std::cout << zero << " ";
   std::cout << std::endl;
 
-  //auto e = error_values_naive(syndromes, zeroes);
+  gf_polynomial e(field);
+  std::fill_n(std::back_inserter(e), b.size(), field.zero());
+  for (const auto &zero : zeroes) {
+    e.at(zero.power()) = field.one();
+  }
 
-  return b;
+  std::transform(std::cbegin(e), std::cend(e), std::cbegin(b), std::begin(e),
+                 [](const auto &lhs, const auto &rhs) { return lhs + rhs; });
+
+  return e;
 }
 
