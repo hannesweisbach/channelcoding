@@ -385,12 +385,14 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
   }
 
   std::vector<int> e(n, 0);
+  for (const auto &zero : zeroes) {
+    e.at(zero.power()) = 1;
+  }
 
 #if 0
   std::cout << "Zeroes in Σ(x): ";
   for (const auto &zero : zeroes) {
     std::cout << zero << " ";
-    e.at(zero.power()) = 1;
   }
   std::cout << std::endl;
 
