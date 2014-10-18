@@ -46,6 +46,9 @@ public:
   gf_polynomial correct_bm(const gf_polynomial &b,
                            const std::vector<gf_element> &erasures =
                                std::vector<gf_element>()) const;
+  std::vector<int> correct_bm(const std::vector<int> &b,
+                              const std::vector<gf_element> &erasures =
+                                  std::vector<gf_element>()) const;
   const matrix<int> &H() const;
 
   gf field;

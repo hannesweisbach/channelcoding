@@ -419,6 +419,21 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
   throw std::runtime_error("No viable solution found. Decoding failure");
 }
 
+std::vector<int> bch::correct_bm(const std::vector<int> &b,
+                              const std::vector<gf_element> &erasures) const {
+  auto e = correct_bm(gf_polynomial(field, b), erasures);
+  std::vector<int> e_;
+  std::transform(std::cbegin(e), std::cend(e), std::back_inserter(e_),
+                 [](const auto &symbol) {
+    if (symbol)
+      return 1;
+    else
+      return 0;
+  });
+
+  return e_;
+}
+
 std::vector<int> bch::decode(const std::vector<int> &b) const {
   if (b.size() == n + 1) {
 
