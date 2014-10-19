@@ -19,12 +19,11 @@ using decoder_t =
         std::vector<float>)>;
 
 std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
-                              const size_t samples, const float eb_n0) {
-  constexpr int fk = 3;
-  constexpr size_t length = 31;
-  constexpr float R = 16.0 / length;
+                              const size_t samples, const float eb_n0,
+                              const size_t n, const size_t l, const size_t fk) {
+  const float R = (float)l / n;
 
-  std::vector<float> b(length);
+  std::vector<float> b(l);
 
   std::normal_distribution<float> random(1.0, sigma(eb_n0, R));
   auto noise_gen = std::bind(std::ref(random), std::ref(generator));
@@ -53,7 +52,7 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
     }
     catch (...) {
       reconstruction_failures++;
-      bit_errors += length;
+      bit_errors += l;
     }
   }
   /* word error rate */
@@ -65,7 +64,7 @@ std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
   const auto wrong_words = reconstruction_failures + reconstruction_errors;
   os << std::setprecision(12) << wrong_words / samples_ << " ";
   os << std::setprecision(12) << fk_corr / samples_ << " ";
-  os << std::setprecision(12) << bit_errors / (samples_ * length);
+  os << std::setprecision(12) << bit_errors / (samples_ * l);
 
   return os.str();
 }
@@ -101,6 +100,12 @@ int main(int argc, const char *const argv[]) {
   std::mt19937 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
+  auto parameters = code.parameters();
+  auto simulator = std::bind(generate_overview, generator,
+                             std::placeholders::_1, std::placeholders::_2,
+                             std::placeholders::_3, std::get<0>(parameters),
+                             std::get<1>(parameters), std::get<2>(parameters));
+
   std::vector<std::pair<std::string, decoder_t> > algorithms;
   algorithms.emplace_back("ms", std::bind(min_sum<max_iterations, float, float>,
                                           std::cref(code.H()),
@@ -110,7 +115,7 @@ int main(int argc, const char *const argv[]) {
                                            std::placeholders::_1, 0.9f));
   algorithms.emplace_back("oms", std::bind(oms<max_iterations, float, float>,
                                            std::cref(code.H()),
-                                           std::placeholders::_1, 0.92f));
+                                           std::placeholders::_1, 0.4f));
   algorithms.emplace_back("2d-nms",
                           std::bind(nms_2d<max_iterations, float, float>,
                                     std::cref(code.H()), std::placeholders::_1,
@@ -154,7 +159,7 @@ int main(int argc, const char *const argv[]) {
       auto start = std::chrono::high_resolution_clock::now();
 
       file << eb_no << " ";
-      file << generate_overview(generator, decoder, samples, eb_no);
+      file << simulator(decoder, samples, eb_no);
       file << std::endl;
 
       auto end = std::chrono::high_resolution_clock::now();
