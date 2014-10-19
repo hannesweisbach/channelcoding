@@ -35,7 +35,7 @@ add_executable(optimize_2d optimize_2d.c++)
 target_link_libraries(optimize_2d bch gf)
 
 add_executable(performance performance.c++)
-target_link_libraries(performance bch gf)
+target_link_libraries(performance eval gf)
 
 add_executable(ln ln.c++)
 target_link_libraries(ln bch gf)
