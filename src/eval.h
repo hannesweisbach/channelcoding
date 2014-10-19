@@ -31,11 +31,24 @@ get_algorithms(const bch &code) {
   algorithms.emplace_back("nms", std::bind(nms<max_iterations, float, float>,
                                            std::cref(code.H()),
                                            std::placeholders::_1, 0.9f));
+  algorithms.emplace_back("oms", std::bind(oms<max_iterations, float, float>,
+                                           std::cref(code.H()),
+                                           std::placeholders::_1, 0.4f));
+  algorithms.emplace_back("2d-nms",
+                          std::bind(nms_2d<max_iterations, float, float>,
+                                    std::cref(code.H()), std::placeholders::_1,
+                                    0.9f, 0.92f));
   algorithms.emplace_back(
       "scms1", std::bind(scms1<max_iterations, float, float>,
                          std::cref(code.H()), std::placeholders::_1));
   algorithms.emplace_back(
       "scms2", std::bind(scms2<max_iterations, float, float>,
                          std::cref(code.H()), std::placeholders::_1));
+
+  algorithms.emplace_back(
+      "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
+  algorithms.emplace_back(
+      "bm", std::bind(bm_wrapper, std::cref(code), std::placeholders::_1));
+
   return algorithms;
 }
