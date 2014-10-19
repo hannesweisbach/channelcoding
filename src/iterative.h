@@ -237,6 +237,17 @@ public:
   float beta() const { return beta_; }
 };
 
+class ab_wrapper {
+  const float alpha_;
+  const float beta_;
+
+public:
+  ab_wrapper(const float alpha, const float beta)
+      : alpha_(alpha), beta_(beta) {}
+  float alpha() const { return alpha_; }
+  float beta() const { return beta_; }
+};
+
 template <unsigned iterations, typename R, typename Q, typename... Args>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 nms(const matrix<int> &H, const std::vector<Q> &y, const float alpha = 1.0f) {
@@ -265,6 +276,15 @@ std::tuple<std::vector<int>, std::vector<R>, unsigned>
 scms2(const matrix<int> &H, const std::vector<Q> &y) {
   return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>,
                                      vertical_sc_2<Q, R>);
+}
+
+template <unsigned iterations, typename R, typename Q>
+std::tuple<std::vector<int>, std::vector<R>, unsigned>
+nms_2d(const matrix<int> &H, const std::vector<Q> &y, const float alpha = 1.0f,
+       const float beta = 0.1f) {
+  return min_sum__<iterations, R, Q>(
+      H, y, horizontal_normalized<Q, R, ab_wrapper>,
+      vertical_normalized<Q, R, ab_wrapper>, ab_wrapper(alpha, beta));
 }
 
 template <unsigned iterations, typename R, typename Q>
