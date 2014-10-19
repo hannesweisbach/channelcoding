@@ -11,6 +11,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_library(gf gf.c++)
 add_library(bch bch.c++)
+target_link_libraries(bch gf)
 add_library(rs rs.c++)
 
 add_library(eval eval.c++)
