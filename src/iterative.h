@@ -78,7 +78,20 @@ void horizontal_offset(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
 template <typename Q, typename R, typename Functor>
 void vertical__(const matrix<int> &H, const std::vector<Q> y,
                 const matrix<R> &r, matrix<Q> &q, Functor &&fn) {
+#if 1
+  std::vector<R> row_sums;
+  row_sums.reserve(H.rows());
+  for (size_t col = 0; col < H.columns(); col++) {
+    row_sums.push_back(R(0));
+    for (size_t row = 0; row < H.rows(); row++) {
+      if (H.at(row).at(col)) {
+        row_sums.back() += r.at(row).at(col);
+      }
+    }
+  }
+#else
   const auto row_sums = r.sum_rows();
+#endif
   const size_t rows = H.rows();
   const size_t cols = H.columns();
   for (auto row = 0; row < rows; row++) {
