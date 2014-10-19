@@ -2,13 +2,7 @@
 #include <fstream>
 #include <chrono>
 
-#include "bch.h"
-#include "iterative.h"
-#include "util.h"
-
-using decoder_t =
-    std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(
-        std::vector<float>)>;
+#include "eval.h"
 
 double test_hard(const unsigned errors, const decoder_t &decoder) {
   const unsigned length = 31;
@@ -45,37 +39,13 @@ double test_hard(const unsigned errors, const decoder_t &decoder) {
   return (double)failures / error_patterns;
 }
 
-std::tuple<std::vector<int>, std::vector<float>, unsigned>
-pzg_wrapper(const bch &code, const std::vector<float> &b) {
-  std::vector<int> hard;
-  hard.reserve(b.size());
-  std::transform(std::cbegin(b), std::cend(b), std::back_inserter(hard),
-                 [](const auto &bit) { return bit < 0; });
-  auto b_corr = code.correct_bm(hard);
-  return std::make_tuple(b_corr, std::vector<float>(), 0);
-}
-
 int main() {
   constexpr size_t max_iterations = 50;
   const unsigned max_fk = 7;
 
   bch code(5, 0x25, 7);
 
-  std::vector<std::pair<std::string, decoder_t> > algorithms;
-  algorithms.emplace_back(
-      "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
-  algorithms.emplace_back("ms", std::bind(min_sum<max_iterations, float, float>,
-                                          std::cref(code.H()),
-                                          std::placeholders::_1));
-  algorithms.emplace_back("nms", std::bind(nms<max_iterations, float, float>,
-                                           std::cref(code.H()),
-                                           std::placeholders::_1, 0.9f));
-  algorithms.emplace_back(
-      "scms1", std::bind(scms1<max_iterations, float, float>,
-                         std::cref(code.H()), std::placeholders::_1));
-  algorithms.emplace_back(
-      "scms2", std::bind(scms2<max_iterations, float, float>,
-                         std::cref(code.H()), std::placeholders::_1));
+  auto algorithms = get_algorithms<max_iterations>(code);
 
   char fname[] = "fk.XXXXXX";
   mktemp(fname);
