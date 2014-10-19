@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <cmath>
+#include <random>
 
 #include "bch.h"
 #include "iterative.h"
@@ -67,3 +68,7 @@ public:
   double ber() const;
   friend std::ostream &operator<<(std::ostream &os, const eval_object &);
 };
+
+eval_object evaluate(std::mt19937 &generator, const decoder_t &decoder,
+                     const size_t samples, const float eb_n0, const unsigned n,
+                     const unsigned l, const unsigned fk);
