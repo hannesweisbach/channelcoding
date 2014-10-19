@@ -8,66 +8,8 @@
 #include <chrono>
 #include <cstdlib>
 
-#include "bch.h"
-#include "iterative.h"
+#include "eval.h"
 #include "util.h"
-
-static double sigma(const double eb_n0, const double R) {
-  return sqrt(1.0f / (2 * R * pow(10, eb_n0 / 10.0)));
-}
-
-using decoder_t =
-    std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(
-        std::vector<float>)>;
-
-std::string generate_overview(std::mt19937 &generator, const decoder_t &decoder,
-                              const size_t samples, const float eb_n0) {
-  constexpr int fk = 3;
-  constexpr size_t length = 31;
-  constexpr float R = 16.0 / length;
-
-  std::vector<float> b(length);
-
-  std::normal_distribution<float> random(1.0, sigma(eb_n0, R));
-  auto noise_gen = std::bind(std::ref(random), std::ref(generator));
-
-  unsigned reconstruction_failures = 0;
-  unsigned reconstruction_errors = 0;
-  unsigned fk_corr = 0;
-  unsigned bit_errors = 0;
-
-  for (size_t sample = 0; sample < samples; sample++) {
-    std::generate(std::begin(b), std::end(b), noise_gen);
-    try {
-      auto result = decoder(b);
-      const auto &b_corr = std::get<0>(result);
-      auto wrong_bits = std::count_if(std::cbegin(b_corr), std::cend(b_corr),
-                                      [](const auto &bit) { return bit != 0; });
-      if (wrong_bits) {
-        reconstruction_errors++;
-        bit_errors += wrong_bits;
-      } else {
-        auto d = std::count_if(std::cbegin(b), std::cend(b),
-                               [](const auto &bit) { return bit < 0; });
-        if (d > fk)
-          fk_corr++;
-      }
-    }
-    catch (...) {
-      reconstruction_failures++;
-      bit_errors += length;
-    }
-  }
-  /* word error rate */
-  std::ostringstream os;
-  os << std::scientific;
-  // os << std::setprecision(4) << eb_n0 << " ";
-  // os << std::setprecision(9) << fk_corr / (float)samples << " ";
-  os << std::setprecision(12) << bit_errors / (double)(samples * length) << " ";
-  //os << std::setprecision(12) << reconstruction_failures / (double)samples;
-
-  return os.str();
-}
 
 int main(int argc, const char *const argv[]) {
   constexpr size_t max_iterations = 50;
@@ -91,15 +33,16 @@ int main(int argc, const char *const argv[]) {
 
   bch code(5, 0x25, 7);
   // bch code(6, 0x45, 7);
+  auto simulator = build_simulator(generator, code);
 
-  const char * fname;
+  const char *fname;
 #if 0
-  char fbuf[] = "optimize.XXXXXX";
+  char fbuf[] = "logs/optimize.XXXXXX";
   mktemp(fbuf);
   fname = fbuf;
 #else
   std::ostringstream os;
-  os << "beta_" << beta_start;
+  os << "logs/beta_" << beta_start;
   fname = os.str().c_str();
 #endif
 
@@ -125,7 +68,7 @@ int main(int argc, const char *const argv[]) {
       auto f = std::bind(oms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, beta);
       const size_t N = num_samples(eb_no);
-      file << generate_overview(generator, f, N, eb_no) << " ";
+      file << simulator(f, N, eb_no).ber() << " ";
       std::cout << beta << " " << N << std::endl;
     }
     auto end = std::chrono::high_resolution_clock::now();
