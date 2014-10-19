@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ostream>
 #include <cmath>
 
 #include "bch.h"
@@ -52,3 +53,17 @@ get_algorithms(const bch &code) {
 
   return algorithms;
 }
+
+class eval_object {
+public:
+  const float eb_no;
+  const unsigned reconstruction_failures = 0;
+  const unsigned reconstruction_errors = 0;
+  const unsigned fk_corr = 0;
+  const unsigned bit_errors = 0;
+  const size_t samples = 0;
+  const unsigned l = 0;
+
+  double ber() const;
+  friend std::ostream &operator<<(std::ostream &os, const eval_object &);
+};
