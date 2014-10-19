@@ -113,8 +113,13 @@ int main(int argc, const char *const argv[]) {
     std::cout << "Calculating for E_b/N_0 = " << eb_no << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     for (float alpha = alpha_start; alpha < alpha_max; alpha += alpha_step) {
+#if 0
       auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
+#else
+      auto f = std::bind(scms1_nms<max_iterations, float, float>,
+                         std::cref(code.H()), std::placeholders::_1, alpha);
+#endif
       const size_t N = num_samples(eb_no);
       file << generate_overview(generator, f, N, eb_no) << " ";
       std::cout << eb_no << " " << alpha << " " << N << std::endl;

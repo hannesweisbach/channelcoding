@@ -238,3 +238,11 @@ scms2(const matrix<int> &H, const std::vector<Q> &y) {
   return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>,
                                      vertical_sc_2<Q, R>);
 }
+
+template <unsigned iterations, typename R, typename Q, typename... Args>
+std::tuple<std::vector<int>, std::vector<R>, unsigned>
+scms1_nms(const matrix<int> &H, const std::vector<Q> &y,
+          const float alpha = 1.0f) {
+  return min_sum__<iterations, R, Q>(H, y, horizontal_normalized<Q, R, Args...>,
+                                     vertical_sc_1<Q, R>, alpha);
+}
