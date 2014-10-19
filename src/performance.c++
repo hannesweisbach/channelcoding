@@ -108,6 +108,9 @@ int main(int argc, const char *const argv[]) {
   algorithms.emplace_back("nms", std::bind(nms<max_iterations, float, float>,
                                            std::cref(code.H()),
                                            std::placeholders::_1, 0.9f));
+  algorithms.emplace_back("oms", std::bind(oms<max_iterations, float, float>,
+                                           std::cref(code.H()),
+                                           std::placeholders::_1, 0.92f));
   algorithms.emplace_back(
       "scms1", std::bind(scms1<max_iterations, float, float>,
                          std::cref(code.H()), std::placeholders::_1));
