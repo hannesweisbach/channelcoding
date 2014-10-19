@@ -75,14 +75,16 @@ void horizontal_offset(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
 
 /* symbol node update */
 template <typename Q, typename R, typename Functor>
-void vertical__(const matrix<int> &H, const std::vector<R> L,
+void vertical__(const matrix<int> &H, const std::vector<Q> y,
                 const matrix<R> &r, matrix<Q> &q, Functor &&fn) {
+  const auto row_sums = r.sum_rows();
   const size_t rows = H.rows();
   const size_t cols = H.columns();
   for (auto row = 0; row < rows; row++) {
     for (auto col = 0; col < cols; col++) {
       if (H.at(row).at(col)) {
-        q.at(row).at(col) = fn(L.at(col), r.at(row).at(col), q.at(row).at(col));
+        const auto exclusive_rowsum = row_sums.at(row) - r.at(row).at(col);
+        q.at(row).at(col) = fn(exclusive_rowsum, y.at(row), q.at(row).at(col));
       }
     }
   }
@@ -92,15 +94,15 @@ template <typename Q, typename R>
 void vertical(const matrix<int> &H, const std::vector<R> L, const matrix<R> &r,
               matrix<Q> &q) {
   vertical__<Q, R>(H, L, r, q,
-                   [](const R &L, const R &r, const Q &) { return L - r; });
+                   [](const R &r, const Q &y, const Q &) { return r + y; });
 }
 
 /* http://dud.inf.tu-dresden.de/LDPC/doc/scms/ */
 template <typename Q, typename R>
 void vertical_sc_1(const matrix<int> &H, const std::vector<R> L,
                                 const matrix<R> &r, matrix<Q> &q) {
-  vertical__<Q, R>(H, L, r, q, [](const R &L, const R &r, const Q &q) {
-    auto tmp = L - r;
+  vertical__<Q, R>(H, L, r, q, [](const R &r, const Q &y, const Q &q) {
+    auto tmp = r + y;
     if (signum(q) == 0 || signum(q) == signum(tmp))
       return tmp;
     else
@@ -111,8 +113,8 @@ void vertical_sc_1(const matrix<int> &H, const std::vector<R> L,
 template <typename Q, typename R>
 void vertical_sc_2(const matrix<int> &H, const std::vector<R> L,
                    const matrix<R> &r, matrix<Q> &q) {
-  vertical__<Q, R>(H, L, r, q, [](const R &L, const R &r, const Q &q) {
-    auto tmp = L - r;
+  vertical__<Q, R>(H, L, r, q, [](const R &r, const Q &y, const Q &q) {
+    auto tmp = r + y;
     if (tmp * q > 0)
       return tmp;
     else
