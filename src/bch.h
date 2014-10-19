@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
 
 #include "matrix.h"
 #include "gf.h"
@@ -50,6 +51,7 @@ public:
                               const std::vector<gf_element> &erasures =
                                   std::vector<gf_element>()) const;
   const matrix<int> &H() const;
+  const std::tuple<unsigned, unsigned, unsigned> parameters() const;
 
   gf field;
 private:

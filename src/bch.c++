@@ -505,3 +505,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
   return e;
 }
 
+const std::tuple<unsigned, unsigned, unsigned> bch::parameters() const {
+  return std::make_tuple(n, l, fk);
+}
+
