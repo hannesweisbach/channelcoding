@@ -82,6 +82,14 @@ public:
     return result;
   }
 
+  std::vector<T> sum_rows() const {
+    std::vector<T> acc;
+    for (const auto &row : *this) {
+      acc.push_back(std::accumulate(std::cbegin(row), std::cend(row), T(0)));
+    }
+    return acc;
+  }
+
   friend std::ostream &operator<<<>(std::ostream &os, const matrix<T> &matrix);
 };
 
