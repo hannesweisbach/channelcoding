@@ -26,7 +26,7 @@ add_executable(ms_fk minsum_fk.c++)
 target_link_libraries(ms_fk eval gf)
 
 add_executable(optimization optimization.c++)
-target_link_libraries(optimization bch gf)
+target_link_libraries(optimization eval gf)
 
 add_executable(optimize_beta optimize_beta.c++)
 target_link_libraries(optimize_beta bch gf)
