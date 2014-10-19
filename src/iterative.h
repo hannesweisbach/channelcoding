@@ -111,6 +111,13 @@ void vertical_sc_1(const matrix<int> &H, const std::vector<R> L,
 }
 
 template <typename Q, typename R>
+void vertical_normalized(const matrix<int> &H, const std::vector<R> L,
+                         const matrix<R> &r, matrix<Q> &q, const float beta) {
+  vertical__<Q, R>(H, L, r, q, [=](const R &r, const Q &y,
+                                   const Q &) { return r * beta + y; });
+}
+
+template <typename Q, typename R>
 void vertical_sc_2(const matrix<int> &H, const std::vector<R> L,
                    const matrix<R> &r, matrix<Q> &q) {
   vertical__<Q, R>(H, L, r, q, [](const R &r, const Q &y, const Q &q) {
