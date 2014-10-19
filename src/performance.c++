@@ -80,6 +80,17 @@ pzg_wrapper(const bch &code, const std::vector<float> &b) {
   return std::make_tuple(b_corr, std::vector<float>(), 0);
 }
 
+std::tuple<std::vector<int>, std::vector<float>, unsigned>
+bm_wrapper(const bch &code, const std::vector<float> &b) {
+  std::vector<int> hard;
+  hard.reserve(b.size());
+  std::transform(std::cbegin(b), std::cend(b), std::back_inserter(hard),
+                 [](const auto &bit) { return bit < 0; });
+  auto b_corr = code.correct_bm(hard);
+  return std::make_tuple(b_corr, std::vector<float>(), 0);
+}
+
+
 int main(int argc, const char *const argv[]) {
   constexpr size_t max_iterations = 50;
   constexpr float eb_no_max = 10;
@@ -105,6 +116,8 @@ int main(int argc, const char *const argv[]) {
                          std::cref(code.H()), std::placeholders::_1));
   algorithms.emplace_back(
       "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
+  algorithms.emplace_back(
+      "bm", std::bind(bm_wrapper, std::cref(code), std::placeholders::_1));
 
   auto num_samples = [=](const double eb_no) {
     return std::min(base_trials * pow(10, eb_no / 2), 10e6);
