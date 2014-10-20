@@ -25,6 +25,11 @@ template <typename T> auto crend(const T &c) -> decltype(c.crend()) {
 #include <string>
 #include <sys/stat.h>
 
+class decoding_failure : std::runtime_error {
+public:
+  decoding_failure(const std::string &what) : runtime_error(what) {}
+};
+
 inline bool file_exists(const std::string &fname) {
   struct stat buf;
   return (stat(fname.c_str(), &buf) != -1);
