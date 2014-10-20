@@ -27,7 +27,7 @@ template <typename T> auto crend(const T &c) -> decltype(c.crend()) {
 
 class decoding_failure : std::runtime_error {
 public:
-  decoding_failure(const std::string &what) : runtime_error(what) {}
+  using std::runtime_error::runtime_error;
 };
 
 inline bool file_exists(const std::string &fname) {
