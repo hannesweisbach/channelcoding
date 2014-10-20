@@ -337,6 +337,8 @@ gf_polynomial bch::pzg(std::vector<gf_element> syndromes) const {
   /* if v = 1, check all equations for the same solution for sigma_1 */
   auto sigma = syndromes.front();
   for (auto it = std::begin(syndromes); it != std::end(syndromes) - 1; ++it) {
+    if (*it == field.zero())
+      throw decoding_failure("Cannot invert syndrome, it is 0.");
     auto sigma_ = *(it + 1) * (field.one() / *it);
     if (sigma != sigma_) {
       std::cout << sigma << " " << sigma_ << std::endl;
@@ -377,11 +379,13 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
     std::ostringstream os;
     os << "Σ(x) has to have " << solution.degree() << " zeroes, but it has "
        << zeroes.size() << "." << std::endl;
-    throw std::logic_error(os.str());
+    throw decoding_failure(os.str());
   }
 
   std::vector<int> e(n, 0);
   for (const auto &zero : zeroes) {
+    if (zero == field.zero())
+      throw decoding_failure("0 is zero in Σ(x)");
     e.at(zero.power()) = 1;
   }
 
@@ -413,8 +417,6 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
   std::cout << std::endl;
 #endif
   return e;
-
-  throw std::runtime_error("No viable solution found. Decoding failure");
 }
 
 std::vector<int> bch::correct_bm(const std::vector<int> &b,
@@ -483,7 +485,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
     std::ostringstream os;
     os << "Σ(x) has to have " << lambda.degree() << " zeroes, but it has "
        << zeroes.size() << "." << std::endl;
-    throw std::logic_error(os.str());
+    throw decoding_failure(os.str());
   }
 
 #if 0
