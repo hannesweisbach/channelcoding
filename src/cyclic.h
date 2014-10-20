@@ -126,7 +126,10 @@ gf_polynomial euklid(const Field &field, const unsigned fk,
     r.push_back(next);
   }
 
-  //protocol_euklid(r, w);
+  // protocol_euklid(r, w);
+  if (w.back().at(0) == field.zero())
+    throw decoding_failure("Cannot invert last element");
+
   return w.back() * w.back().at(0).inverse();
 }
 
