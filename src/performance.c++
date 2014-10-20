@@ -14,9 +14,11 @@ int main(int argc, const char *const argv[]) {
   constexpr float eb_no_step = 0.1f;
   constexpr unsigned base_trials = 10000;
 
+  auto seed =
+      std::chrono::high_resolution_clock::now().time_since_epoch().count();
+
   bch code(5, 0x25, 7);
-  std::mt19937 generator(
-      std::chrono::high_resolution_clock::now().time_since_epoch().count());
+  std::mt19937 generator;
 
   auto parameters = code.parameters();
   auto simulator = std::bind(evaluate, generator, std::placeholders::_1,
@@ -46,6 +48,9 @@ int main(int argc, const char *const argv[]) {
          << "wer "
          << "fk_rate "
          << "ber" << std::endl;
+
+    generator.seed(seed);
+
     for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
       auto samples = num_samples(eb_no);
       std::cout << "Calculating for E_b/N_0 = " << eb_no << " with " << samples
@@ -53,7 +58,7 @@ int main(int argc, const char *const argv[]) {
       std::cout.flush();
       auto start = std::chrono::high_resolution_clock::now();
 
-      file << eb_no << " ";
+      file << std::setprecision(1) << eb_no << " ";
       file << simulator(decoder, samples, eb_no);
       file << std::endl;
 
