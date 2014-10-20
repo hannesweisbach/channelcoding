@@ -105,17 +105,17 @@ void vertical__(const matrix<int> &H, const std::vector<Q> y,
 }
 
 template <typename Q, typename R, typename... Args>
-void vertical(const matrix<int> &H, const std::vector<R> L, const matrix<R> &r,
+void vertical(const matrix<int> &H, const std::vector<Q> y, const matrix<R> &r,
               matrix<Q> &q, Args &&...) {
-  vertical__<Q, R>(H, L, r, q,
+  vertical__<Q, R>(H, y, r, q,
                    [](const R &r, const Q &y, const Q &) { return r + y; });
 }
 
 /* http://dud.inf.tu-dresden.de/LDPC/doc/scms/ */
 template <typename Q, typename R, typename... Args>
-void vertical_sc_1(const matrix<int> &H, const std::vector<R> L,
+void vertical_sc_1(const matrix<int> &H, const std::vector<Q> y,
                    const matrix<R> &r, matrix<Q> &q, Args &&...) {
-  vertical__<Q, R>(H, L, r, q, [](const R &r, const Q &y, const Q &q) {
+  vertical__<Q, R>(H, y, r, q, [](const R &r, const Q &y, const Q &q) {
     auto tmp = r + y;
     if (signum(q) == 0 || signum(q) == signum(tmp))
       return tmp;
@@ -125,16 +125,16 @@ void vertical_sc_1(const matrix<int> &H, const std::vector<R> L,
 }
 
 template <typename Q, typename R, typename Param>
-void vertical_normalized(const matrix<int> &H, const std::vector<R> L,
+void vertical_normalized(const matrix<int> &H, const std::vector<Q> y,
                          const matrix<R> &r, matrix<Q> &q, const Param &p) {
-  vertical__<Q, R>(H, L, r, q, [=](const R &r, const Q &y,
+  vertical__<Q, R>(H, y, r, q, [=](const R &r, const Q &y,
                                    const Q &) { return r * p.beta() + y; });
 }
 
 template <typename Q, typename R>
-void vertical_sc_2(const matrix<int> &H, const std::vector<R> L,
+void vertical_sc_2(const matrix<int> &H, const std::vector<Q> y,
                    const matrix<R> &r, matrix<Q> &q) {
-  vertical__<Q, R>(H, L, r, q, [](const R &r, const Q &y, const Q &q) {
+  vertical__<Q, R>(H, y, r, q, [](const R &r, const Q &y, const Q &q) {
     auto tmp = r + y;
     if (tmp * q > 0)
       return tmp;
@@ -185,7 +185,7 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
   std::vector<std::vector<int>> history;
 
   for (unsigned iteration = 0; iteration < iterations; iteration++) {
-    vert(H, L, r, q, std::forward<Args>(args)...);
+    vert(H, y, r, q, std::forward<Args>(args)...);
     hor(H, q, r, std::forward<Args>(args)...);
 #if 0
     vertical(H, L, r, q);
