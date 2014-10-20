@@ -60,7 +60,7 @@ public:
     std::vector<R> result;
     for (const auto &row : *this)
       result.push_back(std::inner_product(std::cbegin(row), std::cend(row),
-                                          std::cbegin(rhs), T()));
+                                          std::cbegin(rhs), R(0)));
 
     return result;
   }
