@@ -28,11 +28,11 @@ std::ostream &operator<<(std::ostream &os, const eval_object &e) {
   const auto wrong_words = e.reconstruction_failures + e.reconstruction_errors;
   os << std::setprecision(12) << wrong_words / samples_ << " ";
   os << std::setprecision(12) << e.fk_corr / samples_ << " ";
-  os << std::setprecision(12) << e.bit_errors / (samples_ * e.l);
+  os << std::setprecision(12) << e.bit_errors / (samples_ * e.n);
   return os;
 }
 
-double eval_object::ber() const { return bit_errors / (double)(samples * l); }
+double eval_object::ber() const { return bit_errors / (double)(samples * n); }
 
 eval_object evaluate(std::mt19937 &generator, const decoder_t &decoder,
                      const size_t samples, const float eb_n0, const unsigned n,
@@ -44,7 +44,7 @@ eval_object evaluate(std::mt19937 &generator, const decoder_t &decoder,
   unsigned fk_corr = 0;
   unsigned bit_errors = 0;
 
-  std::vector<float> b(l);
+  std::vector<float> b(n);
   std::normal_distribution<float> random(1.0, sigma(eb_n0, R));
   auto noise_gen = std::bind(std::ref(random), std::ref(generator));
 
@@ -67,11 +67,11 @@ eval_object evaluate(std::mt19937 &generator, const decoder_t &decoder,
     }
     catch (...) {
       reconstruction_failures++;
-      bit_errors += l;
+      bit_errors += n;
     }
   }
 
   return { eb_n0,      reconstruction_failures, reconstruction_errors, fk_corr,
-           bit_errors, samples,                 l };
+           bit_errors, samples,                 n };
 }
 

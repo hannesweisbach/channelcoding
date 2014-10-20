@@ -63,7 +63,7 @@ public:
   const unsigned fk_corr = 0;
   const unsigned bit_errors = 0;
   const size_t samples = 0;
-  const unsigned l = 0;
+  const unsigned n = 0;
 
   double ber() const;
   friend std::ostream &operator<<(std::ostream &os, const eval_object &);
