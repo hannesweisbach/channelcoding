@@ -176,7 +176,7 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
   matrix<R> r(H.rows(), H.columns());
   std::vector<R> L;
   std::copy(std::cbegin(y), std::cend(y), std::back_inserter(L));
-  std::vector<std::vector<int>> history;
+  std::vector<std::vector<int> > history;
 
   for (unsigned iteration = 0; iteration < iterations; iteration++) {
     vert(H, y, r, q, std::forward<Args>(args)...);
@@ -191,22 +191,22 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
     std::cout << "Q: " << std::endl << q << std::endl;
     std::cout << "R: " << std::endl << r << std::endl;
 #endif
-    
+
     L = likelihood(y, H, r);
     std::vector<int> b(hard_decision(L));
-    
+
 #if 0
     for (auto e : L)
       std::cout << std::setw(2) << e << " ";
     std::cout << std::endl;
 #endif
-    
+
 #if 0
     for (auto e : b)
       std::cout << std::setw(2) << e << " ";
     std::cout << std::endl;
 #endif
-    //history.push_back(b);
+    // history.push_back(b);
 
     if (syndrome(H, b))
       return std::make_tuple(b, L, iteration);
@@ -221,11 +221,10 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
   throw decoding_failure("Decoding failure");
 }
 
-template <unsigned iterations, typename R, typename Q, typename... Args>
+template <unsigned iterations, typename R, typename Q>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 min_sum(const matrix<int> &H, const std::vector<Q> &y) {
-  return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R, Args...>,
-                                     vertical<Q, R>);
+  return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>, vertical<Q, R>);
 }
 
 class alpha_wrapper {
