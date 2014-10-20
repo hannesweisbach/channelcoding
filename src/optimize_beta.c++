@@ -47,7 +47,7 @@ int main(int argc, const char *const argv[]) {
   file << "eb_no ";
   for (float beta = beta_start; beta < beta_max; beta += beta_step) {
     std::ostringstream col_name;
-    col_name << "ber_" << beta * 10 << " ";
+    col_name << "ber_" << std::fixed << std::setprecision(3) << beta << " ";
     file << col_name.str();
   }
   file << std::endl;
