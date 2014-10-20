@@ -218,7 +218,7 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
     std::cout << std::endl;
   }
 #endif
-  throw std::runtime_error("Decoding failure");
+  throw decoding_failure("Decoding failure");
 }
 
 template <unsigned iterations, typename R, typename Q, typename... Args>
