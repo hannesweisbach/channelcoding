@@ -28,6 +28,20 @@ inline auto syndrome(const matrix<T> &H, const std::vector<T> &b) {
   return true;
 }
 
+template <typename R>
+std::vector<R> column_sum(const matrix<int> &H, const matrix<R> &r) {
+  std::vector<R> col_sums(H.columns(), R(0));
+  for (size_t row = 0; row < H.rows(); row++) {
+    for (size_t col = 0; col < H.columns(); col++) {
+      if (H.at(row).at(col)) {
+        col_sums.at(col) += r.at(row).at(col);
+      }
+    }
+  }
+
+  return col_sums;
+}
+
 /* check node update */
 template <typename Q, typename R, typename Functor>
 void horizontal__(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
@@ -78,14 +92,8 @@ void horizontal_offset(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
 template <typename Q, typename R, typename Functor>
 void vertical__(const matrix<int> &H, const std::vector<Q> y,
                 const matrix<R> &r, matrix<Q> &q, Functor &&fn) {
-  std::vector<R> col_sums(H.columns(), R(0));
-  for (size_t row = 0; row < H.rows(); row++) {
-    for (size_t col = 0; col < H.columns(); col++) {
-      if (H.at(row).at(col)) {
-        col_sums.at(col) += r.at(row).at(col);
-      }
-    }
-  }
+  std::vector<R> col_sums(column_sum(H, r));
+
   const size_t rows = H.rows();
   const size_t cols = H.columns();
   for (auto row = 0; row < rows; row++) {
@@ -174,8 +182,9 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
 
   matrix<Q> q(H.rows(), H.columns());
   matrix<R> r(H.rows(), H.columns());
-  std::vector<R> L;
-  std::copy(std::cbegin(y), std::cend(y), std::back_inserter(L));
+  std::vector<R> col_sums(y.size());
+  std::vector<R> L(y.size());
+
   std::vector<std::vector<int> > history;
 
   for (unsigned iteration = 0; iteration < iterations; iteration++) {
@@ -191,8 +200,11 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
     std::cout << "Q: " << std::endl << q << std::endl;
     std::cout << "R: " << std::endl << r << std::endl;
 #endif
+    col_sums = column_sum(H, r);
 
-    L = likelihood(y, H, r);
+    std::transform(std::cbegin(col_sums), std::cend(col_sums), std::cbegin(y),
+                   std::begin(L),
+                   [](const R &lhs, const Q &rhs) { return lhs + rhs; });
     std::vector<int> b(hard_decision(L));
 
 #if 0
