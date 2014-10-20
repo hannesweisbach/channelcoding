@@ -239,22 +239,4 @@ int main() {
   task_6_8();
   task_6_9();
   task_6_10();
-
-#if 0
-  std::vector<int> powers = { 6, 2, 3, 5, 4, 6, 5 };
-  std::vector<gf_element> erasures;
-
-  gf field(3, 0xb);
-  gf_polynomial a(field, powers, true);
-  gf_polynomial b(a);
-
-  std::cout << "a: " << a << std::endl;
-  std::cout << "b: " << b << std::endl;
-
-  rs code(3, 0xb, 5);
-  
-  expect_equal(a, code.correct_pzg(b));
-
-  //expect_equal(a, code.correct_erasures(b, erasures));
-#endif
 }
