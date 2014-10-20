@@ -25,8 +25,6 @@ template <unsigned max_iterations>
 std::vector<std::pair<std::string, decoder_t> >
 get_algorithms(const bch &code) {
   std::vector<std::pair<std::string, decoder_t> > algorithms;
-  algorithms.emplace_back(
-      "pzg", std::bind(pzg_wrapper, std::cref(code), std::placeholders::_1));
   algorithms.emplace_back("ms", std::bind(min_sum<max_iterations, float, float>,
                                           std::cref(code.H()),
                                           std::placeholders::_1));
