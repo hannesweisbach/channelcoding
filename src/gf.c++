@@ -474,12 +474,21 @@ bool gf_matrix::has_zero_column() const {
 gf_matrix gf_matrix::reduced_echelon_form() const {
   std::vector<gf_polynomial> nrows(*this);
 
-  for(auto first_row = nrows.begin(); first_row != nrows.end(); ++first_row) {
+  /* make sure rows are sorted with the left-most elements at the top */
+  std::sort(std::begin(nrows), std::end(nrows),
+            [](const gf_polynomial &lhs, const gf_polynomial &rhs) {
+    return lhs.degree() > rhs.degree();
+  });
+
+  for (auto first_row = nrows.begin(); first_row != nrows.end(); ++first_row) {
     (*first_row) *= (*first_row)[first_row->degree()].inverse();
-    for(auto next_rows = first_row + 1; next_rows != nrows.end(); ++next_rows) {
-      (*next_rows) += (*first_row) * (*next_rows)[next_rows->degree()];
+    for (auto next_rows = first_row + 1; next_rows != nrows.end();
+         ++next_rows) {
+      /* only add if not already zero */
+      if (next_rows->at(first_row->degree()))
+        (*next_rows) += (*first_row) * (*next_rows)[next_rows->degree()];
     }
-    //std::cout << gf_matrix(*field, nrows) << std::endl;
+    // std::cout << gf_matrix(*field, nrows) << std::endl;
   }
 
   for (auto modify = nrows.rbegin() + 1; modify != nrows.rend(); ++modify) {
