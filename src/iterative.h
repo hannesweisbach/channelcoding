@@ -66,28 +66,6 @@ void horizontal__(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
   }
 }
 
-template <typename Q, typename R, typename... Args>
-void horizontal(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
-                Args &&... args) {
-  horizontal__<Q, R>(H, q, r, [](const R &arg) { return arg; });
-}
-
-template <typename Q, typename R, typename Param>
-void horizontal_normalized(const matrix<int> &H, const matrix<Q> &q,
-                           matrix<R> &r, const Param &p) {
-  horizontal__<Q, R>(H, q, r, [=](const R &min) { return p.alpha() * min; });
-}
-
-template <typename Q, typename R, typename Param,
-          typename Result_t =
-              decltype(std::declval<R>() - std::declval<float>())>
-void horizontal_offset(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
-                       const Param &p) {
-  horizontal__(H, q, r, [=](const R &min) {
-    return std::max(min - p.beta(), Result_t(0));
-  });
-}
-
 /* symbol node update */
 template <typename Q, typename R, typename Functor>
 void vertical__(const matrix<int> &H, const std::vector<Q> y,
@@ -104,45 +82,6 @@ void vertical__(const matrix<int> &H, const std::vector<Q> y,
       }
     }
   }
-}
-
-template <typename Q, typename R, typename... Args>
-void vertical(const matrix<int> &H, const std::vector<Q> y, const matrix<R> &r,
-              matrix<Q> &q, Args &&...) {
-  vertical__<Q, R>(H, y, r, q,
-                   [](const R &r, const Q &y, const Q &) { return r + y; });
-}
-
-/* http://dud.inf.tu-dresden.de/LDPC/doc/scms/ */
-template <typename Q, typename R, typename... Args>
-void vertical_sc_1(const matrix<int> &H, const std::vector<Q> y,
-                   const matrix<R> &r, matrix<Q> &q, Args &&...) {
-  vertical__<Q, R>(H, y, r, q, [](const R &r, const Q &y, const Q &q) {
-    auto tmp = r + y;
-    if (signum(q) == 0 || signum(q) == signum(tmp))
-      return tmp;
-    else
-      return R(0);
-  });
-}
-
-template <typename Q, typename R, typename Param>
-void vertical_normalized(const matrix<int> &H, const std::vector<Q> y,
-                         const matrix<R> &r, matrix<Q> &q, const Param &p) {
-  vertical__<Q, R>(H, y, r, q, [=](const R &r, const Q &y,
-                                   const Q &) { return r * p.beta() + y; });
-}
-
-template <typename Q, typename R>
-void vertical_sc_2(const matrix<int> &H, const std::vector<Q> y,
-                   const matrix<R> &r, matrix<Q> &q) {
-  vertical__<Q, R>(H, y, r, q, [](const R &r, const Q &y, const Q &q) {
-    auto tmp = r + y;
-    if (tmp * q > 0)
-      return tmp;
-    else
-      return R(0.5) * (tmp + q);
-  });
 }
 
 template <typename Q, typename R,
@@ -175,10 +114,10 @@ template <typename T> std::vector<int> hard_decision(const std::vector<T> &L) {
 }
 
 template <unsigned iterations, typename R, typename Q, typename Func_h,
-          typename Func_v, typename... Args>
+          typename Func_v>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
-          Func_v vert, Args &&... args) {
+          Func_v vert) {
 
   matrix<Q> q(H.rows(), H.columns());
   matrix<R> r(H.rows(), H.columns());
@@ -188,8 +127,8 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
   std::vector<std::vector<int> > history;
 
   for (unsigned iteration = 0; iteration < iterations; iteration++) {
-    vert(H, y, r, q, std::forward<Args>(args)...);
-    hor(H, q, r, std::forward<Args>(args)...);
+    vertical__(H, y, r, q, vert);
+    horizontal__(H, q, r, hor);
 #if 0
     vertical(H, L, r, q);
     horizontal(H, q, r);
@@ -233,67 +172,72 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h hor,
   throw decoding_failure("Decoding failure");
 }
 
+template <typename R> R unmodified_horizontal(const R &arg) { return arg; }
+template <typename R, typename Q,
+          typename Result_t = decltype(std::declval<R>() + std::declval<Q>())>
+Result_t unmodified_vertical(const R &r, const Q &y, const Q &) {
+  return r + y;
+};
+
+template <typename R> R normalised_horizontal(const R &arg, const R &alpha) {
+  return alpha * arg;
+}
+
+template <typename R, typename Q>
+R normalised_vertical(const R &arg, const Q &y, const Q &q, const R &beta) {
+  return beta * arg + y;
+}
+
 template <unsigned iterations, typename R, typename Q>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 min_sum(const matrix<int> &H, const std::vector<Q> &y) {
-  return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>, vertical<Q, R>);
+  return min_sum__<iterations, R, Q>(H, y, unmodified_horizontal<R>,
+                                     unmodified_vertical<R, Q>);
 }
 
-class alpha_wrapper {
-  const float alpha_;
-
-public:
-  alpha_wrapper(const float alpha) : alpha_(alpha) {}
-  float alpha() const { return alpha_; }
-};
-
-class beta_wrapper {
-  const float beta_;
-
-public:
-  beta_wrapper(const float beta) : beta_(beta) {}
-  float beta() const { return beta_; }
-};
-
-class ab_wrapper {
-  const float alpha_;
-  const float beta_;
-
-public:
-  ab_wrapper(const float alpha, const float beta)
-      : alpha_(alpha), beta_(beta) {}
-  float alpha() const { return alpha_; }
-  float beta() const { return beta_; }
-};
-
-template <unsigned iterations, typename R, typename Q, typename... Args>
+template <unsigned iterations, typename R, typename Q>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 nms(const matrix<int> &H, const std::vector<Q> &y, const float alpha = 1.0f) {
   return min_sum__<iterations, R, Q>(
-      H, y, horizontal_normalized<Q, R, alpha_wrapper>,
-      vertical<Q, R, alpha_wrapper>, alpha_wrapper(alpha));
+      H, y, std::bind(normalised_horizontal<R>, std::placeholders::_1, alpha),
+      unmodified_vertical<R, Q>);
 }
 
-template <unsigned iterations, typename R, typename Q, typename... Args>
+template <unsigned iterations, typename R, typename Q,
+          typename Result_t =
+              decltype(std::declval<R>() - std::declval<float>())>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 oms(const matrix<int> &H, const std::vector<Q> &y, const float beta = 0.0f) {
   return min_sum__<iterations, R, Q>(
-      H, y, horizontal_offset<Q, R, beta_wrapper>, vertical<Q, R, beta_wrapper>,
-      beta_wrapper(beta));
+      H, y, [=](const R &min) { return std::max(min - beta, Result_t(0)); },
+      unmodified_vertical<R, Q>);
 }
 
-template <unsigned iterations, typename R, typename Q, typename... Args>
+/* http://dud.inf.tu-dresden.de/LDPC/doc/scms/ */
+template <unsigned iterations, typename R, typename Q>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 scms1(const matrix<int> &H, const std::vector<Q> &y) {
-  return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>,
-                                     vertical_sc_1<Q, R>);
+  return min_sum__<iterations, R, Q>(H, y, unmodified_horizontal<R>,
+                                     [](const R &r, const Q &y, const Q &q) {
+    auto tmp = r + y;
+    if (signum(q) == 0 || signum(q) == signum(tmp))
+      return tmp;
+    else
+      return R(0);
+  });
 }
 
-template <unsigned iterations, typename R, typename Q, typename... Args>
+template <unsigned iterations, typename R, typename Q>
 std::tuple<std::vector<int>, std::vector<R>, unsigned>
 scms2(const matrix<int> &H, const std::vector<Q> &y) {
-  return min_sum__<iterations, R, Q>(H, y, horizontal<Q, R>,
-                                     vertical_sc_2<Q, R>);
+  return min_sum__<iterations, R, Q>(H, y, unmodified_horizontal<R>,
+                                     [](const R &r, const Q &y, const Q &q) {
+    auto tmp = r + y;
+    if (tmp * q > 0)
+      return tmp;
+    else
+      return R(0.5) * (tmp + q);
+  });
 }
 
 template <unsigned iterations, typename R, typename Q>
@@ -301,8 +245,9 @@ std::tuple<std::vector<int>, std::vector<R>, unsigned>
 nms_2d(const matrix<int> &H, const std::vector<Q> &y, const float alpha = 1.0f,
        const float beta = 0.1f) {
   return min_sum__<iterations, R, Q>(
-      H, y, horizontal_normalized<Q, R, ab_wrapper>,
-      vertical_normalized<Q, R, ab_wrapper>, ab_wrapper(alpha, beta));
+      H, y, std::bind(normalised_horizontal<R>, std::placeholders::_1, alpha),
+      std::bind(normalised_vertical<R, Q>, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3, beta));
 }
 
 template <unsigned iterations, typename R, typename Q>
@@ -310,6 +255,12 @@ std::tuple<std::vector<int>, std::vector<R>, unsigned>
 scms1_nms(const matrix<int> &H, const std::vector<Q> &y,
           const float alpha = 1.0f) {
   return min_sum__<iterations, R, Q>(
-      H, y, horizontal_normalized<Q, R, alpha_wrapper>,
-      vertical_sc_1<Q, R, alpha_wrapper>, alpha_wrapper(alpha));
+      H, y, std::bind(normalised_horizontal<R>, std::placeholders::_1, alpha),
+      [](const R &r, const Q &y, const Q &q) {
+        auto tmp = r + y;
+        if (signum(q) == 0 || signum(q) == signum(tmp))
+          return tmp;
+        else
+          return R(0);
+      });
 }
