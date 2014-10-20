@@ -444,23 +444,16 @@ std::vector<int> bch::decode(const std::vector<int> &b) const {
 
 gf_polynomial bch::correct_bm(const gf_polynomial &b,
                               const std::vector<gf_element> &erasures) const {
-  std::vector<gf_element> syndromes;
-
-//  std::cout << "Syndromes: ";
-  for (unsigned power = mu; power < mu + dmin - 1; power++) {
-    syndromes.push_back(b(field.power_to_polynomial(power)));
-//    std::cout << syndromes.back() << " ";
-  }
-//  std::cout << std::endl;
+  std::vector<gf_element> syndrome(syndromes(b));
 
   /* check if all syndrome values are zero - error free code word */
   const bool syndromes_zero =
-      std::all_of(std::begin(syndromes), std::end(syndromes),
+      std::all_of(std::begin(syndrome), std::end(syndrome),
                   [&](const auto &e) { return e == field.zero(); });
   if (erasures.size() == 0 && syndromes_zero)
     return b;
 
-  auto lambda = berlekamp_massey(field, syndromes, erasures).reverse();
+  auto lambda = berlekamp_massey(field, syndrome, erasures).reverse();
 #if 0
   std::cout << "Λ(x) = ";
   for (size_t i = 0; i < lambda.degree() + 1; i++) {
