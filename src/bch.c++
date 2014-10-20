@@ -355,10 +355,11 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
 
   std::vector<gf_element> syndrome = syndromes(b);
 
-  /* check if all syndrome values are zero - error free code word */
-  auto it = std::find_if(std::begin(syndrome), std::end(syndrome),
-                         [&](const auto &e) { return e != field.zero(); });
-  if (it == std::end(syndrome))
+  const bool syndromes_zero =
+      std::all_of(std::begin(syndrome), std::end(syndrome),
+                  [&](const auto &e) { return e == field.zero(); });
+
+  if (syndromes_zero)
     return b_;
 
   auto solution = pzg(std::move(syndrome));
