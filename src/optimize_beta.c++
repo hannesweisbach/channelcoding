@@ -36,15 +36,9 @@ int main(int argc, const char *const argv[]) {
   auto simulator = build_simulator(generator, code);
 
   const char *fname;
-#if 0
-  char fbuf[] = "logs/optimize.XXXXXX";
-  mktemp(fbuf);
-  fname = fbuf;
-#else
   std::ostringstream os;
-  os << "logs/beta_" << beta_start;
+  os << "logs/beta_" << std::setprecision(3) << std::fixed << beta_start;
   fname = os.str().c_str();
-#endif
 
   std::ofstream file(fname, std::ofstream::out);
   std::cout << "Writing to file " << fname << std::endl;
