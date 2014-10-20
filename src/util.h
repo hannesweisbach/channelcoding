@@ -23,6 +23,7 @@ template <typename T> auto crend(const T &c) -> decltype(c.crend()) {
 #endif
 
 #include <string>
+#include <stdexcept>
 #include <sys/stat.h>
 
 class decoding_failure : std::runtime_error {
