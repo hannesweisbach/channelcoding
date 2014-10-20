@@ -65,7 +65,7 @@ eval_object evaluate(std::mt19937 &generator, const decoder_t &decoder,
           fk_corr++;
       }
     }
-    catch (decoding_failure) {
+    catch (const decoding_failure &) {
       reconstruction_failures++;
       bit_errors += n;
     }

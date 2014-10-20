@@ -30,7 +30,7 @@ double test_hard(const unsigned errors, const decoder_t &decoder) {
         failures++;
       }
     }
-    catch (...) {
+    catch (const decoding_failure &) {
       failures++;
     }
 
