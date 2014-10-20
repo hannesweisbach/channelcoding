@@ -142,13 +142,13 @@ template <typename Q, typename R,
 std::vector<Result_t> likelihood(const std::vector<Q> &y, const matrix<int> &H,
                                  const matrix<R> &r) {
   std::vector<Result_t> result;
+  result.reserve(y.size());
+  std::copy(std::cbegin(y), std::cend(y), std::back_inserter(result));
 
-  for (size_t col = 0; col < H.columns(); col++) {
-    result.push_back(y.at(col));
-
-    for (size_t row = 0; row < H.rows(); row++) {
+  for (size_t row = 0; row < H.rows(); row++) {
+    for (size_t col = 0; col < H.columns(); col++) {
       if (H.at(row).at(col)) {
-        result.back() += r.at(row).at(col);
+        result.at(col) += r.at(row).at(col);
       }
     }
   }
