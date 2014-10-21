@@ -79,7 +79,7 @@ int main(int argc, const char *const argv[]) {
       auto f =
           std::bind(nms_2d<max_iterations, float, float>, std::ref(code.H()),
                     std::placeholders::_1, alpha, beta);
-      file << simulator(f, N, eb_no) << " ";
+      file << simulator(f, N, eb_no).ber() << " ";
 
       auto end = std::chrono::high_resolution_clock::now();
       auto seconds =
