@@ -33,7 +33,7 @@ add_executable(optimize_beta optimize_beta.c++)
 target_link_libraries(optimize_beta eval gf)
 
 add_executable(optimize_2d optimize_2d.c++)
-target_link_libraries(optimize_2d bch gf)
+target_link_libraries(optimize_2d eval gf)
 
 add_executable(performance performance.c++)
 target_link_libraries(performance eval gf)
