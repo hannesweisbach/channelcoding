@@ -19,15 +19,15 @@ int main(int argc, const char *const argv[]) {
     return std::min(base_trials * pow(10, eb_no / 2), 10e6);
   };
 
-  const float alpha_start = (argc > 0) ? strtof(argv[1], nullptr) : 0.1f;
-  const float alpha_max = (argc > 1) ? strtof(argv[2], nullptr) : 1.0f;
-  const float alpha_step = (argc > 2) ? strtof(argv[3], nullptr) : 0.01f;
+  const float alpha_start = (argc > 1) ? strtof(argv[1], nullptr) : 0.1f;
+  const float alpha_max = (argc > 2) ? strtof(argv[2], nullptr) : 1.0f;
+  const float alpha_step = (argc > 3) ? strtof(argv[3], nullptr) : 0.01f;
 
-  const float beta_start = (argc > 3) ? strtof(argv[4], nullptr) : 0.1f;
-  const float beta_max = (argc > 4) ? strtof(argv[5], nullptr) : 1.0f;
-  const float beta_step = (argc > 5) ? strtof(argv[6], nullptr) : 0.01f;
+  const float beta_start = (argc > 4) ? strtof(argv[4], nullptr) : 0.1f;
+  const float beta_max = (argc > 5) ? strtof(argv[5], nullptr) : 1.0f;
+  const float beta_step = (argc > 6) ? strtof(argv[6], nullptr) : 0.01f;
 
-  const float eb_no = (argc > 6) ? strtof(argv[7], nullptr) : 0.0f;
+  const float eb_no = (argc > 7) ? strtof(argv[7], nullptr) : 0.0f;
 
   std::cout << "Calculating for eb_no: " << eb_no << std::endl;
   std::cout << "alpha: " << alpha_start << " to " << alpha_max << " in "
