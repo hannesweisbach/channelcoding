@@ -67,11 +67,11 @@ public:
   friend std::ostream &operator<<(std::ostream &os, const eval_object &);
 };
 
-eval_object evaluate(std::mt19937 &generator, const decoder_t &decoder,
+eval_object evaluate(std::mt19937_64 &generator, const decoder_t &decoder,
                      const size_t samples, const float eb_n0, const unsigned n,
                      const unsigned l, const unsigned fk);
 
-inline auto build_simulator(std::mt19937 &generator, const bch &code) {
+inline auto build_simulator(std::mt19937_64 &generator, const bch &code) {
   auto parameters = code.parameters();
   return std::bind(evaluate, generator, std::placeholders::_1,
                    std::placeholders::_2, std::placeholders::_3,

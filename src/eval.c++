@@ -34,7 +34,7 @@ std::ostream &operator<<(std::ostream &os, const eval_object &e) {
 
 double eval_object::ber() const { return bit_errors / (double)(samples * n); }
 
-eval_object evaluate(std::mt19937 &generator, const decoder_t &decoder,
+eval_object evaluate(std::mt19937_64 &generator, const decoder_t &decoder,
                      const size_t samples, const float eb_n0, const unsigned n,
                      const unsigned l, const unsigned fk) {
   const float R = (float)l / n;

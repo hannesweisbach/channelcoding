@@ -18,9 +18,9 @@ void generate_hard(const size_t samples, const float eb_n0_max,
   constexpr int fk = 3;
   constexpr size_t length = 31;
   constexpr float R = 16.0/length;
-  std::mt19937 generator(
+  std::mt19937_64 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
-  
+
   std::vector<float> b(length);
 
   for (float eb_n0 = 0; eb_n0 < eb_n0_max; eb_n0 += eb_n0_step) {
@@ -73,9 +73,9 @@ void generate_diagram(const matrix<int> &H, const size_t samples,
   constexpr int fk = 3;
   constexpr size_t length = 31;
   constexpr float R = 16.0/length;
-  std::mt19937 generator(
+  std::mt19937_64 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
-  
+
   std::vector<float> b(length);
 
   for (float eb_n0 = 0; eb_n0 < eb_n0_max; eb_n0 += eb_n0_step) {
@@ -133,7 +133,7 @@ void generate_diagram(const matrix<int> &H, const size_t samples,
 int main() {
   const unsigned errors = 2;
   const unsigned N = 10000000;
-  std::mt19937 generator(
+  std::mt19937_64 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
   std::uniform_int_distribution<int> distribution(0,30);
 

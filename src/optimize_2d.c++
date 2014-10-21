@@ -35,7 +35,7 @@ int main(int argc, const char *const argv[]) {
   std::cout << "beta:  " << beta_start << " to " << beta_max << " in "
             << beta_step << " steps" << std::endl;
 
-  std::mt19937 generator;
+  std::mt19937_64 generator;
   const auto seed =
       std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
