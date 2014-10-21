@@ -60,9 +60,9 @@ int main(int argc, const char *const argv[]) {
   std::cout << "Writing to file " << fname << std::endl;
   file << "#eb_no " << eb_no << std::endl;
   file << "#alpha: " << alpha_start << " " << alpha_max << " " << alpha_step
-       << std::endl;
+       << " in rows" << std::endl;
   file << "#beta : " << beta_start << " " << beta_max << " " << beta_step
-       << std::endl;
+       << " in columns" << std::endl;
 
   file << std::scientific;
 
