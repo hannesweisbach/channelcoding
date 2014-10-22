@@ -5,7 +5,9 @@
 #include <sstream>
 #include <chrono>
 
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include <getopt.h>
 
 #include "eval.h"
