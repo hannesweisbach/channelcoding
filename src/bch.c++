@@ -492,6 +492,8 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
   gf_polynomial e(field);
   std::fill_n(std::back_inserter(e), b.size(), field.zero());
   for (const auto &zero : zeroes) {
+    if (zero == field.zero())
+      throw decoding_failure("0 is zero in Σ(x)");
     e.at(zero.power()) = field.one();
   }
 
