@@ -139,7 +139,7 @@ int main(int argc, char *const argv[]) {
 
     generator.seed(seed);
 
-    double ber = 1;
+    double ber = 0.5;
     for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
       auto samples = num_samples(ber);
       std::cout << "Calculating for E_b/N_0 = " << eb_no << " with " << samples
