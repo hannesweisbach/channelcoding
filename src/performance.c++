@@ -28,8 +28,9 @@ int main(int argc, const char *const argv[]) {
 
   auto algorithms = get_algorithms<max_iterations>(code);
 
-  auto num_samples = [=](const double eb_no) {
-    return std::min(base_trials * pow(10, eb_no / 2), 10e6);
+  auto num_samples = [=](const double ber) {
+    return std::min(1000 * 1/ber, 10e6);
+    //return std::min(base_trials * pow(10, eb_no / 2), 10e6);
   };
 
   auto run_algorithm = [&](const auto &algorithm) {
@@ -51,22 +52,26 @@ int main(int argc, const char *const argv[]) {
 
     generator.seed(seed);
 
+    double ber = 1;
     for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
-      auto samples = num_samples(eb_no);
+      auto samples = num_samples(ber);
       std::cout << "Calculating for E_b/N_0 = " << eb_no << " with " << samples
                 << " … ";
       std::cout.flush();
       auto start = std::chrono::high_resolution_clock::now();
 
-      file << std::setprecision(1) << eb_no << " ";
-      file << simulator(decoder, samples, eb_no);
-      file << std::endl;
+      auto result = simulator(decoder, samples, eb_no);
 
       auto end = std::chrono::high_resolution_clock::now();
       auto seconds =
           std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
-
       std::cout << seconds << " s" << std::endl;
+
+      ber = result.ber();
+
+      file << std::setprecision(1) << eb_no << " ";
+      file << result;
+      file << std::endl;
     }
   };
 
