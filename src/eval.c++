@@ -1,6 +1,13 @@
 #include "eval.h"
 
 #include <cmath>
+#include <vector>
+
+uint64_t primitive_polynomial(unsigned degree) {
+  static const std::vector<uint64_t> primitive_polynomials(
+      { 0, 0x3, 0x7, 0xb, 0x13, 0x25, 0x43 });
+  return primitive_polynomials.at(degree);
+}
 
 static double sigma(const double eb_n0, const double R) {
   return 1.0f / sqrt((2 * R * pow(10, eb_n0 / 10.0)));

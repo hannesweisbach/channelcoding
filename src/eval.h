@@ -10,6 +10,8 @@ using decoder_t =
     std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(
         std::vector<float>)>;
 
+uint64_t primitive_polynomial(const unsigned degree);
+
 std::tuple<std::vector<int>, std::vector<float>, unsigned>
 pzg_wrapper(const bch &code, const std::vector<float> &b);
 
