@@ -119,12 +119,17 @@ int main(int argc, char *const argv[]) {
     const auto &name = algorithm.first;
     const auto &decoder = algorithm.second;
 
-    if (file_exists(name)) {
-      std::cout << "File " << name << " already exists." << std::endl;
+    std::ostringstream os;
+    os << name << "_" << std::get<0>(parameters) << "_"
+       << std::get<1>(parameters) << "_" << std::get<2>(parameters);
+    std::string fname(os.str());
+
+    if (file_exists(fname)) {
+      std::cout << "File " << fname << " already exists." << std::endl;
       return;
     }
 
-    std::ofstream file(name.c_str(), std::ofstream::out);
+    std::ofstream file(fname.c_str(), std::ofstream::out);
     file << "eb_no "
          << "reconstruction_failures "
          << "reconstruction_errors "
