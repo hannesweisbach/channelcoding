@@ -341,8 +341,8 @@ gf_polynomial bch::pzg(std::vector<gf_element> syndromes) const {
       throw decoding_failure("Cannot invert syndrome, it is 0.");
     auto sigma_ = *(it + 1) * (field.one() / *it);
     if (sigma != sigma_) {
-      std::cout << sigma << " " << sigma_ << std::endl;
-      throw std::runtime_error("No solution found.");
+      //std::cout << sigma << " " << sigma_ << std::endl;
+      throw decoding_failure("No solution found.");
     }
   }
 
