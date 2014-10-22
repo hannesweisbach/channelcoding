@@ -45,7 +45,7 @@ get_algorithms(const bch &code) {
   algorithms.emplace_back("2d-nms",
                           std::bind(nms_2d<max_iterations, float, float>,
                                     std::cref(code.H()), std::placeholders::_1,
-                                    0.9f, 0.92f));
+                                    0.97f, 0.92f));
 
   return algorithms;
 }
