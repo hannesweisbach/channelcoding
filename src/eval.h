@@ -1,15 +1,10 @@
 #pragma once
 
 #include <ostream>
-#include <cmath>
 #include <random>
 
 #include "bch.h"
 #include "iterative.h"
-
-static double sigma(const double eb_n0, const double R) {
-  return sqrt(1.0f / (2 * R * pow(10, eb_n0 / 10.0)));
-}
 
 using decoder_t =
     std::function<std::tuple<std::vector<int>, std::vector<float>, unsigned>(

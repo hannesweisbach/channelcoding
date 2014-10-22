@@ -1,5 +1,11 @@
 #include "eval.h"
 
+#include <cmath>
+
+static double sigma(const double eb_n0, const double R) {
+  return 1.0f / sqrt((2 * R * pow(10, eb_n0 / 10.0)));
+}
+
 std::tuple<std::vector<int>, std::vector<float>, unsigned>
 pzg_wrapper(const bch &code, const std::vector<float> &b) {
   std::vector<int> hard;
