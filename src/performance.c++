@@ -5,19 +5,99 @@
 #include <sstream>
 #include <chrono>
 
+#define _GNU_SOURCE
+#include <getopt.h>
+
 #include "eval.h"
 #include "util.h"
 
-int main(int argc, const char *const argv[]) {
+void usage() {
+  int index = 0;
+  bch code(5, 0x25, 7);
+  std::cout << "--algorithm <num>"
+            << "  "
+            << "Choose algorithm:" << std::endl;
+  for (const auto &algorithm : get_algorithms<0>(code))
+    std::cout << "  [" << index++ << "] " << algorithm.first << std::endl;
+  std::cout << "--k <num>        "
+            << "  "
+            << "Choose code length n = 2^k - 1." << std::endl;
+  std::cout << "--dmin <num      "
+            << "  "
+            << "Choose dmin of the code." << std::endl;
+  std::cout << "--seed <num>     "
+            << "  "
+            << "Set seed of the random number generator." << std::endl;
+
+  exit(-1);
+}
+
+int main(int argc, char *const argv[]) {
   constexpr size_t max_iterations = 50;
   constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
   constexpr unsigned base_trials = 10000;
 
-  auto seed =
-      std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  std::vector<int> indices;
+  int k;
+  int dmin;
+  typename std::mt19937_64::result_type seed = 0;
+  // std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
-  bch code(5, 0x25, 7);
+  while (1) {
+    static struct option options[] = {
+      { "algorithm", required_argument, nullptr, 'a' },
+      { "k", required_argument, nullptr, 'k' },
+      { "dmin", required_argument, nullptr, 'd' },
+      { "seed", required_argument, nullptr, 's' },
+      { nullptr, 0, nullptr, 0 },
+    };
+
+    int option_index = 0;
+    int c = getopt_long_only(argc, argv, "", options, &option_index);
+    if (c == -1)
+      break;
+
+    switch (c) {
+    case 'a':
+      indices.push_back(strtoul(optarg, nullptr, 0));
+      break;
+    case 'k':
+      k = strtoul(optarg, nullptr, 0);
+      break;
+    case 'd':
+      dmin = strtoul(optarg, nullptr, 0);
+      break;
+    case 's':
+      seed = strtoull(optarg, nullptr, 0);
+      break;
+    default:
+      std::cerr << "Unkown argument: " << c << " " << std::endl;
+      usage();
+    }
+  }
+
+  bool fail = false;
+
+  if (indices.size() == 0) {
+    std::cerr << "Algorithm not set." << std::endl;
+    fail = true;
+  }
+
+  if (!k) {
+    std::cerr << "k not set." << std::endl;
+    fail = true;
+  }
+
+  if (!dmin) {
+    std::cerr << "dmin not set." << std::endl;
+    fail = true;
+  }
+
+  if (fail)
+    usage();
+
+  bch code(k, primitive_polynomial(k), dmin);
   std::mt19937_64 generator;
 
   auto parameters = code.parameters();
@@ -75,25 +155,17 @@ int main(int argc, const char *const argv[]) {
     }
   };
 
-  if (argc < 2) {
-    std::cout << "Running all algorithms" << std::endl;
-    for (const auto &algorithm : algorithms) {
-      run_algorithm(algorithm);
-    }
-  } else {
-    for (int arg = 1; arg < argc; arg++) {
-      unsigned long index = strtoul(argv[arg], nullptr, 0);
-      if (index < algorithms.size()) {
-        std::cout << "Running algorithm " << algorithms.at(index).first
-                  << std::endl;
-        run_algorithm(algorithms.at(index));
-      } else {
-        unsigned index = 0;
-        std::cout << "Index " << index
-                  << " is out of range. Choose from:" << std::endl;
-        for (const auto &algorithm : algorithms)
-          std::cout << "[" << index++ << "] " << algorithm.first << std::endl;
-      }
+  for (const auto &index : indices) {
+    if (index < algorithms.size()) {
+      std::cout << "Running algorithm " << algorithms.at(index).first
+                << std::endl;
+      run_algorithm(algorithms.at(index));
+    } else {
+      std::cout << "Index " << index
+                << " is out of range. Choose from:" << std::endl;
+      unsigned i = 0;
+      for (const auto &algorithm : algorithms)
+        std::cout << "[" << i++ << "] " << algorithm.first << std::endl;
     }
   }
 }
