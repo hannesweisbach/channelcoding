@@ -42,6 +42,15 @@ uncoded(const std::vector<float> &b) {
   return std::make_tuple(hard, std::vector<float>(), 0);
 }
 
+std::string eval_object::header() {
+  return "reconstruction_failures "
+         "reconstruction_errors "
+         "wer "
+         "fk_rate "
+         "ber "
+         "wer ";
+}
+
 std::ostream &operator<<(std::ostream &os, const eval_object &e) {
   os << std::scientific;
   const double samples_ = e.samples;

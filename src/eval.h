@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <random>
+#include <string>
 
 #include "bch.h"
 #include "iterative.h"
@@ -67,6 +68,8 @@ public:
 
   double wer() const;
   double ber() const;
+
+  static std::string header();
   friend std::ostream &operator<<(std::ostream &os, const eval_object &);
 };
 
