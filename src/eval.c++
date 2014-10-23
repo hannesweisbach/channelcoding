@@ -33,6 +33,15 @@ bm_wrapper(const bch &code, const std::vector<float> &b) {
   return std::make_tuple(b_corr, std::vector<float>(), 0);
 }
 
+std::tuple<std::vector<int>, std::vector<float>, unsigned>
+uncoded(const std::vector<float> &b) {
+  std::vector<int> hard;
+  hard.reserve(b.size());
+  std::transform(std::cbegin(b), std::cend(b), std::back_inserter(hard),
+                 [](const auto &bit) { return bit < 0; });
+  return std::make_tuple(hard, std::vector<float>(), 0);
+}
+
 std::ostream &operator<<(std::ostream &os, const eval_object &e) {
   os << std::scientific;
   const double samples_ = e.samples;
