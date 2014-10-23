@@ -38,6 +38,9 @@ target_link_libraries(optimize_2d eval gf)
 add_executable(performance performance.c++)
 target_link_libraries(performance eval gf)
 
+add_executable(uncoded uncoded.c++)
+target_link_libraries(uncoded eval gf)
+
 add_executable(ln ln.c++)
 target_link_libraries(ln bch gf)
 
