@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <vector>
+#include <chrono>
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -130,6 +131,10 @@ static void usage() {
   std::cout << "--seed <num>     "
             << "  "
             << "Set seed of the random number generator." << std::endl;
+  std::cout << "--seed-time      "
+            << "  "
+            << "Use the current time as seed for the random number generator."
+            << std::endl;
 
   exit(-1);
 }
@@ -148,6 +153,7 @@ parse_options(const int argc, char *const argv[]) {
       { "k", required_argument, nullptr, 'k' },
       { "dmin", required_argument, nullptr, 'd' },
       { "seed", required_argument, nullptr, 's' },
+      { "seed-time", no_argument, nullptr, 't' },
       { nullptr, 0, nullptr, 0 },
     };
 
@@ -168,6 +174,10 @@ parse_options(const int argc, char *const argv[]) {
       break;
     case 's':
       seed = strtoull(optarg, nullptr, 0);
+      break;
+    case 't':
+      seed =
+          std::chrono::high_resolution_clock::now().time_since_epoch().count();
       break;
     default:
       std::cerr << "Unkown argument: " << c << " " << std::endl;
