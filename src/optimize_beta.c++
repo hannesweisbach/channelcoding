@@ -56,6 +56,7 @@ int main(int argc, const char *const argv[]) {
   file << std::endl;
   file << std::scientific;
 
+  double wer = 0.5;
   for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
     file << eb_no << " ";
 
@@ -64,8 +65,9 @@ int main(int argc, const char *const argv[]) {
     for (float beta = beta_start; beta < beta_max; beta += beta_step) {
       auto f = std::bind(oms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, beta);
-      const size_t N = iterations(eb_no);
-      file << simulator(f, N, eb_no).ber() << " ";
+      const size_t N = iterations(wer);
+      wer = simulator(f, N, eb_no).wer();
+      file << wer << " ";
       std::cout << beta << " " << N << std::endl;
     }
     auto end = std::chrono::high_resolution_clock::now();
