@@ -51,12 +51,13 @@ int main(int argc, const char *const argv[]) {
   file << "eb_no ";
   for (float alpha = alpha_start; alpha < alpha_max; alpha += alpha_step) {
     std::ostringstream col_name;
-    col_name << "ber_" << alpha * 1000 << " ";
+    col_name << "wer_" << alpha * 1000 << " ";
     file << col_name.str();
   }
   file << std::endl;
   file << std::scientific;
 
+  double wer = 0.5;
   for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
     file << eb_no << " ";
 
@@ -70,8 +71,9 @@ int main(int argc, const char *const argv[]) {
       auto f = std::bind(scms1_nms<max_iterations, float, float>,
                          std::cref(code.H()), std::placeholders::_1, alpha);
 #endif
-      const size_t N = iterations(eb_no);
-      file << simulator(f, N, eb_no).ber() << " ";
+      const size_t N = iterations(wer);
+      wer = simulator(f, N, eb_no).wer();
+      file << wer << " ";
       std::cout << eb_no << " " << alpha << " " << N << std::endl;
     }
     auto end = std::chrono::high_resolution_clock::now();
