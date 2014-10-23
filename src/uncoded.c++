@@ -14,9 +14,9 @@
 #include "util.h"
 
 void usage() {
-  std::cout << "--k <num>        "
+  std::cout << "--l <num>        "
             << "  "
-            << "Choose code length n = 2^k - 1." << std::endl;
+            << "Choose code length l" << std::endl;
   std::cout << "--seed <num>     "
             << "  "
             << "Set seed of the random number generator." << std::endl;
@@ -27,13 +27,13 @@ int main(int argc, char *const argv[]) {
   constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
 
-  int k;
+  int l;
   typename std::mt19937_64::result_type seed = 0;
   // std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
   while (1) {
     static struct option options[] = {
-      { "k", required_argument, nullptr, 'k' },
+      { "l", required_argument, nullptr, 'l' },
       { "seed", required_argument, nullptr, 's' },
       { nullptr, 0, nullptr, 0 },
     };
@@ -44,8 +44,8 @@ int main(int argc, char *const argv[]) {
       break;
 
     switch (c) {
-    case 'k':
-      k = strtoul(optarg, nullptr, 0);
+    case 'l':
+      l = strtoul(optarg, nullptr, 0);
       break;
     case 's':
       seed = strtoull(optarg, nullptr, 0);
@@ -56,24 +56,19 @@ int main(int argc, char *const argv[]) {
     }
   }
 
-  if (!k) {
-    std::cerr << "k not set." << std::endl;
+  if (!l) {
+    std::cerr << "l not set." << std::endl;
     usage();
   }
 
-  bch code(k, primitive_polynomial(k), 3);
   std::mt19937_64 generator;
 
-  auto parameters = code.parameters();
-  auto simulator = std::bind(evaluate, generator, std::placeholders::_1,
-                             std::placeholders::_2, std::placeholders::_3,
-                             std::get<1>(parameters), std::get<1>(parameters),
-                             std::get<2>(parameters));
-
+  auto simulator =
+      std::bind(evaluate, generator, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3, l, l, 0);
 
   auto num_samples = [=](const double ber) {
-    return std::min(1000 * 1 / ber, 10e6);
-    // return std::min(base_trials * pow(10, eb_no / 2), 10e6);
+    return std::min(10000 * 1 / ber, 10e6);
   };
 
   auto run_algorithm = [&](const auto &algorithm) {
@@ -81,8 +76,7 @@ int main(int argc, char *const argv[]) {
     const auto &decoder = algorithm.second;
 
     std::ostringstream os;
-    os << name << "_" << std::get<1>(parameters) << "_"
-       << std::get<1>(parameters) << "_" << std::get<2>(parameters);
+    os << name << "_" << l << "_" << l << "_" << 0 << ".dat";
     std::string fname(os.str());
 
     if (file_exists(fname)) {
@@ -118,9 +112,7 @@ int main(int argc, char *const argv[]) {
     }
   };
 
-  const auto &uncoded = get_algorithms<0>(code).back();
-
-  std::cout << "Running algorithm " << uncoded.first << std::endl;
-  run_algorithm(uncoded);
+  std::cout << "Running algorithm uncoded" << std::endl;
+  run_algorithm(std::make_pair(std::string("uncoded"), uncoded));
 }
 
