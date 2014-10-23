@@ -27,7 +27,7 @@ int main(int argc, const char *const argv[]) {
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
   bch code(5, 0x25, 7);
-  // bch code(6, 0x45, 7);
+  // bch code(6, 0x43, 7);
 
   auto parameters = code.parameters();
   auto simulator = std::bind(evaluate, generator, std::placeholders::_1,
