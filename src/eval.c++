@@ -3,6 +3,11 @@
 #include <cmath>
 #include <vector>
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#include <getopt.h>
+
 uint64_t primitive_polynomial(unsigned degree) {
   static const std::vector<uint64_t> primitive_polynomials(
       { 0, 0x3, 0x7, 0xb, 0x13, 0x25, 0x43 });
@@ -108,3 +113,87 @@ eval_object evaluate(std::mt19937_64 &generator, const decoder_t &decoder,
            bit_errors, samples,                 n };
 }
 
+static void usage() {
+  int index = 0;
+  bch code(5, 0x25, 7);
+  std::cout << "--algorithm <num>"
+            << "  "
+            << "Choose algorithm:" << std::endl;
+  for (const auto &algorithm : get_algorithms<0>(code))
+    std::cout << "  [" << index++ << "] " << algorithm.first << std::endl;
+  std::cout << "--k <num>        "
+            << "  "
+            << "Choose code length n = 2^k - 1." << std::endl;
+  std::cout << "--dmin <num      "
+            << "  "
+            << "Choose dmin of the code." << std::endl;
+  std::cout << "--seed <num>     "
+            << "  "
+            << "Set seed of the random number generator." << std::endl;
+
+  exit(-1);
+}
+
+std::tuple<std::vector<int>, int, int, uint64_t>
+parse_options(const int argc, char *const argv[]) {
+
+  std::vector<int> indices;
+  int k;
+  int dmin;
+  uint64_t seed = 0;
+
+  while (1) {
+    static struct option options[] = {
+      { "algorithm", required_argument, nullptr, 'a' },
+      { "k", required_argument, nullptr, 'k' },
+      { "dmin", required_argument, nullptr, 'd' },
+      { "seed", required_argument, nullptr, 's' },
+      { nullptr, 0, nullptr, 0 },
+    };
+
+    int option_index = 0;
+    int c = getopt_long_only(argc, argv, "", options, &option_index);
+    if (c == -1)
+      break;
+
+    switch (c) {
+    case 'a':
+      indices.push_back(strtoul(optarg, nullptr, 0));
+      break;
+    case 'k':
+      k = strtoul(optarg, nullptr, 0);
+      break;
+    case 'd':
+      dmin = strtoul(optarg, nullptr, 0);
+      break;
+    case 's':
+      seed = strtoull(optarg, nullptr, 0);
+      break;
+    default:
+      std::cerr << "Unkown argument: " << c << " " << std::endl;
+      usage();
+    }
+  }
+
+  bool fail = false;
+
+  if (indices.size() == 0) {
+    std::cerr << "Algorithm not set." << std::endl;
+    fail = true;
+  }
+
+  if (!k) {
+    std::cerr << "k not set." << std::endl;
+    fail = true;
+  }
+
+  if (!dmin) {
+    std::cerr << "dmin not set." << std::endl;
+    fail = true;
+  }
+
+  if (fail)
+    usage();
+
+  return { indices, k, dmin, seed };
+}

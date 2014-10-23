@@ -13,6 +13,9 @@ using decoder_t =
 
 uint64_t primitive_polynomial(const unsigned degree);
 
+std::tuple<std::vector<int>, int, int, uint64_t>
+parse_options(const int argc, char *const argv[]);
+
 std::tuple<std::vector<int>, std::vector<float>, unsigned>
 pzg_wrapper(const bch &code, const std::vector<float> &b);
 
