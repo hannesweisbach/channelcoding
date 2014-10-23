@@ -50,8 +50,6 @@ get_algorithms(const bch &code) {
                           std::bind(nms_2d<max_iterations, float, float>,
                                     std::cref(code.H()), std::placeholders::_1,
                                     0.97f, 0.92f));
-  algorithms.emplace_back("uncoded", uncoded);
-
   return algorithms;
 }
 
