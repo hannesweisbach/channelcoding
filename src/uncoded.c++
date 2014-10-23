@@ -14,13 +14,6 @@
 #include "util.h"
 
 void usage() {
-  int index = 0;
-  bch code(5, 0x25, 7);
-  std::cout << "--algorithm <num>"
-            << "  "
-            << "Choose algorithm:" << std::endl;
-  for (const auto &algorithm : get_algorithms<0>(code))
-    std::cout << "  [" << index++ << "] " << algorithm.first << std::endl;
   std::cout << "--k <num>        "
             << "  "
             << "Choose code length n = 2^k - 1." << std::endl;
@@ -30,17 +23,13 @@ void usage() {
   std::cout << "--seed <num>     "
             << "  "
             << "Set seed of the random number generator." << std::endl;
-
   exit(-1);
 }
 
 int main(int argc, char *const argv[]) {
-  constexpr size_t max_iterations = 50;
   constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
-  constexpr unsigned base_trials = 10000;
 
-  std::vector<int> indices;
   int k;
   int dmin;
   typename std::mt19937_64::result_type seed = 0;
@@ -48,7 +37,6 @@ int main(int argc, char *const argv[]) {
 
   while (1) {
     static struct option options[] = {
-      { "algorithm", required_argument, nullptr, 'a' },
       { "k", required_argument, nullptr, 'k' },
       { "dmin", required_argument, nullptr, 'd' },
       { "seed", required_argument, nullptr, 's' },
@@ -61,9 +49,6 @@ int main(int argc, char *const argv[]) {
       break;
 
     switch (c) {
-    case 'a':
-      indices.push_back(strtoul(optarg, nullptr, 0));
-      break;
     case 'k':
       k = strtoul(optarg, nullptr, 0);
       break;
@@ -80,11 +65,6 @@ int main(int argc, char *const argv[]) {
   }
 
   bool fail = false;
-
-  if (indices.size() == 0) {
-    std::cerr << "Algorithm not set." << std::endl;
-    fail = true;
-  }
 
   if (!k) {
     std::cerr << "k not set." << std::endl;
@@ -108,7 +88,6 @@ int main(int argc, char *const argv[]) {
                              std::get<1>(parameters), std::get<1>(parameters),
                              std::get<2>(parameters));
 
-  auto algorithms = get_algorithms<max_iterations>(code);
 
   auto num_samples = [=](const double ber) {
     return std::min(1000 * 1 / ber, 10e6);
@@ -157,17 +136,9 @@ int main(int argc, char *const argv[]) {
     }
   };
 
-  const auto index = 8;
-  if (index < algorithms.size()) {
-    std::cout << "Running algorithm " << algorithms.at(index).first
-              << std::endl;
-    run_algorithm(algorithms.at(index));
-  } else {
-    std::cout << "Index " << index
-              << " is out of range. Choose from:" << std::endl;
-    unsigned i = 0;
-    for (const auto &algorithm : algorithms)
-      std::cout << "[" << i++ << "] " << algorithm.first << std::endl;
-  }
+  const auto &uncoded = get_algorithms<0>(code).back();
+
+  std::cout << "Running algorithm " << uncoded.first << std::endl;
+  run_algorithm(uncoded);
 }
 
