@@ -32,7 +32,15 @@ int main(int argc, const char *const argv[]) {
 
   const char *fname;
   std::ostringstream os;
-  os << "logs/beta_" << std::setprecision(3) << std::fixed << beta_start;
+  auto parameters = code.parameters();
+  os << "logs/beta_" << std::setprecision(3) << std::fixed << beta_start << "_"
+     << std::get<0>(parameters) << "_" << std::get<1>(parameters) << "_"
+     << std::get<2>(parameters) << ".dat";
+
+  if (file_exists(os.str())) {
+    std::cerr << "File " << fname << " already exists." << std::endl;
+    return -1;
+  }
   fname = os.str().c_str();
 
   std::ofstream file(fname, std::ofstream::out);
