@@ -16,7 +16,7 @@ int main(int argc, const char *const argv[]) {
   constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
 
-  float alpha_start = (argc > 1) ? strtof(argv[1], nullptr) : 0.1f;
+  float alpha_start = (argc > 1) ? strtof(argv[1], nullptr) : 0.8f;
   float alpha_max = (argc > 2) ? strtof(argv[2], nullptr) : 1.0f;
   float alpha_step = (argc > 3) ? strtof(argv[3], nullptr) : 0.01f;
 
