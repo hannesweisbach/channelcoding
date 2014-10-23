@@ -59,7 +59,8 @@ std::ostream &operator<<(std::ostream &os, const eval_object &e) {
   const auto wrong_words = e.reconstruction_failures + e.reconstruction_errors;
   os << std::setprecision(12) << wrong_words / samples_ << " ";
   os << std::setprecision(12) << e.fk_corr / samples_ << " ";
-  os << std::setprecision(12) << e.bit_errors / (samples_ * e.n);
+  os << std::setprecision(12) << e.ber() << " ";
+  os << std::setprecision(12) << e.wer();
   return os;
 }
 
