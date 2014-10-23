@@ -35,10 +35,16 @@ int main(int argc, const char *const argv[]) {
                              std::get<0>(parameters), std::get<1>(parameters),
                              std::get<2>(parameters));
 
-  char fname[] = "optimize.XXXXXX";
-  mktemp(fname);
-  std::ofstream file(fname, std::ofstream::out);
+  std::ostringstream os;
+  os << "alpha_" << alpha_start << "_" << std::get<0>(parameters) << "_"
+     << std::get<1>(parameters) << "_" << std::get<2>(parameters) << ".dat";
+  std::string fname(os.str());
+  if (file_exists(fname)) {
+    std::cerr << "File " << fname << " already exists." << std::endl;
+    return -1;
+  }
 
+  std::ofstream file(fname, std::ofstream::out);
   std::cout << "Writing to file " << fname << std::endl;
 
   /* header */
