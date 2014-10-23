@@ -46,6 +46,7 @@ std::ostream &operator<<(std::ostream &os, const eval_object &e) {
 }
 
 double eval_object::ber() const { return bit_errors / (double)(samples * n); }
+double eval_object::wer() const { return word_errors / (double)(samples); }
 
 eval_object evaluate(std::mt19937_64 &generator, const decoder_t &decoder,
                      const size_t samples, const float eb_n0, const unsigned n,
@@ -56,6 +57,7 @@ eval_object evaluate(std::mt19937_64 &generator, const decoder_t &decoder,
   unsigned reconstruction_errors = 0;
   unsigned fk_corr = 0;
   unsigned bit_errors = 0;
+  unsigned word_errors = 0;
 
   std::vector<float> b(n);
   std::normal_distribution<float> random(1.0, sigma(eb_n0, R));
@@ -71,6 +73,7 @@ eval_object evaluate(std::mt19937_64 &generator, const decoder_t &decoder,
       if (wrong_bits) {
         reconstruction_errors++;
         bit_errors += wrong_bits;
+        word_errors++;
       } else {
         auto d = std::count_if(std::cbegin(b), std::cend(b),
                                [](const auto &bit) { return bit < 0; });
@@ -81,10 +84,11 @@ eval_object evaluate(std::mt19937_64 &generator, const decoder_t &decoder,
     catch (const decoding_failure &) {
       reconstruction_failures++;
       bit_errors += n;
+      word_errors++;
     }
   }
 
   return { eb_n0,      reconstruction_failures, reconstruction_errors, fk_corr,
-           bit_errors, samples,                 n };
+           bit_errors, word_errors,             samples,               n };
 }
 
