@@ -17,9 +17,6 @@ void usage() {
   std::cout << "--k <num>        "
             << "  "
             << "Choose code length n = 2^k - 1." << std::endl;
-  std::cout << "--dmin <num      "
-            << "  "
-            << "Choose dmin of the code." << std::endl;
   std::cout << "--seed <num>     "
             << "  "
             << "Set seed of the random number generator." << std::endl;
@@ -31,14 +28,12 @@ int main(int argc, char *const argv[]) {
   constexpr float eb_no_step = 0.1f;
 
   int k;
-  int dmin;
   typename std::mt19937_64::result_type seed = 0;
   // std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
   while (1) {
     static struct option options[] = {
       { "k", required_argument, nullptr, 'k' },
-      { "dmin", required_argument, nullptr, 'd' },
       { "seed", required_argument, nullptr, 's' },
       { nullptr, 0, nullptr, 0 },
     };
@@ -52,9 +47,6 @@ int main(int argc, char *const argv[]) {
     case 'k':
       k = strtoul(optarg, nullptr, 0);
       break;
-    case 'd':
-      dmin = strtoul(optarg, nullptr, 0);
-      break;
     case 's':
       seed = strtoull(optarg, nullptr, 0);
       break;
@@ -64,22 +56,12 @@ int main(int argc, char *const argv[]) {
     }
   }
 
-  bool fail = false;
-
   if (!k) {
     std::cerr << "k not set." << std::endl;
-    fail = true;
-  }
-
-  if (!dmin) {
-    std::cerr << "dmin not set." << std::endl;
-    fail = true;
-  }
-
-  if (fail)
     usage();
+  }
 
-  bch code(k, primitive_polynomial(k), dmin);
+  bch code(k, primitive_polynomial(k), 3);
   std::mt19937_64 generator;
 
   auto parameters = code.parameters();
