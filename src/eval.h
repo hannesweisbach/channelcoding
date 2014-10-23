@@ -16,6 +16,11 @@ uint64_t primitive_polynomial(const unsigned degree);
 std::tuple<std::vector<int>, int, int, uint64_t>
 parse_options(const int argc, char *const argv[]);
 
+inline size_t iterations(const double ber) {
+  return std::min(1000 * 1 / ber, 10e6);
+  // return std::min(base_trials * pow(10, eb_no / 2), 10e6);
+};
+
 std::tuple<std::vector<int>, std::vector<float>, unsigned>
 pzg_wrapper(const bch &code, const std::vector<float> &b);
 
