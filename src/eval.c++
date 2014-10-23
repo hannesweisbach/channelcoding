@@ -205,5 +205,5 @@ parse_options(const int argc, char *const argv[]) {
   if (fail)
     usage();
 
-  return { indices, k, dmin, seed };
+  return std::make_tuple(indices, k, dmin, seed);
 }
