@@ -121,7 +121,7 @@ int main(int argc, char *const argv[]) {
 
     std::ostringstream os;
     os << name << "_" << std::get<0>(parameters) << "_"
-       << std::get<1>(parameters) << "_" << std::get<2>(parameters);
+       << std::get<1>(parameters) << "_" << std::get<2>(parameters) << ".dat";
     std::string fname(os.str());
 
     if (file_exists(fname)) {
