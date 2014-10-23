@@ -37,11 +37,6 @@ int main(int argc, char *const argv[]) {
 
   auto algorithms = get_algorithms<max_iterations>(code);
 
-  auto num_samples = [=](const double ber) {
-    return std::min(1000 * 1 / ber, 10e6);
-    // return std::min(base_trials * pow(10, eb_no / 2), 10e6);
-  };
-
   auto run_algorithm = [&](const auto &algorithm) {
     const auto &name = algorithm.first;
     const auto &decoder = algorithm.second;
@@ -63,7 +58,7 @@ int main(int argc, char *const argv[]) {
 
     double ber = 0.5;
     for (double eb_no = 0; eb_no < eb_no_max; eb_no += eb_no_step) {
-      auto samples = num_samples(ber);
+      auto samples = iterations(ber);
       std::cout << "Calculating for E_b/N_0 = " << eb_no << " with " << samples
                 << " … ";
       std::cout.flush();
