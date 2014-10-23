@@ -64,7 +64,7 @@ int main(int argc, const char *const argv[]) {
     std::cout << "Calculating for E_b/N_0 = " << eb_no << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     for (float alpha = alpha_start; alpha < alpha_max; alpha += alpha_step) {
-#if 0
+#if 1
       auto f = std::bind(nms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, alpha);
 #else
