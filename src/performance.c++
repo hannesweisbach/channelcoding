@@ -130,12 +130,7 @@ int main(int argc, char *const argv[]) {
     }
 
     std::ofstream file(fname.c_str(), std::ofstream::out);
-    file << "eb_no "
-         << "reconstruction_failures "
-         << "reconstruction_errors "
-         << "wer "
-         << "fk_rate "
-         << "ber" << std::endl;
+    file << "eb_no " << eval_object::header() << std::endl;
 
     generator.seed(seed);
 
