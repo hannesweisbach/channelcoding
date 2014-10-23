@@ -15,11 +15,6 @@ int main(int argc, const char *const argv[]) {
   constexpr size_t max_iterations = 50;
   constexpr float eb_no_max = 10;
   constexpr float eb_no_step = 0.1f;
-  constexpr unsigned base_trials = 10000;
-
-  auto num_samples = [=](const double eb_no) {
-    return std::min(base_trials * pow(10, eb_no / 2), 10e6);
-  };
 
   float beta_start = (argc > 1) ? strtof(argv[1], nullptr) : 0.1f;
   float beta_max = (argc > 2) ? strtof(argv[2], nullptr) : 1.0f;
@@ -61,7 +56,7 @@ int main(int argc, const char *const argv[]) {
     for (float beta = beta_start; beta < beta_max; beta += beta_step) {
       auto f = std::bind(oms<max_iterations, float, float>, std::ref(code.H()),
                          std::placeholders::_1, beta);
-      const size_t N = num_samples(eb_no);
+      const size_t N = iterations(eb_no);
       file << simulator(f, N, eb_no).ber() << " ";
       std::cout << beta << " " << N << std::endl;
     }
