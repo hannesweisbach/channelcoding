@@ -26,8 +26,8 @@ int main(int argc, const char *const argv[]) {
   std::mt19937_64 generator(
       std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
-  bch code(5, 0x25, 7);
-  // bch code(6, 0x45, 7);
+  int k = 5;
+  bch code(k, primitive_polynomial(k), 7);
   auto simulator = build_simulator(generator, code);
 
   const char *fname;
