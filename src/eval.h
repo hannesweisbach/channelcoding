@@ -53,7 +53,7 @@ get_algorithms(const bch &code) {
                                            std::placeholders::_1, 0.915f));
   algorithms.emplace_back("oms", std::bind(oms<max_iterations, float, float>,
                                            std::cref(code.H()),
-                                           std::placeholders::_1, 0.029f));
+                                           std::placeholders::_1, 0.032f));
   algorithms.emplace_back("2d-nms",
                           std::bind(nms_2d<max_iterations, float, float>,
                                     std::cref(code.H()), std::placeholders::_1,
