@@ -13,11 +13,6 @@
 
 int main(int argc, const char *const argv[]) {
   constexpr size_t max_iterations = 50;
-  constexpr unsigned base_trials = 10000;
-
-  auto num_samples = [=](const double eb_no) {
-    return std::min(base_trials * pow(10, eb_no / 2), 10e6);
-  };
 
   const float alpha_start = (argc > 1) ? strtof(argv[1], nullptr) : 0.1f;
   const float alpha_max = (argc > 2) ? strtof(argv[2], nullptr) : 1.0f;
@@ -66,11 +61,12 @@ int main(int argc, const char *const argv[]) {
 
   file << std::scientific;
 
+  double wer = 0.5;
   for (float alpha = alpha_start; alpha < alpha_max; alpha += alpha_step) {
     for (float beta = beta_start; beta < beta_max; beta += beta_step) {
       generator.seed(seed);
 
-      const size_t N = num_samples(eb_no);
+      const size_t N = iterations(wer);
 
       std::cout << "alpha = " << alpha << " beta = " << beta << " N = " << N;
       std::cout.flush();
@@ -79,7 +75,9 @@ int main(int argc, const char *const argv[]) {
       auto f =
           std::bind(nms_2d<max_iterations, float, float>, std::ref(code.H()),
                     std::placeholders::_1, alpha, beta);
-      file << simulator(f, N, eb_no).ber() << " ";
+
+      wer = simulator(f, N, eb_no).wer();
+      file << wer << " ";
 
       auto end = std::chrono::high_resolution_clock::now();
       auto seconds =
