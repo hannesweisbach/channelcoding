@@ -11,7 +11,7 @@
 
 uint64_t primitive_polynomial(unsigned degree) {
   static const std::vector<uint64_t> primitive_polynomials(
-      { 0, 0x3, 0x7, 0xb, 0x13, 0x25, 0x43 });
+      { 0, 0x3, 0x7, 0xb, 0x13, 0x25, 0x43, 0x83 });
   return primitive_polynomials.at(degree);
 }
 
