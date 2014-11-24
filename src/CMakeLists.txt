@@ -21,6 +21,9 @@ target_link_libraries(benchmark simulation)
 add_executable(bitflips simulation/bitflips.c++)
 target_link_libraries(bitflips simulation)
 
+add_executable(uncoded simulation/uncoded.c++)
+target_link_libraries(uncoded simulation)
+
 add_executable(gf2 gf2.c++)
 
 add_library(gf gf.c++)
@@ -41,9 +44,6 @@ target_link_libraries(optimize_beta eval gf)
 
 add_executable(optimize_2d optimize_2d.c++)
 target_link_libraries(optimize_2d eval gf)
-
-add_executable(uncoded uncoded.c++)
-target_link_libraries(uncoded eval gf)
 
 add_executable(compare compare_h.c++)
 target_link_libraries(compare eval gf)
