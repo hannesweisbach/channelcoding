@@ -9,6 +9,7 @@ add_definitions(-DNDEBUG)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+add_executable(exercises exercises.c++)
 add_library(gf gf.c++)
 add_library(bch bch.c++)
 target_link_libraries(bch gf)
@@ -17,8 +18,6 @@ add_library(rs rs.c++)
 add_library(eval eval.c++)
 target_link_libraries(eval bch)
 
-add_executable(tasks tasks.c++)
-target_link_libraries(tasks gf bch rs)
 
 add_executable(md md.c++)
 add_executable(rm rm.c++)
