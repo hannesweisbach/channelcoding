@@ -98,7 +98,7 @@ void awgn_simulation::operator()() {
   const size_t factor = 1.0 / step;
   const size_t tmp = ebno(decoder.rate()) / step;
   const double start = (tmp + (1.0 / step)) * step;
-  const double max = 8.0 + std::numeric_limits<double>::epsilon();
+  const double max = std::max(8.0, start) + step / 2;
 
   /* TODO round ebno() up to next step */
   for (double eb_no = start; eb_no < max; eb_no += step) {
