@@ -43,7 +43,8 @@ int main() {
   constexpr size_t max_iterations = 50;
   const unsigned max_fk = 7;
 
-  bch code(5, 0x25, 7);
+  //bch code(5, 0x25, 7);
+  bch code(6, 0x43, 7);
 
   auto algorithms = get_algorithms<max_iterations>(code);
 

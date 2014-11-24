@@ -26,7 +26,7 @@ template <typename T> auto crend(const T &c) -> decltype(c.crend()) {
 #include <stdexcept>
 #include <sys/stat.h>
 
-class decoding_failure : std::runtime_error {
+class decoding_failure : public std::runtime_error {
 public:
   using std::runtime_error::runtime_error;
 };

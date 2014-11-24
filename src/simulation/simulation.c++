@@ -152,7 +152,7 @@ void bitflip_simulation::operator()() const {
   log_file << std::setw(ebno_width + 1) << "errors"
            << " ";
   log_file << std::setw(wer_width + 6) << "wer" << std::endl;
-
+  
   const size_t length = decoder.n();
 
   for (size_t error = 0; error <= errors; error++) {

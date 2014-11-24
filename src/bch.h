@@ -51,7 +51,8 @@ public:
                               const std::vector<gf_element> &erasures =
                                   std::vector<gf_element>()) const;
   const matrix<int> &H() const;
-  const std::tuple<unsigned, unsigned, unsigned> parameters() const;
+  const std::tuple<unsigned, unsigned, unsigned, unsigned> parameters() const;
+  gf_polynomial h() const;
 
   gf field;
 private:
@@ -67,7 +68,7 @@ private:
 
   gf_polynomial generator;
   gf_polynomial f;
-  gf_polynomial h;
+  gf_polynomial h_;
   matrix<int> control_matrix;
 };
 

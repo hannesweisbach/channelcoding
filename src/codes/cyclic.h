@@ -228,7 +228,7 @@ private:
       copy.at(erasure) = typename InputSequence::value_type(0);
 
     std::vector<Result_type> result =
-        std::get<0>(min_sum<float, Result_type>(H<int>(), copy, Tag()));
+        std::get<0>(min_sum<float, Result_type>(H_alt<int>(), copy, Tag()));
     return Polynomial(result);
   }
 
@@ -310,6 +310,7 @@ public:
                                        std::vector<unsigned>()) const {
     auto b_ = correct_(b, erasures, Algorithm());
 
+    //std::cout << b_ << std::endl;
     std::vector<Return_type> r;
     r.reserve(n);
     std::transform(std::cbegin(b_), std::cend(b_), std::back_inserter(r),

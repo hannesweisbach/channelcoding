@@ -91,7 +91,7 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e)
 
 bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
     : field(q, modular_polynomial), n(n), l(0), k(0), dmin(0),
-      type(type::shortened), generator(field, { 1 }), f(field, { 1 }), h(field),
+      type(type::shortened), generator(field, { 1 }), f(field, { 1 }), h_(field),
       control_matrix(0, 0) {
   if (d_e > n)
     throw std::logic_error("d_e <= n required");
@@ -198,8 +198,8 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
   f += gf_polynomial(field, { 1 });
   std::cout << "f(x) = " << f << std::endl;
 
-  h = f / generator;
-  std::cout << "h(x) = " << h << std::endl;
+  h_ = f / generator;
+  std::cout << "h(x) = " << h_ << std::endl;
 
   fk = (dmin - 1) / 2;
 
@@ -213,7 +213,7 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
    *     `              ´
    */
 
-  auto h_tmp(h);
+  auto h_tmp(h_);
   h_tmp.reverse();
 
   for (unsigned i = 0; i < k; ++i) {
@@ -231,6 +231,7 @@ bch::bch(unsigned q, uint64_t modular_polynomial, unsigned d_e, unsigned n)
 }
 
 const matrix<int> &bch::H() const { return control_matrix; }
+gf_polynomial bch::h() const { return h_; }
 
 std::vector<int> bch::encode_div(const std::vector<int> &a) const {
   if (a.size() > l) {
@@ -272,13 +273,14 @@ std::vector<gf_element> bch::syndromes(const gf_polynomial &b) const {
     throw std::runtime_error(os.str());
   }
 
-  // std::cout << "Syndrome values: ";
+   std::cout << "Syndrome values: ";
   for (unsigned i = mu; i <= mu + dmin - 2; i++) {
+    std::cout << "(" << field.power_to_polynomial(i) << ") = ";
     syndrome.push_back(b(field.power_to_polynomial(i)));
-    // std::cout << syndrome.back() << " ";
+     std::cout << syndrome.back() << ", ";
   }
 
-  // std::cout << std::endl;
+  std::cout << std::endl;
 
   return syndrome;
 }
@@ -376,6 +378,12 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
 
   // chien(field, solution);
   auto zeroes = solution.zeroes();
+
+  /* remove duplicate zeroes. we need n distinct ones. */
+  std::sort(std::begin(zeroes), std::end(zeroes));
+  auto last = std::unique(std::begin(zeroes), std::end(zeroes));
+  zeroes.erase(last, std::end(zeroes));
+
   if (zeroes.size() != solution.degree()) {
     std::ostringstream os;
     os << "Σ(x) has to have " << solution.degree() << " zeroes, but it has "
@@ -417,6 +425,15 @@ std::vector<int> bch::correct_peterson(const std::vector<int> &b_) const {
     std::cout << i;
   std::cout << std::endl;
 #endif
+  
+  gf_polynomial b_corr(field, e);
+  syndrome = syndromes(b_corr);
+
+  /* declare decoding failure - Avoid decoder malfunction */
+  if (!std::all_of(std::begin(syndrome), std::end(syndrome),
+                   [&](const auto &e) { return e == field.zero(); }))
+    throw decoding_failure("Corrected word is not a codeword");
+
   return e;
 }
 
@@ -503,7 +520,7 @@ gf_polynomial bch::correct_bm(const gf_polynomial &b,
   return e;
 }
 
-const std::tuple<unsigned, unsigned, unsigned> bch::parameters() const {
-  return std::make_tuple(n, l, fk);
+const std::tuple<unsigned, unsigned, unsigned, unsigned> bch::parameters() const {
+  return std::make_tuple(n, l, fk, dmin);
 }
 

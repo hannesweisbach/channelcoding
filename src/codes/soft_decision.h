@@ -199,6 +199,18 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h &&hor,
       return std::make_tuple(b, L, iteration);
   }
 
+#if 0
+  std::cout << H << std::endl;
+  
+  std::vector<U> b(hard_decision<U>(L));
+  for (const auto &bit : b)
+    std::cout << static_cast<unsigned>(bit);
+  std::cout << std::endl;
+
+  for (const auto &l : L)
+    std::cout << l;
+  std::cout << std::endl;
+#endif
   throw decoding_failure("Decoding failure");
 }
 
