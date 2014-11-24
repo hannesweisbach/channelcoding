@@ -33,9 +33,6 @@ add_executable(bch_test bch_test.c++)
 add_library(eval eval.c++)
 target_link_libraries(eval bch)
 
-add_executable(ms_fk minsum_fk.c++)
-target_link_libraries(ms_fk eval gf)
-
 add_executable(optimization optimization.c++)
 target_link_libraries(optimization eval gf)
 
@@ -48,7 +45,7 @@ target_link_libraries(optimize_2d eval gf)
 add_executable(uncoded uncoded.c++)
 target_link_libraries(uncoded eval gf)
 
-
 add_executable(compare compare_h.c++)
 target_link_libraries(compare eval gf)
+
 
