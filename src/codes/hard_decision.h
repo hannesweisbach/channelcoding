@@ -33,6 +33,31 @@ struct euklid_tag : hard_decision_tag {
  * inverse-free BMAs
  */
 
+#if 0
+std::vector<gf_element> chien(const gf &field, gf_polynomial polynomial) {
+  std::vector<gf_element> zeroes;
+  std::vector<gf_element> factors(polynomial.size(), field.zero());
+  std::iota(std::begin(factors), std::end(factors), field.one());
+
+  for (int i = 0; i < field.size(); i++) {
+    auto result = std::accumulate(std::begin(polynomial), std::end(polynomial),
+                                  field.zero());
+    if (result == field.zero()) {
+      zeroes.push_back(field.power_to_polynomial(i));
+    }
+
+    /* multiply by alpha, alpha^2, ... */
+    std::transform(
+        std::cbegin(polynomial), std::cend(polynomial), std::cbegin(factors),
+        std::begin(polynomial),
+        [](const gf_element &lhs, const gf_element &rhs) { return lhs * rhs; });
+  }
+
+  return zeroes;
+}
+#endif
+
+
 template <typename Polynomial,
           typename Element = typename Polynomial::element_type>
 Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
