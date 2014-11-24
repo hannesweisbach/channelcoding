@@ -48,8 +48,6 @@ target_link_libraries(optimize_2d eval gf)
 add_executable(uncoded uncoded.c++)
 target_link_libraries(uncoded eval gf)
 
-add_executable(ln ln.c++)
-target_link_libraries(ln bch gf)
 
 add_executable(compare compare_h.c++)
 target_link_libraries(compare eval gf)
