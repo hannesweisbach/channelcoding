@@ -7,8 +7,6 @@
 #include <numeric>
 #include <iterator>
 
-#include "util.h"
-
 void print_sequence(const std::vector<long> &sequence) {
   std::cout << "(";
   for (auto it = std::cbegin(sequence); it != std::cend(sequence) - 1;
