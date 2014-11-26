@@ -16,6 +16,8 @@
 #include <condition_variable>
 #include <atomic>
 
+#include "util.h"
+
 /* TODO: InputSequence concept. */
 
 class decoder {
