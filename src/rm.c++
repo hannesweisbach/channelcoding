@@ -23,17 +23,9 @@ std::vector<int> wedge_product(const std::vector<int> &lhs,
   }
 
   std::vector<int> result;
+  result.reserve(rhs.size());
 
-  auto it1 = std::begin(lhs);
-  auto it2 = std::begin(rhs);
-
-  std::generate_n(std::back_inserter(result), lhs.size(), [&]() {
-    auto v1 = *it1;
-    auto v2 = *it2;
-    ++it1;
-    ++it2;
-    return v1 * v2;
-  });
+  std::transform(std::cbegin(lhs), std::cend(lhs), std::begin(rhs), std::back_inserter(result), std::multiplies<int>{});
 
   return result;
 }
