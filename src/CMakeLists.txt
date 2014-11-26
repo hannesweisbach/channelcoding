@@ -5,6 +5,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
+find_package(Threads REQUIRED)
+
 #add_definitions(-DNDEBUG)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -14,6 +16,7 @@ add_executable(md md.c++)
 add_executable(rm rm.c++)
 
 add_library(simulation simulation/simulation.c++)
+target_link_libraries(simulation ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(benchmark simulation/benchmark.c++)
 target_link_libraries(benchmark simulation)
