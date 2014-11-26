@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <iterator>
 
 #include <thread>
 #include <random>
