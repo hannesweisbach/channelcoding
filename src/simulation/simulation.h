@@ -62,7 +62,7 @@ public:
 };
 
 class awgn_simulation {
-  const decoder &decoder;
+  const class decoder &decoder;
   const double step;
   const uint64_t seed;
   std::mt19937_64 generator;
@@ -76,7 +76,7 @@ public:
 };
 
 class bitflip_simulation {
-  const decoder &decoder;
+  const class decoder &decoder;
   const size_t errors = 0;
 
 public:
