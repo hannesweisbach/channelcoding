@@ -340,9 +340,6 @@ public:
   }
 
   template <typename T> matrix<T> H_alt() const {
-    std::vector<Element> row;
-    for (unsigned power = 0; power < n; power++)
-      row.push_back(Element::from_power(0));
     matrix<Element> tmp(t, n);
 
     for (unsigned row = 0; row < t; row++) {
