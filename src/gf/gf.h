@@ -128,7 +128,6 @@ private:
       return exp.at(power % size);
     }
 
-    gf_element &operator=(const gf_element &other) = default;
     unsigned power() const { return log.at(value); }
 
     gf_element operator+(const gf_element &rhs) const {
