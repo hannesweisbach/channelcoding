@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -15,7 +16,7 @@
   std::cout << "--seed <num>     "
             << "  "
             << "Set seed of the random number generator." << std::endl;
-  exit(-1);
+  std::exit(EXIT_FAILURE);
 }
 
 int main(int argc, char *const argv[]) {
