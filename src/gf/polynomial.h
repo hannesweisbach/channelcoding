@@ -35,8 +35,8 @@ class polynomial : public std::vector<Element> {
       // r = r - (rhs * t);
       // leading zero coeffs in rhs possible, so use lead instead of crbegin()
       std::transform(r_lead, r_lead + rhs.degree() + 1, rhs_lead, r_lead,
-                     [=](const Element &lhs, const Element &rhs) {
-        return lhs - (rhs * coefficient);
+                     [=](const Element &lhs_, const Element &rhs_) {
+        return lhs_ - (rhs_ * coefficient);
       });
     }
 
