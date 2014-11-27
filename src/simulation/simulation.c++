@@ -136,7 +136,8 @@ void awgn_simulation::operator()() {
     log_file << std::setw(ebno_width + 1) << std::setprecision(ebno_width)
              << std::defaultfloat << eb_no << " ";
     log_file << std::setw(wer_width + 1) << std::setprecision(wer_width)
-             << std::scientific << (double)word_errors / samples << std::endl;
+             << std::scientific << static_cast<double>(word_errors) / samples
+             << std::endl;
   }
 }
 
