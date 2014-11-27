@@ -5,6 +5,10 @@
 #include "codes/bch.h"
 #include "codes/rs.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+
 static std::vector<decoder> decoders{
   cyclic::primitive_bch<5, dmin<7>, cyclic::berlekamp_massey_tag>(),
   cyclic::primitive_bch<5, dmin<7>, cyclic::peterson_gorenstein_zierler_tag>(),
@@ -18,6 +22,8 @@ static std::vector<decoder> decoders{
   cyclic::primitive_bch<5, dmin<7>, self_correcting_2_min_sum_tag<50> >(),
   cyclic::primitive_bch<5, dmin<7>, normalized_2d_min_sum_tag<50> >(),
 };
+
+#pragma clang diagnostic pop
 
 int main() {
   for (const auto &decoder : decoders) {
