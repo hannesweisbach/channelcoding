@@ -67,7 +67,7 @@ static constexpr double ebno(const double rate) {
   }
 }
 
-std::ofstream open_file(const std::string &fname) {
+static std::ofstream open_file(const std::string &fname) {
   if (detail::file_exists(fname)) {
     std::ostringstream os;
     os << "File " << fname << " already exists.";
