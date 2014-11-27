@@ -32,7 +32,7 @@ std::basic_ostream<charT, traits> &operator<<(
     std::basic_ostream<charT, traits> &s,
     const center_helper<charT, traits> &c) {
   std::streamsize w = s.width();
-  size_t strlen = mbstowcs(nullptr, c.str_.c_str(), 0);
+  ssize_t strlen = mbstowcs(nullptr, c.str_.c_str(), 0);
   if (w > strlen) {
     std::streamsize left = (w + strlen) / 2;
     s << std::setw(left - strlen) << "" << c.str_ << std::setw(w - left) << "";
