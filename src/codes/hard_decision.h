@@ -159,9 +159,9 @@ template <typename Polynomial,
 Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
                                     const std::vector<unsigned> &erasures,
                                     euklid_tag) {
-  const unsigned fk = syndromes.size() / 2;
-  const unsigned dmin = 2 * fk + 1;
-  const unsigned max = (2 * fk + erasures.size()) / 2;
+  const auto fk = syndromes.size() / 2;
+  const auto dmin = 2 * fk + 1;
+  const auto max = static_cast<ssize_t>((2 * fk + erasures.size()) / 2);
 
   Polynomial u({ Element(1) });
   std::vector<Polynomial> w;
@@ -178,7 +178,7 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
   w.push_back(u);
   w.push_back(Polynomial({ Element(0) }));
 
-  for (int i = 1; r.back().degree() >= max; i++) {
+  for (size_t i = 1; r.back().degree() >= max; i++) {
     auto next = r.at(i - 1) % r.at(i);
     auto q = r.at(i - 1) / r.at(i);
     w.push_back(w.at(i - 1) + q * w.at(i));

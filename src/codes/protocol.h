@@ -12,9 +12,8 @@
 #include "center.h"
 
 template <typename Polynomial>
-static void protocol_euklid(const std::vector<Polynomial> &r,
-                            const std::vector<Polynomial> &w, std::false_type) {
-}
+static void protocol_euklid(const std::vector<Polynomial> &,
+                            const std::vector<Polynomial> &, std::false_type) {}
 
 template <typename Polynomial>
 static void protocol_euklid(const std::vector<Polynomial> &r,
