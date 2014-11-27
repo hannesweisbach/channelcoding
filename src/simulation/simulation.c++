@@ -123,7 +123,7 @@ void awgn_simulation::operator()() {
           word_errors++;
         }
       }
-      catch (const decoding_failure &e) {
+      catch (const decoding_failure &) {
         word_errors++;
       }
     }
