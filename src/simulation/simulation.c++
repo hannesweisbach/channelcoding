@@ -140,9 +140,9 @@ void awgn_simulation::operator()() {
   }
 }
 
-bitflip_simulation::bitflip_simulation(const class decoder &decoder,
-                                       const size_t errors)
-    : decoder(decoder), errors(errors) {}
+bitflip_simulation::bitflip_simulation(const class decoder &decoder_,
+                                       const size_t errors_)
+    : decoder(decoder_), errors(errors_) {}
 
 void bitflip_simulation::operator()() const {
   const size_t wer_width = std::numeric_limits<double>::digits10;
