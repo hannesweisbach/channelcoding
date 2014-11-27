@@ -96,7 +96,6 @@ void awgn_simulation::operator()() {
            << " ";
   log_file << std::setw(wer_width + 6) << "wer" << std::endl;
 
-  const size_t factor = static_cast<size_t>(1.0 / step);
   const size_t tmp = static_cast<size_t>(ebno(decoder.rate()) / step);
   const double start = (tmp + (1.0 / step)) * step;
   const double max = std::max(8.0, start) + step / 2;
