@@ -21,7 +21,7 @@
 class decoder {
   class decoder_concept {
   public:
-    virtual ~decoder_concept() = default;
+    virtual ~decoder_concept();
     virtual std::vector<unsigned char>
     correct(const std::vector<float> &b) const = 0;
     virtual std::string to_string() const = 0;
@@ -34,6 +34,7 @@ class decoder {
 
   public:
     decoder_model(T arg) : implementation(std::move(arg)) {}
+    virtual ~decoder_model() = default;
     std::vector<unsigned char> correct(const std::vector<float> &b) const
         override {
       return implementation.template correct<unsigned char>(b);

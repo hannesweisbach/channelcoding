@@ -51,6 +51,8 @@ static std::array<double, 131> limits = {
     6.651,  6.837,  7.072,  7.378,  7.864 }
 };
 
+decoder::decoder_concept::~decoder_concept() = default;
+
 static constexpr double ebno(const double rate) {
   if (rate <= 0.800) {
     const size_t index = static_cast<size_t>(rate * 100);
