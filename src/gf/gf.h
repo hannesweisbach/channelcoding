@@ -235,8 +235,7 @@ public:
   }
   const_reverse_iterator crend() const noexcept { return std::crend(exp); }
 
-  friend std::ostream &operator<<(std::ostream &os, const gf &e) {
-
+  friend std::ostream &operator<<(std::ostream &os, const gf &) {
     for (int i = 0; i < log.size(); i++)
       std::cout << i << " " << static_cast<int>(log.at(i)) << std::endl;
 
