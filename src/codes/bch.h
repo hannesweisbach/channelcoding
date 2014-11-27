@@ -76,16 +76,15 @@ private:
     return roots;
   }
 
-  std::vector<Element>
-  error_values(const std::vector<Element> &,
-               const std::vector<Element> &zeroes, naive_tag) const
-      override {
+  std::vector<Element> error_values(const std::vector<Element> &,
+                                    const std::vector<Element> &zeroes,
+                                    naive_tag) const override {
     return std::vector<Element>(zeroes.size(), Element(1));
   }
 
   std::vector<Element> error_values(const std::vector<Element> &s,
-                                         const std::vector<Element> &z,
-                                         forney_tag) const override {
+                                    const std::vector<Element> &z,
+                                    forney_tag) const override {
     return error_values(s, z, naive_tag());
   }
 
