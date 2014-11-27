@@ -2,9 +2,6 @@
 #include <cstdlib>
 #include <string>
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
 #include <getopt.h>
 
 #include "codes/uncoded.h"
