@@ -219,7 +219,7 @@ template <typename R, typename Q,
           typename Result_t = typename std::common_type<Q, R>::type>
 Result_t unmodified_vertical(const R &r, const Q &y, const Q &) {
   return r + y;
-};
+}
 
 template <typename R> R normalised_horizontal(const R &arg, const R &alpha) {
   return alpha * arg;
