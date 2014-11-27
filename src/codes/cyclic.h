@@ -170,7 +170,9 @@ private:
     Polynomial b_;
     b_.reserve(n);
     std::transform(std::cbegin(b), std::cend(b), std::back_inserter(b_),
-                   [](const auto &e) { return Element(e); });
+                   [](const auto &e) {
+      return Element(static_cast<typename Element::storage_t>(e));
+    });
     return b_;
   }
 
