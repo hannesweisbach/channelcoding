@@ -303,6 +303,9 @@ init_tables() {
   return std::make_tuple(exp, log);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+
 template <unsigned q, typename Modular_Polynomial>
 typename gf<q, Modular_Polynomial>::Log_table_type
 gf<q, Modular_Polynomial>::log =
@@ -312,6 +315,8 @@ template <unsigned q, typename Modular_Polynomial>
 typename gf<q, Modular_Polynomial>::Exp_table_type
 gf<q, Modular_Polynomial>::exp =
     init_tables<gf<q, Modular_Polynomial>, q>().first;
+
+#pragma clang diagnostic pop
 
 template <unsigned q, typename Modular_Polynomial>
 const typename gf<q, Modular_Polynomial>::element_t
