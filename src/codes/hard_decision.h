@@ -70,7 +70,7 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
   /* TODO: this implementation suffers from decoder malfunction. Fix it.
    * http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=333881
    */
-  for (unsigned v = syndromes.size() / 2; v; --v) {
+  for (ssize_t v = static_cast<ssize_t>(syndromes.size() / 2); v; --v) {
     linear_equation_system<Polynomial> eq_system;
     for (auto it = std::cbegin(syndromes); it != std::cbegin(syndromes) + v;
          ++it) {
@@ -85,7 +85,7 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
       solution.push_back(Element(1));
       return solution;
     }
-    catch (const std::exception &e) {
+    catch (const std::exception &) {
     }
   }
 
