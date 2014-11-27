@@ -117,7 +117,7 @@ void horizontal__(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
             min = std::min(min, std::abs(q.at(row).at(i)));
           }
         }
-        r.at(row).at(col) = sign * fn(min);
+        r.at(row).at(col) = static_cast<R>(sign * fn(min));
       }
     }
   }
