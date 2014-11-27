@@ -203,10 +203,16 @@ void bitflip_simulation::operator()() const {
   }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 std::atomic_bool thread_pool::running{ true };
 std::mutex thread_pool::lock;
 std::condition_variable thread_pool::cv;
 std::list<std::function<void(void)> > thread_pool::queue;
+
+#pragma clang diagnostic pop
 
 thread_pool::thread_pool() {
   for (unsigned i = 0; i < std::thread::hardware_concurrency(); i++) {
