@@ -366,9 +366,15 @@ public:
   }
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+
 template <unsigned q, typename Capability, typename Algorithm, unsigned N,
           typename Coding, typename Error>
 const typename cyclic<q, Capability, Algorithm, N, Coding, Error>::Polynomial
 cyclic<q, Capability, Algorithm, N, Coding, Error>::f =
     cyclic<q, Capability, Algorithm, N, Coding, Error>::init_f();
+
+#pragma clang diagnostic pop
 }
