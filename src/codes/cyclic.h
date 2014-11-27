@@ -256,6 +256,11 @@ public:
     std::cout << "g(x) = " << g << std::endl;
     std::cout << "h(x) = " << h << std::endl;
   }
+  virtual ~cyclic() = default;
+  cyclic(const cyclic &) = default;
+  cyclic(cyclic &&) = default;
+  cyclic &operator=(const cyclic &) = default;
+  cyclic &operator=(cyclic &&) = default;
 
   std::string to_string() const {
     std::ostringstream os;
