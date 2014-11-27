@@ -53,16 +53,16 @@ static std::array<double, 131> limits = {
 
 static constexpr double ebno(const double rate) {
   if (rate <= 0.800) {
-    const size_t index = rate * 100;
+    const size_t index = static_cast<size_t>(rate * 100);
     return limits.at(index);
   } else if (rate >= 0.999) {
     return limits.back();
   } else {
     const size_t offset = 80;
-    const size_t index = std::distance(
+    const size_t index = static_cast<size_t>(std::distance(
         std::cbegin(rates),
         std::find_if(std::cbegin(rates) + offset, std::cend(rates) - 1,
-                     [=](const double r) { return r >= rate; }));
+                     [=](const double r) { return r >= rate; })));
     return limits.at(index);
   }
 }
