@@ -105,8 +105,8 @@ void horizontal__(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
                   Functor &&fn) {
   const size_t rows = H.rows();
   const size_t cols = H.columns();
-  for (auto row = 0; row < rows; row++) {
-    for (auto col = 0; col < cols; col++) {
+  for (size_t row = 0; row < rows; row++) {
+    for (size_t col = 0; col < cols; col++) {
       if (H.at(row).at(col)) {
         int sign = 1;
         Q min = std::numeric_limits<Q>::max();
@@ -131,8 +131,8 @@ void vertical__(const matrix<int> &H, const std::vector<Q> y,
 
   const size_t rows = H.rows();
   const size_t cols = H.columns();
-  for (auto row = 0; row < rows; row++) {
-    for (auto col = 0; col < cols; col++) {
+  for (size_t row = 0; row < rows; row++) {
+    for (size_t col = 0; col < cols; col++) {
       if (H.at(row).at(col)) {
         const auto exclusive_colsum = col_sums.at(col) - r.at(row).at(col);
         q.at(row).at(col) = fn(exclusive_colsum, y.at(col), q.at(row).at(col));
