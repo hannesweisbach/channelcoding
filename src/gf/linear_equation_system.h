@@ -14,21 +14,29 @@ class linear_equation_system : public std::vector<Polytype> {
               [](const Polytype &lhs,
                  const Polytype &rhs) { return lhs.degree() > rhs.degree(); });
 
+    /* empty rows */
+    if (nrows.front().degree() < 0)
+      return linear_equation_system(nrows);
+
     for (auto first_row = nrows.begin(); first_row != nrows.end();
          ++first_row) {
-      (*first_row) *= first_row->at(first_row->degree()).inverse();
+      size_t offset = static_cast<size_t>(first_row->degree());
+      (*first_row) *= first_row->at(offset).inverse();
       for (auto next_rows = first_row + 1; next_rows != nrows.end();
            ++next_rows) {
         /* only add if not already zero */
-        if (next_rows->at(first_row->degree()))
-          (*next_rows) += (*first_row) * next_rows->at(next_rows->degree());
+        if (next_rows->at(offset)) {
+          size_t next_offset = static_cast<size_t>(next_rows->degree());
+          (*next_rows) += (*first_row) * next_rows->at(next_offset);
+        }
       }
       // std::cout << matrix(nrows) << std::endl;
     }
 
     for (auto modify = nrows.rbegin() + 1; modify != nrows.rend(); ++modify) {
       for (auto row = nrows.crbegin(); row != modify; ++row) {
-        const size_t index = std::distance(std::crbegin(nrows), row) + 1;
+        const size_t index =
+            static_cast<size_t>(std::distance(std::crbegin(nrows), row) + 1);
         auto factor = modify->at(index);
         (*modify) += (*row) * factor;
       }
