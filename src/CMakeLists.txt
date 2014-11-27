@@ -16,12 +16,15 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+add_library(codes codes/codes.c++)
+
 add_executable(exercises exercises.c++)
+target_link_libraries(exercises codes)
 add_executable(md md.c++)
 add_executable(rm rm.c++)
 
 add_library(simulation simulation/simulation.c++)
-target_link_libraries(simulation ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(simulation codes ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(benchmark simulation/benchmark.c++)
 target_link_libraries(benchmark simulation)

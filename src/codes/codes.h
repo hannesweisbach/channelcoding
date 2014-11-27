@@ -27,6 +27,11 @@ template <unsigned v> struct correction_capability<errors<v> > {
 class decoding_failure : public std::runtime_error {
 public:
   using std::runtime_error::runtime_error;
+  virtual ~decoding_failure();
+  decoding_failure(const decoding_failure &);
+  decoding_failure(decoding_failure &&);
+  decoding_failure &operator=(const decoding_failure &);
+  decoding_failure &operator=(decoding_failure &&);
 };
 
 struct algorithm_tag {};
