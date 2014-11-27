@@ -231,15 +231,15 @@ public:
     return this->operator!=(rhs);
   }
 
-  Element operator()(const Element &x) const {
-    if (this->empty())
+  Element operator()(const Element &x_) const {
+    if (this->empty() || x_ == Element(0))
       return Element(0);
 
     Element result(*std::crbegin(*this));
 
     std::for_each(std::crbegin(*this) + 1, std::crend(*this),
                   [&](const Element &coefficient) {
-      result = (result * x) + coefficient;
+      result = (result * x_) + coefficient;
     });
     return result;
   }
@@ -275,9 +275,9 @@ public:
 
   /* returns polynomial x^n */
   static polynomial n(unsigned power) {
-    polynomial x(power + 1, GF::zero);
-    x.back() = GF::one;
-    return x;
+    polynomial p(power + 1, GF::zero);
+    p.back() = GF::one;
+    return p;
   }
 };
 
