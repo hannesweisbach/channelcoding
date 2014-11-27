@@ -23,9 +23,9 @@ public:
   using std::vector<std::vector<T> >::vector;
   matrix(const std::vector<T> &v)
       : std::vector<std::vector<T> >(1, v), cols(v.size()) {}
-  matrix(const size_t rows, const size_t cols)
-      : std::vector<std::vector<T> >(rows, std::vector<T>(cols, T())),
-        cols(cols) {}
+  matrix(const size_t rows, const size_t cols_)
+      : std::vector<std::vector<T> >(rows, std::vector<T>(cols_, T())),
+        cols(cols_) {}
 
   size_t columns() const { return cols; }
   size_t rows() const { return this->size(); }
