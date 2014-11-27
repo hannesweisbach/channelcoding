@@ -91,6 +91,12 @@ private:
 
 public:
   primitive_bch() : Base(g(), syndromes()) {}
+  virtual ~primitive_bch() = default;
+
+  primitive_bch(const primitive_bch &) = default;
+  primitive_bch(primitive_bch &&) = default;
+  primitive_bch &operator=(const primitive_bch &) = default;
+  primitive_bch &operator=(primitive_bch &&) = default;
 
   template <typename Return_type = typename Base::Galois_Field::storage_t,
             typename InputSequence>
