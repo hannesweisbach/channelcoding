@@ -5,7 +5,7 @@
 #include "codes/bch.h"
 #include "codes/rs.h"
 
-std::vector<decoder> decoders{
+static std::vector<decoder> decoders{
   cyclic::primitive_bch<5, dmin<7>, cyclic::berlekamp_massey_tag>(),
   cyclic::primitive_bch<5, dmin<7>, cyclic::peterson_gorenstein_zierler_tag>(),
   cyclic::primitive_bch<5, dmin<7>, cyclic::euklid_tag>(),
