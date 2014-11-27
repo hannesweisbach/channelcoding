@@ -122,7 +122,7 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
   const auto rho = erasures.size();
   Polynomial lambda({ Element(1) });
   Polynomial b;
-  int l = erasures.size();
+  auto l = erasures.size();
 
   /* position of the erasure is the power of the element */
   for (const auto &erasure : erasures)
@@ -130,13 +130,15 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
 
   b = lambda;
 
-  for (int i = rho; i < 2 * fk; i++) {
+  for (auto i = rho; i < 2 * fk; i++) {
     /* b = b * x; */
     b *= Polynomial({ Element(0), Element(1) });
     /* d = si + \sigma_j=1^l lambda_j * s_i-j; */
-    const auto delta =
-        std::inner_product(std::cbegin(lambda) + 1, std::cbegin(lambda) + l + 1,
-                           std::crend(syndromes) - i, syndromes.at(i));
+    ssize_t end_offset = static_cast<ssize_t>(l + 1);
+    ssize_t start_offset = static_cast<ssize_t>(i);
+    const auto delta = std::inner_product(
+        std::cbegin(lambda) + 1, std::cbegin(lambda) + end_offset,
+        std::crend(syndromes) - start_offset, syndromes.at(i));
 
     if (delta) {
       auto t = lambda + b * delta;
