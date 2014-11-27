@@ -96,14 +96,15 @@ void awgn_simulation::operator()() {
            << " ";
   log_file << std::setw(wer_width + 6) << "wer" << std::endl;
 
-  const size_t factor = 1.0 / step;
-  const size_t tmp = ebno(decoder.rate()) / step;
+  const size_t factor = static_cast<size_t>(1.0 / step);
+  const size_t tmp = static_cast<size_t>(ebno(decoder.rate()) / step);
   const double start = (tmp + (1.0 / step)) * step;
   const double max = std::max(8.0, start) + step / 2;
 
   /* TODO round ebno() up to next step */
   for (double eb_no = start; eb_no < max; eb_no += step) {
-    std::normal_distribution<float> distribution(1.0, sigma(eb_no));
+    std::normal_distribution<float> distribution(
+        1.0, static_cast<float>(sigma(eb_no)));
     auto noise = std::bind(std::ref(distribution), std::ref(generator));
     size_t word_errors = 0;
     size_t samples = 10000;
