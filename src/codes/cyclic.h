@@ -31,7 +31,7 @@ Polynomial encode(const Polynomial &g, const Polynomial &a,
 template <typename Polynomial>
 Polynomial encode(const Polynomial &g, const Polynomial &a, division_tag) {
   /* a * x^k */
-  auto x_k = a * Polynomial::n(g.degree());
+  auto x_k = a * Polynomial::n(static_cast<size_t>(g.degree()));
   return x_k + (x_k % g);
 }
 
@@ -43,7 +43,7 @@ Polynomial decode(const Polynomial &g, const Polynomial &b,
 
 template <typename Polynomial>
 Polynomial decode(const Polynomial &g, const Polynomial &b, division_tag) {
-  return b / Polynomial::n(g.degree());
+  return b / Polynomial::n(static_cast<size_t>(g.degree()));
 }
 
 template <typename Polynomial,
