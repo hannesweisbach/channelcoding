@@ -29,6 +29,8 @@ class decoder {
     virtual unsigned n() const = 0;
   };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
   template <typename T> class decoder_model : public decoder_concept {
     T implementation;
 
@@ -45,6 +47,7 @@ class decoder {
     double rate() const override { return implementation.rate; }
     unsigned n() const override { return implementation.n; }
   };
+#pragma clang diagnostic pop
 
   std::shared_ptr<const decoder_concept> _self;
 
