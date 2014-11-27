@@ -119,11 +119,11 @@ private:
 
   public:
     static constexpr size_t digits = q;
-    constexpr explicit gf_element() : value(0) {};
-    constexpr explicit gf_element(storage_t value) : value(value) {
+    constexpr explicit gf_element() : value(0) {}
+    constexpr explicit gf_element(storage_t v) : value(v) {
       if (value & ~n)
         throw std::runtime_error("Value is not an element of the field.");
-    };
+    }
     static constexpr gf_element from_power(unsigned power) {
       return exp.at(power % size);
     }
