@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
+#include <functional>
 
 namespace gf {
 
@@ -176,9 +177,8 @@ public:
     for (const auto &term : *this) {
       auto copy = rhs * term;
       //std::cout << "  rhs * term = " << rhs << " * " << term << " = " << copy << std::endl;
-      std::transform(
-          std::cbegin(copy), std::cend(copy), coffset, offset,
-          [](const Element &lhs, const Element &rhs) { return lhs + rhs; });
+      std::transform(std::cbegin(copy), std::cend(copy), coffset, offset,
+                     std::plus<Element>{});
       ++coffset;
       ++offset;
       //std::cout << "  " << result << std::endl;
@@ -201,13 +201,11 @@ public:
   }
 
   polynomial &operator+=(const polynomial &rhs) {
-    return element_wise(
-        rhs, [](const Element &lhs, const Element &rhs) { return lhs + rhs; });
+    return element_wise(rhs, std::plus<Element>{});
   }
 
   polynomial &operator-=(const polynomial &rhs) {
-    return element_wise(
-        rhs, [](const Element &lhs, const Element &rhs) { return lhs - rhs; });
+    return element_wise(rhs, std::minus<Element>{});
   }
 
   polynomial &operator*=(const polynomial &rhs) {
