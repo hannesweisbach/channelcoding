@@ -236,7 +236,7 @@ static void init() {
   }
 }
 
-static void usage() {
+[[noreturn]] static void usage() {
   std::cout << "--simulation [awgn|bitflip]"
             << "  "
             << "Choose the simulation to run. The default is AWGN."
