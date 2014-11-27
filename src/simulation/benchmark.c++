@@ -273,7 +273,7 @@ static void init() {
             << std::endl;
   std::cout << "For all other options, giving them multiple times results in "
                "the last value" << std::endl << "being used." << std::endl;
-  exit(-1);
+  std::exit(EXIT_FAILURE);
 }
 
 template <typename T> static T convert(const std::string &v) { return T(v); }
