@@ -17,7 +17,8 @@ class polynomial : public std::vector<Element> {
     if (lhs.degree() < rhs.degree())
       return std::make_tuple(polynomial(1, GF::zero), lhs);
 
-    const size_t quotient_degree = lhs.degree() - rhs.degree();
+    const size_t quotient_degree =
+        static_cast<size_t>(lhs.degree() - rhs.degree());
     polynomial q(quotient_degree + 1, GF::zero);
     polynomial r(lhs);
 
