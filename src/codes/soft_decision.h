@@ -226,7 +226,7 @@ template <typename R> R normalised_horizontal(const R &arg, const R &alpha) {
 }
 
 template <typename R, typename Q>
-R normalised_vertical(const R &arg, const Q &y, const Q &q, const R &beta) {
+R normalised_vertical(const R &arg, const Q &y, const Q &, const R &beta) {
   return beta * arg + y;
 }
 
