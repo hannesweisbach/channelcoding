@@ -8,7 +8,7 @@
 #include "codes/uncoded.h"
 #include "simulation/simulation.h"
 
-void usage() {
+[[noreturn]] static void usage() {
   std::cout << "--l <num>        "
             << "  "
             << "Choose code length l" << std::endl;
