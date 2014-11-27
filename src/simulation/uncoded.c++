@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <string>
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -20,7 +21,7 @@
 }
 
 int main(int argc, char *const argv[]) {
-  unsigned long l = 0;
+  unsigned l = 0;
   uint64_t seed = 0;
 
   while (1) {
@@ -37,10 +38,10 @@ int main(int argc, char *const argv[]) {
 
     switch (c) {
     case 'l':
-      l = strtoul(optarg, nullptr, 0);
+      l = static_cast<unsigned>(std::stoul(optarg));
       break;
     case 's':
-      seed = strtoull(optarg, nullptr, 0);
+      seed = std::stoull(optarg);
       break;
     default:
       std::cerr << "Unkown argument: " << c << " " << std::endl;
