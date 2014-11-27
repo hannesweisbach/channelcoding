@@ -99,7 +99,10 @@ protected:
   unsigned dmin;
 
 public:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
   const double rate;
+#pragma clang diagnostic pop
 
 private:
   static Polynomial init_f() {
