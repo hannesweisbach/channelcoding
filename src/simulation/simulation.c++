@@ -83,8 +83,8 @@ double awgn_simulation::sigma(const double eb_no) const {
 }
 
 awgn_simulation::awgn_simulation(const class decoder &decoder_,
-                                 const double step_, const uint64_t seed_)
-    : decoder(decoder_), step(step_), seed(seed_) {}
+                                 const double step_, const uint64_t seed)
+    : decoder(decoder_), step(step_), generator(seed) {}
 
 void awgn_simulation::operator()() {
   const size_t wer_width = std::numeric_limits<double>::digits10;

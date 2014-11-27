@@ -64,7 +64,6 @@ public:
 class awgn_simulation {
   const class decoder &decoder;
   const double step;
-  const uint64_t seed;
   std::mt19937_64 generator;
 
   double sigma(const double eb_no) const;
