@@ -350,8 +350,8 @@ parse_options(const int argc, char *const argv[]) {
       seed = strtoull(optarg, nullptr, 0);
       break;
     case 't':
-      seed =
-          std::chrono::high_resolution_clock::now().time_since_epoch().count();
+      seed = static_cast<uint64_t>(
+          std::chrono::high_resolution_clock::now().time_since_epoch().count());
       break;
     default:
       std::cerr << "Unkown argument: " << c << " " << std::endl;
