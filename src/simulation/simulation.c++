@@ -198,7 +198,8 @@ void bitflip_simulation::operator()() const {
     log_file << std::setw(ebno_width + 1) << std::setprecision(ebno_width)
              << std::defaultfloat << error << " ";
     log_file << std::setw(wer_width + 1) << std::setprecision(wer_width)
-             << std::scientific << (double)word_errors / patterns << std::endl;
+             << std::scientific << static_cast<double>(word_errors) / patterns
+             << std::endl;
   }
 }
 
