@@ -33,7 +33,7 @@ void expect_equal(const C1 &a, const C2 &b) {
   }
 }
 
-void task_6_1() {
+static void task_6_1() {
   std::cout << std::endl << "Task 6.1" << std::endl << std::endl;
 
   using code_type = cyclic::primitive_bch<4, dmin<7>>;
@@ -52,7 +52,7 @@ void task_6_1() {
   expect_equal(a, code.correct(b2));
 }
 
-void task_6_2() {
+static void task_6_2() {
   std::cout << std::endl << "Task 6.2" << std::endl << std::endl;
 
   using code_type = cyclic::primitive_bch<4, dmin<5>>;
@@ -75,7 +75,7 @@ void task_6_2() {
   throw std::runtime_error("Expected decoding failure");
 }
 
-void task_6_3() {
+static void task_6_3() {
   std::cout << std::endl << "Task 6.3" << std::endl << std::endl;
 
   using code_type = cyclic::primitive_bch<4, dmin<6>>;
@@ -99,7 +99,7 @@ void task_6_3() {
   }
 }
 
-void task_6_4() {
+static void task_6_4() {
   std::cout << std::endl << "Task 6.4" << std::endl << std::endl;
 
   using code_type = cyclic::rs<3, errors<1>>;
@@ -129,7 +129,7 @@ void task_6_4() {
   }
 }
 
-void task_6_5() {
+static void task_6_5() {
   std::cout << std::endl << "Task 6.5" << std::endl << std::endl;
 
   using RS_Code = cyclic::rs<4, errors<3>>;
@@ -154,7 +154,7 @@ void task_6_5() {
   }
 }
 
-void task_6_6() {
+static void task_6_6() {
   std::cout << std::endl << "Task 6.6" << std::endl << std::endl;
 
   using RS_Code = cyclic::rs<3, errors<2>>;
@@ -173,7 +173,7 @@ void task_6_6() {
   std::cout << "Corrected vector: " << b_ << std::endl;
 }
 
-void task_6_7() {
+static void task_6_7() {
   std::cout << std::endl << "Task 6.7" << std::endl << std::endl;
 
   using RS_Code = cyclic::rs<3, errors<2>, cyclic::berlekamp_massey_tag>;
@@ -199,7 +199,7 @@ void task_6_7() {
   expect_equal(a, code.correct<Element>(b, erasures));
 }
 
-void task_6_8() {
+static void task_6_8() {
   std::cout << std::endl << "Task 6.8" << std::endl << std::endl;
 
   using RS_Code = cyclic::rs<3, errors<2>, cyclic::berlekamp_massey_tag>;
@@ -221,7 +221,7 @@ void task_6_8() {
   std::cout << "Corrected vector: " << b_ << std::endl;
 }
 
-void task_6_9() {
+static void task_6_9() {
   std::cout << std::endl << "Task 6.9" << std::endl << std::endl;
 
   using RS_Code_pgz = cyclic::rs<3, errors<2>>;
@@ -246,7 +246,7 @@ void task_6_9() {
   std::cout << "Corrected vector (BMA/EUKLID): " << b_bm << std::endl;
 }
 
-void task_6_10() {
+static void task_6_10() {
   std::cout << std::endl << "Task 6.10" << std::endl << std::endl;
 
   using code_type_peterson =
