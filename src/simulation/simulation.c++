@@ -112,7 +112,7 @@ void awgn_simulation::operator()() {
     std::cout << std::this_thread::get_id() << " " << decoder.to_string()
               << ": E_b/N_0 = " << eb_no << " with " << samples << " … ";
     std::cout.flush();
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start_time = std::chrono::high_resolution_clock::now();
 
     for (size_t i = 0; i < samples; i++) {
       std::generate(std::begin(b), std::end(b), noise);
@@ -128,9 +128,9 @@ void awgn_simulation::operator()() {
       }
     }
 
-    auto end = std::chrono::high_resolution_clock::now();
-    auto seconds =
-        std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(
+        end_time - start_time).count();
     std::cout << seconds << " s" << std::endl;
 
     log_file << std::setw(ebno_width + 1) << std::setprecision(ebno_width)
