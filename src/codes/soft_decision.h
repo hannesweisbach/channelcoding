@@ -37,7 +37,7 @@ template <unsigned Iterations, typename T = std::ratio<1> >
 struct normalized_min_sum_tag : soft_decision_tag {
   static_assert(detail::is_ratio<T>::value, "needs to be std::ratio<>.");
   static constexpr unsigned iterations = Iterations;
-  static constexpr double alpha = (double)T::num / T::den;
+  static constexpr double alpha = static_cast<double>(T::num) / T::den;
   static std::string to_string() { return "NMS"; }
 };
 
@@ -45,7 +45,7 @@ template <unsigned Iterations = 50, typename T = std::ratio<0> >
 struct offset_min_sum_tag : soft_decision_tag {
   static_assert(detail::is_ratio<T>::value, "needs to be std::ratio<>.");
   static constexpr unsigned iterations = Iterations;
-  static constexpr double beta = (double)T::num / T::den;
+  static constexpr double beta = static_cast<double>(T::num) / T::den;
   static std::string to_string() { return "OMS"; }
 };
 
@@ -67,8 +67,8 @@ struct normalized_2d_min_sum_tag : soft_decision_tag {
   static_assert(detail::is_ratio<Alpha>::value, "needs to be std::ratio<>.");
   static_assert(detail::is_ratio<Beta>::value, "needs to be std::ratio<>.");
   static constexpr unsigned iterations = Iterations;
-  static constexpr double alpha = (double)Alpha::num / Alpha::den;
-  static constexpr double beta = (double)Beta::num / Alpha::den;
+  static constexpr double alpha = static_cast<double>(Alpha::num) / Alpha::den;
+  static constexpr double beta = static_cast<double>(Beta::num) / Alpha::den;
   static std::string to_string() { return "2DNMS"; }
 };
 
