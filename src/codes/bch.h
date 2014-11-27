@@ -27,9 +27,8 @@ private:
   static Polynomial g() {
     Polynomial g({ Element(1) });
 
-    std::vector<unsigned long long> powers;
-    for (long long p = 1; p < 2 * static_cast<unsigned long long>(Base::t);
-         p += 2) {
+    std::vector<unsigned> powers;
+    for (unsigned p = 1; p < 2 * static_cast<unsigned>(Base::t); p += 2) {
       powers.push_back(p);
     }
 
@@ -49,7 +48,7 @@ private:
     std::vector<Element> syndromes;
     Polynomial g_ = g();
 
-    for (int power = 1; power < 2 * Base::t + 1; power++)
+    for (unsigned power = 1; power < 2 * Base::t + 1; power++)
       syndromes.push_back(Element::from_power(power));
     return syndromes;
   }
