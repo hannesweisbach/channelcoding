@@ -24,6 +24,10 @@
 #include "codes/bch.h"
 #include "codes/rs.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 static std::vector<decoder> decoders{
   cyclic::primitive_bch<5, dmin<3>, cyclic::berlekamp_massey_tag>(),
   cyclic::primitive_bch<5, dmin<5>, cyclic::berlekamp_massey_tag>(),
@@ -159,6 +163,17 @@ static std::vector<decoder> decoders{
   cyclic::primitive_bch<7, dmin<9>, normalized_2d_min_sum_tag<50> >(),
 };
 
+static std::unordered_set<std::string> names;
+static std::unordered_set<unsigned> distances;
+static std::unordered_set<unsigned> powers;
+
+static std::unordered_multimap<std::string, const decoder &> decoders_by_name;
+static std::unordered_multimap<unsigned, const decoder &> decoders_by_distance;
+static std::unordered_multimap<unsigned, const decoder &> decoders_by_power;
+
+#pragma clang diagnostic pop
+
+
 class simulation_factory {
   enum class type {
     AWGN,
@@ -199,14 +214,6 @@ static std::string &to_lower(std::string &s) {
   std::transform(std::cbegin(s), std::cend(s), std::begin(s), ::tolower);
   return s;
 }
-
-static std::unordered_set<std::string> names;
-static std::unordered_set<unsigned> distances;
-static std::unordered_set<unsigned> powers;
-
-static std::unordered_multimap<std::string, const decoder &> decoders_by_name;
-static std::unordered_multimap<unsigned, const decoder &> decoders_by_distance;
-static std::unordered_multimap<unsigned, const decoder &> decoders_by_power;
 
 static void init() {
   for (const auto &decoder : decoders) {
