@@ -168,7 +168,7 @@ public:
   polynomial operator*(const polynomial &rhs) const {
     if (!(*this && rhs))
       return polynomial({ Element(0) });
-    size_t result_degree = degree() + rhs.degree();
+    size_t result_degree = static_cast<size_t>(degree() + rhs.degree());
     polynomial result(result_degree + 1, GF::zero);
 
     auto coffset = std::cbegin(result);
