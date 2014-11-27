@@ -53,14 +53,14 @@ private:
      */
 
     std::cout << std::endl << "Calculating error values naively" << std::endl;
-    const unsigned v = zeroes.size();
+    const size_t v = zeroes.size();
     const Polynomial factor(
         std::vector<Element>(std::rbegin(zeroes), std::rend(zeroes)));
 
     Polynomial row(factor);
     linear_equation_system<Polynomial> system;
 
-    for (unsigned i = 0; i < v; i++) {
+    for (size_t i = 0; i < v; i++) {
       Polynomial tmp({ syndromes.at(i) });
       std::copy(std::cbegin(row), std::cend(row), std::back_inserter(tmp));
       system.push_back(tmp);
