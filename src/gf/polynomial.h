@@ -274,7 +274,7 @@ public:
   static const polynomial x;
 
   /* returns polynomial x^n */
-  static polynomial n(unsigned power) {
+  static polynomial n(size_t power) {
     polynomial p(power + 1, GF::zero);
     p.back() = GF::one;
     return p;
