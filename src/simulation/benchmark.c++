@@ -276,15 +276,11 @@ static void usage() {
   exit(-1);
 }
 
-template <typename T> static T convert(const std::string &v) {
-  return T(v);
-};
-template <> std::string convert<std::string>(const std::string &v) {
-  return v;
-};
+template <typename T> static T convert(const std::string &v) { return T(v); }
+template <> std::string convert<std::string>(const std::string &v) { return v; }
 template <> unsigned int convert<unsigned int>(const std::string &v) {
   return std::stoul(v);
-};
+}
 
 template <typename T>
 static void process(const char *option, std::unordered_set<T> &options,
