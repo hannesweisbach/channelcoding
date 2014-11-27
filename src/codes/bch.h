@@ -88,6 +88,72 @@ private:
     return error_values(s, z, naive_tag());
   }
 
+  template <
+      typename Return_type = typename Base::Galois_Field::storage_t,
+      typename InputSequence, typename Tag,
+      typename std::enable_if<
+          !std::is_same<Tag, peterson_gorenstein_zierler_tag>::value>::type * =
+          nullptr>
+  std::vector<Return_type> correct(const InputSequence &b,
+                                   const std::vector<unsigned> &erasures,
+                                   Tag) const {
+    return Base::template correct<Return_type>(b, erasures);
+  }
+
+  template <typename Return_type = typename Base::Galois_Field::storage_t,
+            typename InputSequence>
+  std::vector<Return_type> correct(const InputSequence &b,
+                                   const std::vector<unsigned> &erasures,
+                                   peterson_gorenstein_zierler_tag) const {
+    if (erasures.empty()) {
+      return Base::template correct<Return_type>(b, erasures);
+    } else {
+      if (erasures.size() > 2 * Base::t)
+        throw decoding_failure(
+            "Number of erasures exceed error correction capability.");
+
+      auto tmp(b);
+
+      std::vector<std::pair<Polynomial, size_t> > results;
+
+      try {
+        for (const auto &erasure : erasures)
+          tmp.at(erasure) = Return_type(0);
+        results.push_back(Base::template correct_<Return_type>(
+            tmp, std::vector<unsigned>{}, Sigma{}));
+      }
+      catch (const decoding_failure &e) {
+        std::cout << e.what() << std::endl;
+      }
+
+      try {
+        for (const auto &erasure : erasures)
+          tmp.at(erasure) = Return_type(1);
+        results.push_back(Base::template correct_<Return_type>(
+            tmp, std::vector<unsigned>{}, Sigma{}));
+      }
+      catch (const decoding_failure &e) {
+        std::cout << e.what() << std::endl;
+      }
+
+      if (results.empty()) {
+        throw decoding_failure("Erasure decoding failed.");
+      }
+
+      /* order by number of errors, ascending */
+      std::sort(std::begin(results), std::end(results),
+                [](const auto &lhs,
+                   const auto &rhs) { return lhs.second < rhs.second; });
+
+      const auto &poly = results.front().first;
+      std::vector<Return_type> r;
+      r.reserve(b.size());
+      std::transform(std::cbegin(poly), std::cend(poly), std::back_inserter(r),
+                     [](const auto &e) { return Return_type(e); });
+      return r;
+    }
+  }
+
 public:
   primitive_bch() : Base(g(), syndromes()) {}
   virtual ~primitive_bch() = default;
@@ -102,56 +168,7 @@ public:
   std::vector<Return_type> correct(const InputSequence &b,
                                    const std::vector<unsigned> &erasures =
                                        std::vector<unsigned>()) const {
-    if (!std::is_same<Sigma, peterson_gorenstein_zierler_tag>::value ||
-        erasures.empty()) {
-      return Base::template correct<Return_type>(b, erasures);
-    } else {
-      if (erasures.size() > 2 * Base::t)
-        throw decoding_failure(
-            "Number of erasures exceed error correction capability.");
-
-      auto tmp(b);
-
-      std::vector<Return_type> v0;
-      std::vector<Return_type> v1;
-
-      try {
-        for (const auto &erasure : erasures)
-          tmp.at(erasure) = Return_type(0);
-        v0 = Base::template correct<Return_type>(tmp);
-      }
-      catch (const decoding_failure &e) {
-        std::cout << e.what() << std::endl;
-      }
-
-      try {
-        for (const auto &erasure : erasures)
-          tmp.at(erasure) = Return_type(1);
-        v1 = Base::template correct<Return_type>(tmp);
-      }
-      catch (const decoding_failure &e) {
-        std::cout << e.what() << std::endl;
-      }
-
-      if (v0.empty() && v1.empty()) {
-        throw decoding_failure("Erasure decoding failed.");
-      } else if (v0.empty()) {
-        return v1;
-      } else if (v1.empty()) {
-        return v0;
-      } else {
-        auto v0_it = std::cbegin(v0);
-        size_t v0_equals =
-            std::count_if(std::cbegin(b), std::cend(b),
-                          [&](const auto &e) { return e == *v0_it++; });
-        auto v1_it = std::cbegin(v1);
-        size_t v1_equals =
-            std::count_if(std::cbegin(b), std::cend(b),
-                          [&](const auto &e) { return e == *v1_it++; });
-        std::cout << v0_equals << " " << v1_equals << std::endl;
-        return (v0_equals >= v1_equals) ? v0 : v1;
-      }
-    }
+    return correct<Return_type>(b, erasures, Sigma{});
   }
 };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <utility>
 
 #include "codes.h"
 #include "gf/polynomial.h"
@@ -176,11 +177,24 @@ private:
     return b_;
   }
 
+  static unsigned consecutive_zeroes(const Polynomial &g) {
+    unsigned zeroes = 0;
+    for (auto it = std::cbegin(Galois_Field()) + 1;
+         it != std::cend(Galois_Field()); ++it) {
+      if (g(*it))
+        break;
+      zeroes++;
+    }
+    return zeroes;
+  }
+
+protected:
   template <typename Return_type = typename Galois_Field::storage_t,
             typename InputSequence>
-  Polynomial correct_(const InputSequence &b,
-                      const std::vector<unsigned> &erasures,
-                      hard_decision_tag) const {
+  std::pair<Polynomial, size_t> correct_(const InputSequence &b,
+                                         const std::vector<unsigned> &erasures,
+                                         hard_decision_tag) const {
+    size_t errors = 0;
     if (b.size() != n) {
       std::ostringstream os;
       os << "Channel code word has the wrong size (" << b.size()
@@ -205,6 +219,7 @@ private:
       const auto positions = error_positions(zeroes_);
       const auto values = error_values(syndromes, zeroes_, Error());
 
+      errors = positions.size();
       auto value = std::begin(values);
       for (const auto &position : positions) {
         b_.at(position) += *value++;
@@ -218,14 +233,15 @@ private:
         throw decoding_failure("Corrected word is not a codeword");
     }
 
-    return b_;
+    return std::make_pair(b_, errors);
   }
 
   template <typename InputSequence, typename Tag,
             typename std::enable_if<std::is_base_of<
                 soft_decision_tag, Tag>::value>::type * = nullptr>
-  Polynomial correct_(const InputSequence &b,
-                      const std::vector<unsigned> &erasures, Tag) const {
+  std::pair<Polynomial, size_t> correct_(const InputSequence &b,
+                                         const std::vector<unsigned> &erasures,
+                                         Tag) const {
     using Result_type = typename Galois_Field::storage_t;
     auto copy(b);
 
@@ -234,18 +250,7 @@ private:
 
     std::vector<Result_type> result =
         std::get<0>(min_sum<float, Result_type>(H_alt<int>(), copy, Tag()));
-    return Polynomial(result);
-  }
-
-  static unsigned consecutive_zeroes(const Polynomial &g) {
-    unsigned zeroes = 0;
-    for (auto it = std::cbegin(Galois_Field()) + 1;
-         it != std::cend(Galois_Field()); ++it) {
-      if (g(*it))
-        break;
-      zeroes++;
-    }
-    return zeroes;
+    return std::make_pair(Polynomial(result), -1);
   }
 
 public:
@@ -302,7 +307,8 @@ public:
   std::vector<Return_type> decode(const InputSequence &b,
                                   const std::vector<unsigned> &erasures =
                                       std::vector<unsigned>()) const {
-    auto b_ = ::cyclic::decode(g, correct_(b, erasures, Algorithm()), Coding());
+    auto b_ =
+        ::cyclic::decode(g, correct_(b, erasures, Algorithm()).first, Coding());
 
     std::vector<Return_type> r;
     r.reserve(l);
@@ -319,9 +325,8 @@ public:
   std::vector<Return_type> correct(const InputSequence &b,
                                    const std::vector<unsigned> &erasures =
                                        std::vector<unsigned>()) const {
-    auto b_ = correct_(b, erasures, Algorithm());
+    auto b_ = correct_(b, erasures, Algorithm()).first;
 
-    //std::cout << b_ << std::endl;
     std::vector<Return_type> r;
     r.reserve(n);
     std::transform(std::cbegin(b_), std::cend(b_), std::back_inserter(r),
