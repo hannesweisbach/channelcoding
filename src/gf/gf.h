@@ -118,6 +118,7 @@ private:
     storage_t value;
 
   public:
+    using storage_t = storage_t;
     static constexpr size_t digits = q;
     constexpr explicit gf_element() : value(0) {}
     constexpr explicit gf_element(storage_t v) : value(v) {
