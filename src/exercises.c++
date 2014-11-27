@@ -36,7 +36,7 @@ void expect_equal(const C1 &a, const C2 &b) {
 static void task_6_1() {
   std::cout << std::endl << "Task 6.1" << std::endl << std::endl;
 
-  using code_type = cyclic::primitive_bch<4, dmin<7>>;
+  using code_type = cyclic::primitive_bch<4, dmin<7> >;
 
   code_type code;
 
@@ -55,12 +55,14 @@ static void task_6_1() {
 static void task_6_2() {
   std::cout << std::endl << "Task 6.2" << std::endl << std::endl;
 
-  using code_type = cyclic::primitive_bch<4, dmin<5>>;
+  using code_type = cyclic::primitive_bch<4, dmin<5> >;
 
   code_type code;
 
-  const std::vector<unsigned> a({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
-  const std::vector<unsigned> b({ 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0 });
+  const std::vector<unsigned> a(
+      { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
+  const std::vector<unsigned> b(
+      { 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0 });
 
   try {
     auto b_ = code.correct(b);
@@ -78,15 +80,19 @@ static void task_6_2() {
 static void task_6_3() {
   std::cout << std::endl << "Task 6.3" << std::endl << std::endl;
 
-  using code_type = cyclic::primitive_bch<4, dmin<6>>;
+  using code_type = cyclic::primitive_bch<4, dmin<6> >;
 
-  const std::vector<unsigned> a({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
+  const std::vector<unsigned> a(
+      { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
 
   code_type code;
 
-  const std::vector<unsigned> b1({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1 });
-  const std::vector<unsigned> b2({ 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1 });
-  const std::vector<unsigned> b3({ 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
+  const std::vector<unsigned> b1(
+      { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1 });
+  const std::vector<unsigned> b2(
+      { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1 });
+  const std::vector<unsigned> b3(
+      { 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1 });
 
   expect_equal(a, code.correct<unsigned>(b1));
   expect_equal(a, code.correct<unsigned>(b2));
@@ -102,7 +108,7 @@ static void task_6_3() {
 static void task_6_4() {
   std::cout << std::endl << "Task 6.4" << std::endl << std::endl;
 
-  using code_type = cyclic::rs<3, errors<1>>;
+  using code_type = cyclic::rs<3, errors<1> >;
   using Element = typename code_type::Element;
 
   std::vector<Element> b1({ Element(0),            Element(0), Element(0),
@@ -132,7 +138,7 @@ static void task_6_4() {
 static void task_6_5() {
   std::cout << std::endl << "Task 6.5" << std::endl << std::endl;
 
-  using RS_Code = cyclic::rs<4, errors<3>>;
+  using RS_Code = cyclic::rs<4, errors<3> >;
   using Element = typename RS_Code::Element;
 
   std::vector<Element> b({ Element(1), Element(1), Element(1), Element(1),
@@ -157,7 +163,7 @@ static void task_6_5() {
 static void task_6_6() {
   std::cout << std::endl << "Task 6.6" << std::endl << std::endl;
 
-  using RS_Code = cyclic::rs<3, errors<2>>;
+  using RS_Code = cyclic::rs<3, errors<2> >;
   using Element = RS_Code::Element;
 
   std::vector<Element> b({ Element::from_power(6), Element::from_power(2),
@@ -224,7 +230,7 @@ static void task_6_8() {
 static void task_6_9() {
   std::cout << std::endl << "Task 6.9" << std::endl << std::endl;
 
-  using RS_Code_pgz = cyclic::rs<3, errors<2>>;
+  using RS_Code_pgz = cyclic::rs<3, errors<2> >;
   using RS_Code_bm = cyclic::rs<3, errors<2>, cyclic::berlekamp_massey_tag>;
 
   using Element = RS_Code_pgz::Element;
@@ -249,8 +255,8 @@ static void task_6_9() {
 static void task_6_10() {
   std::cout << std::endl << "Task 6.10" << std::endl << std::endl;
 
-  using code_type_peterson =
-      cyclic::primitive_bch<4, errors<2>, cyclic::peterson_gorenstein_zierler_tag>;
+  using code_type_peterson = cyclic::primitive_bch<
+      4, errors<2>, cyclic::peterson_gorenstein_zierler_tag>;
   using code_type_berlekamp =
       cyclic::primitive_bch<4, errors<2>, cyclic::berlekamp_massey_tag>;
   using code_type_euklid =
