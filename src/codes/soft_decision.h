@@ -270,28 +270,28 @@ template <typename R, typename U = unsigned, typename Q, unsigned Iterations>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
 min_sum(const matrix<int> &H, const std::vector<Q> &y,
         self_correcting_1_min_sum_tag<Iterations>) {
-  return min_sum__<Iterations, U, R, Q>(H, y, unmodified_horizontal<R>,
-                                        [](const R &r, const Q &y, const Q &q) {
-    auto tmp = r + y;
-    if (signum(q) == 0 || signum(q) == signum(tmp))
-      return tmp;
-    else
-      return R(0);
-  });
+  return min_sum__<Iterations, U, R, Q>(
+      H, y, unmodified_horizontal<R>, [](const R &r, const Q &y_, const Q &q) {
+        auto tmp = r + y_;
+        if (signum(q) == 0 || signum(q) == signum(tmp))
+          return tmp;
+        else
+          return R(0);
+      });
 }
 
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
 min_sum(const matrix<int> &H, const std::vector<Q> &y,
         self_correcting_2_min_sum_tag<Iterations>) {
-  return min_sum__<Iterations, U, R, Q>(H, y, unmodified_horizontal<R>,
-                                        [](const R &r, const Q &y, const Q &q) {
-    auto tmp = r + y;
-    if (tmp * q > 0)
-      return tmp;
-    else
-      return R(0.5) * (tmp + q);
-  });
+  return min_sum__<Iterations, U, R, Q>(
+      H, y, unmodified_horizontal<R>, [](const R &r, const Q &y_, const Q &q) {
+        auto tmp = r + y_;
+        if (tmp * q > 0)
+          return tmp;
+        else
+          return R(0.5) * (tmp + q);
+      });
 }
 
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations,
