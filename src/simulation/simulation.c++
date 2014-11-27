@@ -149,7 +149,6 @@ void bitflip_simulation::operator()() const {
   const size_t ebno_width = 6;
 
   std::ofstream log_file(open_file(decoder.to_string() + ".log"));
-  std::vector<float> b(decoder.n());
 
   log_file << std::setw(ebno_width + 1) << "errors"
            << " ";
