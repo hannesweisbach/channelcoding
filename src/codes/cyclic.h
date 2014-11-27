@@ -244,9 +244,10 @@ private:
   }
 
 public:
-  cyclic(Polynomial g, std::vector<Element> roots)
-      : g(g), h(f / g), roots(roots), k(g.degree()), l(n - k),
-        dmin(consecutive_zeroes(g) + 1), rate((double)l / n) {
+  cyclic(Polynomial generator, std::vector<Element> roots_)
+      : g(generator), h(f / g), roots(roots_),
+        k(static_cast<unsigned>(g.degree())), l(n - k),
+        dmin(consecutive_zeroes(g) + 1), rate(static_cast<double>(l) / n) {
     if (dmin > n) {
       std::cout << "dmin error: " << dmin << std::endl;
       throw std::runtime_error("dmin > n");
