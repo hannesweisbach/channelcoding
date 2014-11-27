@@ -279,7 +279,7 @@ static void init() {
 template <typename T> static T convert(const std::string &v) { return T(v); }
 template <> std::string convert<std::string>(const std::string &v) { return v; }
 template <> unsigned int convert<unsigned int>(const std::string &v) {
-  return std::stoul(v);
+  return static_cast<unsigned int>(std::stoul(v));
 }
 
 template <typename T>
