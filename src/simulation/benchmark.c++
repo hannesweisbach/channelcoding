@@ -189,13 +189,13 @@ public:
   }
 };
 
-std::string to_lower(const char *s) {
+static std::string to_lower(const char *s) {
   std::string s_(s);
   std::transform(std::cbegin(s_), std::cend(s_), std::begin(s_), ::tolower);
   return s_;
 }
 
-std::string &to_lower(std::string &s) {
+static std::string &to_lower(std::string &s) {
   std::transform(std::cbegin(s), std::cend(s), std::begin(s), ::tolower);
   return s;
 }
