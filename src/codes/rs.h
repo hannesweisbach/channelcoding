@@ -20,7 +20,7 @@ private:
   static Polynomial g() {
     Polynomial g({ Element(1) });
 
-    for (int i = 0; i < 2 * Base::t; ++i) {
+    for (unsigned i = 0; i < 2 * Base::t; ++i) {
       auto power = mu + i * step;
       Element root = Element::from_power(power);
       g *= Polynomial({ root, Element(1) });
@@ -32,7 +32,7 @@ private:
   static std::vector<Element> syndromes() {
     std::vector<Element> syndromes;
 
-    for (int i = 0; i < 2 * Base::t; ++i) {
+    for (unsigned i = 0; i < 2 * Base::t; ++i) {
       auto power = mu + i * step;
       Element root = Element::from_power(power);
       syndromes.push_back(root);
