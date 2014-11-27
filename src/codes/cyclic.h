@@ -115,7 +115,7 @@ private:
     auto last = std::unique(std::begin(zeroes), std::end(zeroes));
     zeroes.erase(last, std::end(zeroes));
 
-    if (zeroes.size() != sigma.degree()) {
+    if (static_cast<long>(zeroes.size()) != sigma.degree()) {
       std::ostringstream os;
       os << "Σ(x) has to have " << sigma.degree() << " zeroes, but it has "
          << zeroes.size() << "." << std::endl;
