@@ -71,6 +71,7 @@ class awgn_simulation {
   std::mt19937_64 generator;
 
   double sigma(const double eb_no) const;
+  size_t samples(const double &wer) const;
 
 public:
   awgn_simulation(const class decoder &decoder, const double step = 0.5,

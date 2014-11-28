@@ -88,6 +88,10 @@ awgn_simulation::awgn_simulation(const class decoder &decoder_,
                                  const double step_, const uint64_t seed)
     : decoder(decoder_), step(step_), generator(seed) {}
 
+size_t awgn_simulation::samples(const double &wer) const {
+  return static_cast<size_t>(std::min(1e6, 5e3 / wer));
+}
+
 void awgn_simulation::operator()() {
   const size_t wer_width = std::numeric_limits<double>::digits10;
   const size_t ebno_width = 6;
@@ -102,20 +106,22 @@ void awgn_simulation::operator()() {
   const double start = (tmp + (1.0 / step)) * step;
   const double max = std::max(8.0, start) + step / 2;
 
+  double wer = 0.5;
+
   /* TODO round ebno() up to next step */
   for (double eb_no = start; eb_no < max; eb_no += step) {
     std::normal_distribution<float> distribution(
         1.0, static_cast<float>(sigma(eb_no)));
     auto noise = std::bind(std::ref(distribution), std::ref(generator));
     size_t word_errors = 0;
-    size_t samples = 10000;
+    size_t iterations = samples(wer);
 
     std::cout << std::this_thread::get_id() << " " << decoder.to_string()
-              << ": E_b/N_0 = " << eb_no << " with " << samples << " … ";
+              << ": E_b/N_0 = " << eb_no << " with " << iterations << " … ";
     std::cout.flush();
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    for (size_t i = 0; i < samples; i++) {
+    for (size_t i = 0; i < iterations; i++) {
       std::generate(std::begin(b), std::end(b), noise);
       try {
         auto result = decoder.correct(b);
@@ -134,11 +140,12 @@ void awgn_simulation::operator()() {
         end_time - start_time).count();
     std::cout << seconds << " s" << std::endl;
 
+    wer = static_cast<double>(word_errors) / iterations;
+
     log_file << std::setw(ebno_width + 1) << std::setprecision(ebno_width)
              << std::defaultfloat << eb_no << " ";
     log_file << std::setw(wer_width + 1) << std::setprecision(wer_width)
-             << std::scientific << static_cast<double>(word_errors) / samples
-             << std::endl;
+             << std::scientific << wer << std::endl;
   }
 }
 
