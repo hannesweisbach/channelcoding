@@ -169,19 +169,23 @@ public:
   polynomial operator*(const polynomial &rhs) const {
     if (!(*this && rhs))
       return polynomial({ Element(0) });
-    size_t result_degree = static_cast<size_t>(degree() + rhs.degree());
+    /* The range based for loop below also loops over leading zero coefficients,
+     * so use size() for *this instead of degree()
+     */
+    size_t result_degree = this->size() + static_cast<size_t>(rhs.degree());
     polynomial result(result_degree + 1, GF::zero);
 
     auto coffset = std::cbegin(result);
     auto offset = std::begin(result);
     for (const auto &term : *this) {
       auto copy = rhs * term;
-      //std::cout << "  rhs * term = " << rhs << " * " << term << " = " << copy << std::endl;
+
+      // std::cout << "  rhs * term = " << rhs << " * " << term << " = " << copy
+      // << std::endl;
       std::transform(std::cbegin(copy), std::cend(copy), coffset, offset,
                      std::plus<Element>{});
       ++coffset;
       ++offset;
-      //std::cout << "  " << result << std::endl;
     }
     return result;
   }
