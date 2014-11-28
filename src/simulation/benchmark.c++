@@ -170,7 +170,6 @@ static std::unordered_multimap<unsigned, const decoder &> decoders_by_power;
 
 #pragma clang diagnostic pop
 
-
 class simulation_factory {
   enum class type {
     AWGN,
@@ -272,7 +271,12 @@ static void init() {
             << "Use the current time as seed for the random number";
   std::cout << std::endl << "generator." << std::endl;
 
+  std::cout << "--threads <num>            "
+            << "  "
+            << "Set the number of worker threads. The default" << std::endl;
+  std::cout << "default is platform and implementation dependent." << std::endl;
   std::cout << std::endl;
+
   std::cout << "algorithm, k, and dmin can be specified multiple times."
             << std::endl;
   std::cout << "For all other options, giving them multiple times results in "
@@ -303,7 +307,8 @@ static void process(const char *option, std::unordered_set<T> &options,
 }
 
 static std::tuple<std::unordered_set<std::string>, std::unordered_set<unsigned>,
-                  std::unordered_set<unsigned>, simulation_factory, uint64_t>
+                  std::unordered_set<unsigned>, simulation_factory, uint64_t,
+                  size_t>
 parse_options(const int argc, char *const argv[]) {
 
   std::unordered_set<std::string> algorithms;
@@ -311,6 +316,7 @@ parse_options(const int argc, char *const argv[]) {
   std::unordered_set<unsigned> dmin;
   simulation_factory factory("awgn");
   uint64_t seed = 0;
+  size_t threads = std::thread::hardware_concurrency();
 
   while (1) {
     static struct option options[] = {
@@ -320,6 +326,7 @@ parse_options(const int argc, char *const argv[]) {
       { "dmin", required_argument, nullptr, 'd' },
       { "seed", required_argument, nullptr, 's' },
       { "seed-time", no_argument, nullptr, 't' },
+      { "threads", required_argument, nullptr, 'm' },
       { nullptr, 0, nullptr, 0 },
     };
 
@@ -355,6 +362,9 @@ parse_options(const int argc, char *const argv[]) {
       seed = static_cast<uint64_t>(
           std::chrono::high_resolution_clock::now().time_since_epoch().count());
       break;
+    case 'm':
+      threads = std::stoull(optarg);
+      break;
     default:
       std::cerr << "Unkown argument: " << c << " " << std::endl;
       usage();
@@ -381,7 +391,7 @@ parse_options(const int argc, char *const argv[]) {
   if (fail)
     usage();
 
-  return std::make_tuple(algorithms, k, dmin, factory, seed);
+  return std::make_tuple(algorithms, k, dmin, factory, seed, threads);
 }
 
 int main(int argc, char *const argv[]) {
@@ -390,10 +400,11 @@ int main(int argc, char *const argv[]) {
   std::unordered_set<unsigned> dmin;
   simulation_factory factory;
   uint64_t seed;
-  thread_pool p;
+  size_t threads;
 
   init();
-  std::tie(algorithms, k, dmin, factory, seed) = parse_options(argc, argv);
+  std::tie(algorithms, k, dmin, factory, seed, threads) =
+      parse_options(argc, argv);
 
   std::set<const decoder *> chosen_names;
   std::set<const decoder *> chosen_power;
@@ -431,6 +442,8 @@ int main(int argc, char *const argv[]) {
     std::cout << "The selection is empty" << std::endl;
     usage();
   }
+
+  thread_pool p(threads);
 
   for (const auto &decoder : chosen) {
     p.push(factory.simulation(*decoder));
