@@ -371,25 +371,17 @@ parse_options(const int argc, char *const argv[]) {
     }
   }
 
-  bool fail = false;
-
   if (algorithms.empty()) {
-    std::cerr << "Algorithm not set." << std::endl;
-    fail = true;
+    algorithms = names;
   }
 
   if (k.empty()) {
-    std::cerr << "k not set." << std::endl;
-    fail = true;
+    k = powers;
   }
 
   if (dmin.empty()) {
-    std::cerr << "dmin not set." << std::endl;
-    fail = true;
+    dmin = distances;
   }
-
-  if (fail)
-    usage();
 
   return std::make_tuple(algorithms, k, dmin, factory, seed, threads);
 }
