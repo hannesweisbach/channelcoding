@@ -170,10 +170,9 @@ public:
     if (!(*this && rhs))
       return polynomial({ Element(0) });
     /* The range based for loop below also loops over leading zero coefficients,
-     * so use size() for *this instead of degree()
+     * so use size() instead of degree()
      */
-    size_t result_degree = this->size() + static_cast<size_t>(rhs.degree());
-    polynomial result(result_degree + 1, GF::zero);
+    polynomial result(this->size() + rhs.size(), GF::zero);
 
     auto coffset = std::cbegin(result);
     auto offset = std::begin(result);
