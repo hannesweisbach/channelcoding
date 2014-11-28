@@ -427,6 +427,11 @@ int main(int argc, char *const argv[]) {
       std::cbegin(tmp), std::cend(tmp), std::cbegin(chosen_distance),
       std::cend(chosen_distance), std::inserter(chosen, std::end(chosen)));
 
+  if (chosen.empty()) {
+    std::cout << "The selection is empty" << std::endl;
+    usage();
+  }
+
   for (const auto &decoder : chosen) {
     p.push(factory.simulation(*decoder));
   }
