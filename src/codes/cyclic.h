@@ -236,20 +236,18 @@ protected:
     return std::make_pair(b_, errors);
   }
 
-  template <typename InputSequence, typename Tag,
-            typename std::enable_if<std::is_base_of<
-                soft_decision_tag, Tag>::value>::type * = nullptr>
+  template <typename InputSequence>
   std::pair<Polynomial, size_t> correct_(const InputSequence &b,
                                          const std::vector<unsigned> &erasures,
-                                         Tag) const {
+                                         soft_decision_tag) const {
     using Result_type = typename Galois_Field::storage_t;
     auto copy(b);
 
     for (const auto &erasure : erasures)
       copy.at(erasure) = typename InputSequence::value_type(0);
 
-    std::vector<Result_type> result =
-        std::get<0>(min_sum<float, Result_type>(H_alt<int>(), copy, Tag()));
+    std::vector<Result_type> result = std::get<0>(
+        min_sum<float, Result_type>(H_alt<int>(), copy, Algorithm{}));
     return std::make_pair(Polynomial(result), -1);
   }
 
