@@ -123,6 +123,9 @@ private:
       std::ostringstream os;
       os << "Σ(x) has to have " << sigma.degree() << " zeroes, but it has "
          << zeroes.size() << "." << std::endl;
+      os << sigma << " sigma(x) = 0: ";
+      for (const auto &zero : sigma.zeroes())
+        os << zero << " ";
       throw decoding_failure(os.str());
     }
 
