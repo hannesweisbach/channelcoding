@@ -297,10 +297,8 @@ static void process(const char *option, std::unordered_set<T> &options,
   } else if (reference.find(option_value) != std::cend(reference))
     options.emplace(option_value);
   else {
+    std::cerr << "Unknown " << name << " '" << option << "'" << std::endl;
     usage();
-    std::ostringstream os;
-    os << "Unknown " << name << " '" << option << "'";
-    throw std::runtime_error(os.str());
   }
 }
 
