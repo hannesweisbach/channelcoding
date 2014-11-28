@@ -145,7 +145,9 @@ public:
   void set(size_t power, const Element &rhs);
 
   polynomial &reverse() {
-    std::reverse(std::begin(*this), std::end(*this));
+    const ssize_t deg = this->degree();
+    if (deg > 0)
+      std::reverse(std::begin(*this), std::begin(*this) + deg + 1);
     return *this;
   }
 
