@@ -99,7 +99,7 @@ class thread_pool {
   void thread_function() const;
 
 public:
-  thread_pool();
+  thread_pool(const size_t pool_size = std::thread::hardware_concurrency());
   ~thread_pool();
 
   template <typename Functor> void push(Functor &&f) {

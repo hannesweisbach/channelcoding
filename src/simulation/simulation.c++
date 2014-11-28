@@ -223,8 +223,8 @@ std::list<std::function<void(void)> > thread_pool::queue;
 
 #pragma clang diagnostic pop
 
-thread_pool::thread_pool() {
-  for (unsigned i = 0; i < std::thread::hardware_concurrency(); i++) {
+thread_pool::thread_pool(const size_t pool_size) {
+  for (unsigned i = 0; i < pool_size; i++) {
     pool.emplace_back(std::bind(&thread_pool::thread_function, this));
   }
   std::cout << "Using " << pool.size() << " threads." << std::endl;
