@@ -227,6 +227,7 @@ thread_pool::thread_pool() {
   for (unsigned i = 0; i < std::thread::hardware_concurrency(); i++) {
     pool.emplace_back(std::bind(&thread_pool::thread_function, this));
   }
+  std::cout << "Using " << pool.size() << " threads." << std::endl;
 }
 
 thread_pool::~thread_pool() {
