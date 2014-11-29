@@ -186,3 +186,19 @@ library and is called concepts-based polymorphism (Sean Parent).
 
 The uncoded program simulates uncoded, BPSK-modulated communication over an
 AWGN channel.
+
+Misc
+
+The exercises program implements solutions for the tasks posed in the lecture.
+The tasks are available via
+http://www.inf.tu-dresden.de/content/institutes/sya/dud/lectures/2013wintersemester/Kanalkodierung/aufg_samml.pdf
+
+The tasks for admittance to the exam are available via 
+http://www.inf.tu-dresden.de/content/institutes/sya/dud/lectures/2014wintersemester/Kanalkodierung/leistungsnachweiseWS1415.pdf
+
+The reuslt is available in the iterative_soft_decoding_of_bch_codes.pdf in this repository.
+
+This implementation requires a C++14 (N3797) conformant compiler and standard
+library.  The only conformant library as of this writing is libc++. For OSX
+Mountain Lion and later this works out-of-the-box. For Linux libc++ has to be
+installed and used.
