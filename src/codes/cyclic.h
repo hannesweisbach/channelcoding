@@ -6,6 +6,7 @@
 #include "codes.h"
 #include "gf/polynomial.h"
 #include "math/matrix.h"
+#include "math/polynomial.h"
 
 #include "hard_decision.h"
 #include "soft_decision.h"
@@ -84,7 +85,7 @@ public:
   using Galois_Field =
       gf::gf<q, typename gf::default_modular_polynomial<q>::type>;
   using Element = typename Galois_Field::element_t;
-  using Polynomial = gf::polynomial<Galois_Field>;
+  using Polynomial = math::polynomial<Element>;
   static constexpr unsigned n = N;
   static constexpr unsigned t = correction_capability<Capability>::value;
 
@@ -113,7 +114,7 @@ private:
 
   /* TODO: implement & benchmark chien search */
   std::vector<Element> zeroes(const Polynomial &sigma) const {
-    auto zeroes = sigma.zeroes();
+    auto zeroes = gf::roots(sigma, gf::brute_force_tag{});
 
     std::sort(std::begin(zeroes), std::end(zeroes));
     auto last = std::unique(std::begin(zeroes), std::end(zeroes));
@@ -124,7 +125,7 @@ private:
       os << "Σ(x) has to have " << sigma.degree() << " zeroes, but it has "
          << zeroes.size() << "." << std::endl;
       os << sigma << " sigma(x) = 0: ";
-      for (const auto &zero : sigma.zeroes())
+      for (const auto &zero : gf::roots(sigma, gf::brute_force_tag{}))
         os << zero << " ";
       throw decoding_failure(os.str());
     }
