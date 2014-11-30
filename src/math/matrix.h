@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <type_traits>
 
 template <typename T> class matrix;
 template <typename T>
@@ -30,8 +31,7 @@ public:
   size_t columns() const { return cols; }
   size_t rows() const { return this->size(); }
 
-  template <typename A,
-            typename R = decltype(std::declval<T>() * std::declval<A>())>
+  template <typename A, typename R = typename std::common_type<T, A>::type>
   std::vector<R> operator*(const std::vector<A> &rhs) const {
     check_dimension(rhs);
 
