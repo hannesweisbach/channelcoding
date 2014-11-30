@@ -59,7 +59,7 @@ std::vector<gf_element> chien(const gf &field, gf_polynomial polynomial) {
 
 
 template <typename Polynomial,
-          typename Element = typename Polynomial::element_type>
+          typename Element = typename Polynomial::coefficient_type>
 Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
                                     const std::vector<unsigned> &erasures,
                                     peterson_gorenstein_zierler_tag) {
@@ -114,7 +114,7 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
 }
 
 template <typename Polynomial,
-          typename Element = typename Polynomial::element_type>
+          typename Element = typename Polynomial::coefficient_type>
 Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
                                     const std::vector<unsigned> &erasures,
                                     berlekamp_massey_tag) {
@@ -155,7 +155,7 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
 }
 
 template <typename Polynomial,
-          typename Element = typename Polynomial::element_type>
+          typename Element = typename Polynomial::coefficient_type>
 Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
                                     const std::vector<unsigned> &erasures,
                                     euklid_tag) {

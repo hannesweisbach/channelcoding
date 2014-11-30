@@ -48,7 +48,7 @@ Polynomial decode(const Polynomial &g, const Polynomial &b, division_tag) {
 }
 
 template <typename Polynomial,
-          typename Element = typename Polynomial::element_type>
+          typename Element = typename Polynomial::coefficient_type>
 std::vector<Element> calculate_syndromes(const Polynomial &b,
                                          const std::vector<Element> roots) {
   std::vector<Element> syndromes;

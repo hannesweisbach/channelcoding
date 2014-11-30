@@ -66,7 +66,7 @@ public:
      * Must be non-zero, otherwise the system is overdetermined.
      * Since it is in row-echelon form, it must be one.
      */
-    if (copy.back()[1] != typename Polytype::element_type(1))
+    if (copy.back()[1] != typename Polytype::coefficient_type(1))
       throw std::runtime_error("Linear equation system not solvable");
 
     Polytype s;

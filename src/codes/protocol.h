@@ -104,12 +104,12 @@ static void protocol_euklid(const std::vector<Polynomial> &r,
 }
 
 template <typename Polynomial,
-          typename Element = typename Polynomial::element_type>
+          typename Element = typename Polynomial::coefficient_type>
 void protocol_bm(const size_t &, const Element &, const Polynomial &,
                  const size_t &, const Polynomial &, std::false_type) {}
 
 template <typename Polynomial,
-          typename Element = typename Polynomial::element_type>
+          typename Element = typename Polynomial::coefficient_type>
 void protocol_bm(const size_t &i, const Element &delta,
                  const Polynomial &lambda, const size_t &l, const Polynomial &b,
                  std::true_type) {

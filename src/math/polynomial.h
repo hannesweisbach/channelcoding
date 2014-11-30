@@ -79,7 +79,6 @@ class polynomial : public std::vector<Coefficient> {
 
 public:
   using std::vector<Coefficient>::vector;
-  using element_type = Coefficient;
   using coefficient_type = Coefficient;
 
   polynomial() = default;
