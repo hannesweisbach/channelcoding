@@ -1,7 +1,5 @@
 #pragma once
 
-#include "gf/gf.h"
-#include "gf/polynomial.h"
 #include "codes/cyclic.h"
 
 namespace cyclic {

@@ -4,6 +4,8 @@
 #include <utility>
 
 #include "codes.h"
+
+#include "gf/gf.h"
 #include "gf/polynomial.h"
 #include "math/matrix.h"
 #include "math/polynomial.h"

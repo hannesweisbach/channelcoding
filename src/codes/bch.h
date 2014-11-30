@@ -6,8 +6,6 @@
 #include <sstream>
 #include <numeric>
 
-#include "gf/gf.h"
-#include "gf/polynomial.h"
 #include "codes/cyclic.h"
 #include "math/linear_equation_system.h"
 
