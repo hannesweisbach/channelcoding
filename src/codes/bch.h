@@ -9,7 +9,7 @@
 #include "gf/gf.h"
 #include "gf/polynomial.h"
 #include "codes/cyclic.h"
-#include "gf/linear_equation_system.h"
+#include "math/linear_equation_system.h"
 
 namespace cyclic {
 template <unsigned q, typename Capability,

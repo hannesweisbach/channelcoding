@@ -58,7 +58,7 @@ private:
         std::vector<Element>(std::rbegin(zeroes), std::rend(zeroes)));
 
     Polynomial row(factor);
-    linear_equation_system<Polynomial> system;
+    math::linear_equation_system<Polynomial> system;
 
     for (size_t i = 0; i < v; i++) {
       Polynomial tmp({ syndromes.at(i) });

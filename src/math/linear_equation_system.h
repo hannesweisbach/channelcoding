@@ -1,6 +1,6 @@
 #pragma once
 
-#include "polynomial.h"
+namespace math {
 
 template <typename Polytype>
 class linear_equation_system : public std::vector<Polytype> {
@@ -76,5 +76,15 @@ public:
 
     return s;
   }
-};
 
+  template <class charT, class traits>
+  friend std::basic_ostream<charT, traits> &operator<<(
+      std::basic_ostream<charT, traits> &os,
+      const linear_equation_system &les) {
+    for (const auto &row : les) {
+      os << row << std::endl;
+    }
+    return os;
+  }
+};
+}

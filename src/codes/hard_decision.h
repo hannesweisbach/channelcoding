@@ -7,7 +7,7 @@
 #include <string>
 
 #include "codes/codes.h"
-#include "gf/linear_equation_system.h"
+#include "math/linear_equation_system.h"
 #include "protocol.h"
 
 namespace cyclic {
@@ -71,7 +71,7 @@ Polynomial error_locator_polynomial(const std::vector<Element> &syndromes,
    * http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=333881
    */
   for (ssize_t v = static_cast<ssize_t>(syndromes.size() / 2); v; --v) {
-    linear_equation_system<Polynomial> eq_system;
+    math::linear_equation_system<Polynomial> eq_system;
     for (auto it = std::cbegin(syndromes); it != std::cbegin(syndromes) + v;
          ++it) {
       Polynomial poly;
