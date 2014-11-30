@@ -62,13 +62,9 @@ create the like so: T(0) or T(1).
 
 Polynomials
 
-The polynomial class is templated over a Galois Field. The main reason for this
-is to allow finding zeroes. In retrospect, this design decision was wrong. It
-is more general to implement finding zeroes as algorithm. This not also allows
-to have different algorithms to find roots of a polynomial, but also to use
-different algorithms depending on the coefficients of the polynomial.
-Coefficients from a Galois Field allow a brute force search for the roots of
-the polynomials whereas real coefficients do not.
+The polynomial class is templated over the coefficient type. It is intended to
+be as general as possible. For this end, algorithms like finding roots are
+implemented as free standing functions.
 
 The usual arithmetic operators for polynomial arithmetic are provided as well
 as the relational operators == and !=. Operator() is overloaded for evaluating
