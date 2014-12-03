@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <utility>
+#include <cassert>
 
 #include "codes.h"
 
@@ -298,6 +299,8 @@ public:
                    [](const auto &e) { return Element(e); });
 
     auto enc = ::cyclic::encode(g, a_, Coding());
+
+    assert(enc.size() <= n);
 
     std::transform(std::cbegin(enc), std::cend(enc), out, [](const Element &e) {
       return typename InputSequence::value_type(e);
