@@ -116,7 +116,7 @@ private:
 
   /* TODO: implement & benchmark chien search */
   std::vector<Element> zeroes(const Polynomial &sigma) const {
-    auto zeroes = gf::roots(sigma, gf::brute_force_tag{});
+    auto zeroes = gf::roots<typename Element::field_type>(sigma, gf::brute_force_tag{});
 
     std::sort(std::begin(zeroes), std::end(zeroes));
     auto last = std::unique(std::begin(zeroes), std::end(zeroes));
@@ -127,7 +127,7 @@ private:
       os << "Σ(x) has to have " << sigma.degree() << " zeroes, but it has "
          << zeroes.size() << "." << std::endl;
       os << sigma << " sigma(x) = 0: ";
-      for (const auto &zero : gf::roots(sigma, gf::brute_force_tag{}))
+      for (const auto &zero : gf::roots<typename Element::field_type>(sigma, gf::brute_force_tag{}))
         os << zero << " ";
       throw decoding_failure(os.str());
     }
