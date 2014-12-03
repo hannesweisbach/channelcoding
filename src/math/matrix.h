@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <type_traits>
+#include <iomanip>
 
 template <typename T> class matrix;
 template <typename T>
