@@ -201,15 +201,15 @@ public:
 
   bool operator!=(const polynomial &rhs) { return this->operator!=(rhs); }
 
-  Coefficient operator()(const Coefficient &x_) const {
-    if (this->empty() || x_ == Coefficient(0))
-      return Coefficient(0);
+  template <typename T> T operator()(const T &x_) const {
+    if (this->empty() || x_ == T(0))
+      return T(0);
 
-    Coefficient result(*std::crbegin(*this));
+    T result(*std::crbegin(*this));
 
     std::for_each(std::crbegin(*this) + 1, std::crend(*this),
                   [&](const Coefficient &coefficient) {
-      result = (result * x_) + coefficient;
+      result = (result * x_) + T(coefficient);
     });
     return result;
   }
