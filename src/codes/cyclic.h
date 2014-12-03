@@ -255,7 +255,7 @@ protected:
       copy.at(erasure) = typename InputSequence::value_type(0);
 
     std::vector<Result_type> result = std::get<0>(
-        min_sum<float, Result_type>(H_alt<int>(), copy, Algorithm{}));
+        min_sum<float, Result_type>(H_alt<Result_type>(), copy, Algorithm{}));
     return std::make_pair(Polynomial(result), -1);
   }
 
