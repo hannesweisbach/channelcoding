@@ -79,10 +79,8 @@ template <typename T> constexpr int signum(const T &val) {
 template <typename T, typename U>
 inline auto syndrome(const matrix<T> &H, const std::vector<U> &b) {
   const auto syndromes = H * b;
-  for (const auto &s : syndromes)
-    if (s % 2)
-      return false;
-  return true;
+  return std::none_of(std::cbegin(syndromes), std::cend(syndromes),
+                      [](const auto &bit) { return bool(bit); });
 }
 
 template <typename U, typename R>
