@@ -86,7 +86,7 @@ class cyclic {
 public:
   using Galois_Field =
       gf::gf<q, typename gf::default_modular_polynomial<q>::type>;
-  using Element = typename Galois_Field::element_t;
+  using Element = typename Galois_Field::element_type;
   using Polynomial = math::polynomial<Element>;
   static constexpr unsigned n = N;
   static constexpr unsigned t = correction_capability<Capability>::value;

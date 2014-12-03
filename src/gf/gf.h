@@ -85,6 +85,7 @@ class gf {
 
 public:
   using element_t = gf_element;
+  using element_type = gf_element;
   /* TODO: think about using std::bitset. */
   using storage_t = typename detail::uint_t<q>::type;
 
