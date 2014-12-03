@@ -85,8 +85,8 @@ inline auto syndrome(const matrix<T> &H, const std::vector<U> &b) {
   return true;
 }
 
-template <typename R>
-std::vector<R> column_sum(const matrix<int> &H, const matrix<R> &r) {
+template <typename U, typename R>
+std::vector<R> column_sum(const matrix<U> &H, const matrix<R> &r) {
   std::vector<R> col_sums(H.columns(), R(0));
   for (size_t row = 0; row < H.rows(); row++) {
     for (size_t col = 0; col < H.columns(); col++) {
@@ -100,8 +100,8 @@ std::vector<R> column_sum(const matrix<int> &H, const matrix<R> &r) {
 }
 
 /* check node update */
-template <typename Q, typename R, typename Functor>
-void horizontal__(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
+template <typename U, typename Q, typename R, typename Functor>
+void horizontal__(const matrix<U> &H, const matrix<Q> &q, matrix<R> &r,
                   Functor &&fn) {
   const size_t rows = H.rows();
   const size_t cols = H.columns();
@@ -124,9 +124,9 @@ void horizontal__(const matrix<int> &H, const matrix<Q> &q, matrix<R> &r,
 }
 
 /* symbol node update */
-template <typename Q, typename R, typename Functor>
-void vertical__(const matrix<int> &H, const std::vector<Q> y,
-                const matrix<R> &r, matrix<Q> &q, Functor &&fn) {
+template <typename U, typename Q, typename R, typename Functor>
+void vertical__(const matrix<U> &H, const std::vector<Q> y, const matrix<R> &r,
+                matrix<Q> &q, Functor &&fn) {
   std::vector<R> col_sums(column_sum(H, r));
 
   const size_t rows = H.rows();
@@ -141,9 +141,9 @@ void vertical__(const matrix<int> &H, const std::vector<Q> y,
   }
 }
 
-template <typename Q, typename R,
+template <typename U, typename Q, typename R,
           typename Result_t = typename std::common_type<Q, R>::type>
-std::vector<Result_t> likelihood(const std::vector<Q> &y, const matrix<int> &H,
+std::vector<Result_t> likelihood(const std::vector<Q> &y, const matrix<U> &H,
                                  const matrix<R> &r) {
   std::vector<Result_t> result;
   result.reserve(y.size());
@@ -175,7 +175,7 @@ std::vector<U> hard_decision(const std::vector<T> &L) {
 template <unsigned iterations, typename U = unsigned, typename R, typename Q,
           typename Func_h, typename Func_v>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
-min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h &&hor,
+min_sum__(const matrix<U> &H, const std::vector<Q> &y, Func_h &&hor,
           Func_v &&vert) {
 
   matrix<Q> q(H.rows(), H.columns());
@@ -227,12 +227,12 @@ template <typename R> R normalised_horizontal(const R &arg, const R &alpha) {
 
 template <typename R, typename Q>
 R normalised_vertical(const R &arg, const Q &y, const Q &, const R &beta) {
-  return beta * arg + y;
+  return beta * arg + R(y);
 }
 
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
-min_sum(const matrix<int> &H, const std::vector<Q> &y,
+min_sum(const matrix<U> &H, const std::vector<Q> &y,
         min_sum_tag<Iterations>) {
   return min_sum__<min_sum_tag<Iterations>::iterations, U, R, Q>(
       H, y, unmodified_horizontal<R>, unmodified_vertical<R, Q>);
@@ -241,7 +241,7 @@ min_sum(const matrix<int> &H, const std::vector<Q> &y,
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations,
           typename T>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
-min_sum(const matrix<int> &H, const std::vector<Q> &y,
+min_sum(const matrix<U> &H, const std::vector<Q> &y,
         normalized_min_sum_tag<Iterations, T>) {
   auto alpha = normalized_min_sum_tag<Iterations, T>::alpha;
   return min_sum__<normalized_min_sum_tag<Iterations, T>::iterations, U, R, Q>(
@@ -252,7 +252,7 @@ min_sum(const matrix<int> &H, const std::vector<Q> &y,
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations,
           typename T>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
-min_sum(const matrix<int> &H, const std::vector<Q> &y,
+min_sum(const matrix<U> &H, const std::vector<Q> &y,
         offset_min_sum_tag<Iterations, T>) {
   return min_sum__<offset_min_sum_tag<Iterations, T>::iterations, U, R, Q>(
       H, y, [](const R &min) {
@@ -268,7 +268,7 @@ min_sum(const matrix<int> &H, const std::vector<Q> &y,
 /* http://dud.inf.tu-dresden.de/LDPC/doc/scms/ */
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
-min_sum(const matrix<int> &H, const std::vector<Q> &y,
+min_sum(const matrix<U> &H, const std::vector<Q> &y,
         self_correcting_1_min_sum_tag<Iterations>) {
   return min_sum__<Iterations, U, R, Q>(
       H, y, unmodified_horizontal<R>, [](const R &r, const Q &y_, const Q &q) {
@@ -282,7 +282,7 @@ min_sum(const matrix<int> &H, const std::vector<Q> &y,
 
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
-min_sum(const matrix<int> &H, const std::vector<Q> &y,
+min_sum(const matrix<U> &H, const std::vector<Q> &y,
         self_correcting_2_min_sum_tag<Iterations>) {
   return min_sum__<Iterations, U, R, Q>(
       H, y, unmodified_horizontal<R>, [](const R &r, const Q &y_, const Q &q) {
@@ -297,7 +297,7 @@ min_sum(const matrix<int> &H, const std::vector<Q> &y,
 template <typename R, typename U = unsigned, typename Q, unsigned Iterations,
           typename Alpha, typename Beta>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
-min_sum(const matrix<int> &H, const std::vector<Q> &y,
+min_sum(const matrix<U> &H, const std::vector<Q> &y,
         normalized_2d_min_sum_tag<Iterations, Alpha, Beta>) {
   auto alpha = normalized_2d_min_sum_tag<Iterations, Alpha, Beta>::alpha;
   auto beta = normalized_2d_min_sum_tag<Iterations, Alpha, Beta>::beta;
