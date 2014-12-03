@@ -109,7 +109,7 @@ private:
 
       try {
         for (const auto &erasure : erasures)
-          tmp.at(erasure) = Return_type(0);
+          tmp.at(erasure) = typename InputSequence::value_type(0);
         results.push_back(Base::template correct_<Return_type>(
             tmp, std::vector<unsigned>{}, Sigma{}));
       }
@@ -119,7 +119,7 @@ private:
 
       try {
         for (const auto &erasure : erasures)
-          tmp.at(erasure) = Return_type(1);
+          tmp.at(erasure) = typename InputSequence::value_type(1);
         results.push_back(Base::template correct_<Return_type>(
             tmp, std::vector<unsigned>{}, Sigma{}));
       }
