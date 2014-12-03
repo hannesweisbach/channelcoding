@@ -192,7 +192,7 @@ min_sum__(const matrix<int> &H, const std::vector<Q> &y, Func_h &&hor,
 
     std::transform(std::cbegin(col_sums), std::cend(col_sums), std::cbegin(y),
                    std::begin(L),
-                   [](const R &lhs, const Q &rhs) { return lhs + rhs; });
+                   [](const R &lhs, const Q &rhs) { return lhs + R(rhs); });
     std::vector<U> b(hard_decision<U>(L));
 
     if (syndrome(H, b))
@@ -218,7 +218,7 @@ template <typename R> R unmodified_horizontal(const R &arg) { return arg; }
 template <typename R, typename Q,
           typename Result_t = typename std::common_type<Q, R>::type>
 Result_t unmodified_vertical(const R &r, const Q &y, const Q &) {
-  return r + y;
+  return r + R(y);
 }
 
 template <typename R> R normalised_horizontal(const R &arg, const R &alpha) {
@@ -272,7 +272,7 @@ min_sum(const matrix<int> &H, const std::vector<Q> &y,
         self_correcting_1_min_sum_tag<Iterations>) {
   return min_sum__<Iterations, U, R, Q>(
       H, y, unmodified_horizontal<R>, [](const R &r, const Q &y_, const Q &q) {
-        auto tmp = r + y_;
+        auto tmp = r + R(y_);
         if (signum(q) == 0 || signum(q) == signum(tmp))
           return tmp;
         else
@@ -286,11 +286,11 @@ min_sum(const matrix<int> &H, const std::vector<Q> &y,
         self_correcting_2_min_sum_tag<Iterations>) {
   return min_sum__<Iterations, U, R, Q>(
       H, y, unmodified_horizontal<R>, [](const R &r, const Q &y_, const Q &q) {
-        auto tmp = r + y_;
-        if (tmp * q > 0)
+        auto tmp = r + R(y_);
+        if (tmp * R(q) > 0)
           return tmp;
         else
-          return R(0.5) * (tmp + q);
+          return R(0.5) * (tmp + R(q));
       });
 }
 
