@@ -5,10 +5,10 @@
 
 #include "codes.h"
 
-#include "gf/gf.h"
 #include "gf/polynomial.h"
 #include "math/matrix.h"
 #include "math/polynomial.h"
+#include "math/galois.h"
 
 #include "hard_decision.h"
 #include "soft_decision.h"
@@ -84,9 +84,8 @@ class cyclic {
                 "Capability has to be of type errors<> or dmin<>.");
 
 public:
-  using Galois_Field =
-      gf::gf<q, typename gf::default_modular_polynomial<q>::type>;
-  using Element = typename Galois_Field::element_type;
+  using Element = math::ef_element<2, q>;
+  using Galois_Field = typename Element::field_type;
   using Polynomial = math::polynomial<Element>;
   static constexpr unsigned n = N;
   static constexpr unsigned t = correction_capability<Capability>::value;
