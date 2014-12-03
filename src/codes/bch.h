@@ -74,16 +74,9 @@ private:
     return roots;
   }
 
-  std::vector<Element> error_values(const std::vector<Element> &,
-                                    const std::vector<Element> &zeroes,
-                                    naive_tag) const override {
+  static std::vector<Element> error_values(const std::vector<Element> &,
+                                           const std::vector<Element> &zeroes) {
     return std::vector<Element>(zeroes.size(), Element(1));
-  }
-
-  std::vector<Element> error_values(const std::vector<Element> &s,
-                                    const std::vector<Element> &z,
-                                    forney_tag) const override {
-    return error_values(s, z, naive_tag());
   }
 
   template <
@@ -153,13 +146,7 @@ private:
   }
 
 public:
-  primitive_bch() : Base(g(), syndromes()) {}
-  virtual ~primitive_bch() = default;
-
-  primitive_bch(const primitive_bch &) = default;
-  primitive_bch(primitive_bch &&) = default;
-  primitive_bch &operator=(const primitive_bch &) = default;
-  primitive_bch &operator=(primitive_bch &&) = default;
+  primitive_bch() : Base(g(), syndromes(), &error_values) {}
 
   template <typename Return_type = typename Base::Element::storage_type,
             typename InputSequence>

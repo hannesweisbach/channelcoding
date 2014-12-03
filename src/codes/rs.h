@@ -38,9 +38,9 @@ private:
     return syndromes;
   }
 
-  std::vector<Element> error_values(const std::vector<Element> &syndromes,
-                                    const std::vector<Element> &zeroes,
-                                    naive_tag) const {
+  static std::vector<Element>
+  error_values(const std::vector<Element> &syndromes,
+               const std::vector<Element> &zeroes) {
     /* Let s_j be the syndrome values.
      * Let x_i be the error positions.
      * Let y_i be the error values.
@@ -76,22 +76,20 @@ private:
 
     return solution;
   }
-  
-  std::vector<Element> error_values(const std::vector<Element> &syndromes,
-                                    const std::vector<Element> &zeroes,
-                                    forney_tag) const {
-    return error_values(syndromes, zeroes, naive_tag());
+
+  static std::vector<Element>
+  error_values_forney(const std::vector<Element> &syndromes,
+                      const std::vector<Element> &zeroes) {
+    return error_values(syndromes, zeroes);
   }
 
-
 public:
-  rs() : Base(g(), syndromes()) {}
+  rs() : Base(g(), syndromes(), &error_values) {}
 
   /* TODO: typedef codeword type? */
   /* InputSequence concepts:
    * size()
    * convertible to bool
    */
-
 };
 }

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <utility>
 #include <cassert>
+#include <functional>
 
 #include "codes.h"
 
@@ -105,6 +106,13 @@ protected:
   unsigned l;
   unsigned dmin;
 
+  using error_value_function = std::function<std::vector<Element>(
+      const std::vector<Element> &, const std::vector<Element> &)>;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
+  error_value_function error_values;
+#pragma clang diagnostic pop
+
 public:
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpadded"
@@ -151,16 +159,6 @@ private:
 
     return error_positions;
   }
-
-  /* narf. don't need this for binary bch codes - we should inject a functor via
-   * ctor*/
-  virtual std::vector<Element> error_values(const std::vector<Element> &,
-                                            const std::vector<Element> &,
-                                            naive_tag) const = 0;
-
-  virtual std::vector<Element> error_values(const std::vector<Element> &,
-                                            const std::vector<Element> &,
-                                            forney_tag) const = 0;
 
   /* TODO: select functor on signedness */
   /* is signed */
@@ -227,7 +225,7 @@ protected:
       const auto zeroes_ = zeroes(sigma_);
       /* TODO: let this be a functor supplied by the derived class */
       const auto positions = error_positions(zeroes_);
-      const auto values = error_values(syndromes, zeroes_, Error());
+      const auto values = error_values(syndromes, zeroes_);
 
       errors = positions.size();
       auto value = std::begin(values);
@@ -262,10 +260,12 @@ protected:
   }
 
 public:
-  cyclic(Polynomial generator, std::vector<Element> roots_)
+  cyclic(Polynomial generator, std::vector<Element> roots_,
+         error_value_function error_values_)
       : g(generator), h(f / g), roots(roots_),
         k(static_cast<unsigned>(g.degree())), l(n - k),
-        dmin(consecutive_zeroes(g) + 1), rate(static_cast<double>(l) / n) {
+        dmin(consecutive_zeroes(g) + 1), error_values(error_values_),
+        rate(static_cast<double>(l) / n) {
     if (dmin > n) {
       std::cout << "dmin error: " << dmin << std::endl;
       throw std::runtime_error("dmin > n");
@@ -275,11 +275,6 @@ public:
     std::cout << "g(x) = " << g << std::endl;
     std::cout << "h(x) = " << h << std::endl;
   }
-  virtual ~cyclic() = default;
-  cyclic(const cyclic &) = default;
-  cyclic(cyclic &&) = default;
-  cyclic &operator=(const cyclic &) = default;
-  cyclic &operator=(cyclic &&) = default;
 
   std::string to_string() const {
     std::ostringstream os;
