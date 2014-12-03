@@ -120,8 +120,8 @@ private:
 
   public:
     using storage_t = storage_t;
-    using Field = gf;
     using storage_type = storage_t;
+    using field_type = gf;
 
     static constexpr size_t digits = q;
     constexpr explicit gf_element() : value(0) {}
