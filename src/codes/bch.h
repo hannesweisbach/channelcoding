@@ -87,7 +87,7 @@ private:
   }
 
   template <
-      typename Return_type = typename Base::Galois_Field::storage_t,
+      typename Return_type = typename Base::Element::storage_type,
       typename InputSequence, typename Tag,
       typename std::enable_if<
           !std::is_same<Tag, peterson_gorenstein_zierler_tag>::value>::type * =
@@ -98,7 +98,7 @@ private:
     return Base::template correct<Return_type>(b, erasures);
   }
 
-  template <typename Return_type = typename Base::Galois_Field::storage_t,
+  template <typename Return_type = typename Base::Element::storage_type,
             typename InputSequence>
   std::vector<Return_type> correct(const InputSequence &b,
                                    const std::vector<unsigned> &erasures,
@@ -161,7 +161,7 @@ public:
   primitive_bch &operator=(const primitive_bch &) = default;
   primitive_bch &operator=(primitive_bch &&) = default;
 
-  template <typename Return_type = typename Base::Galois_Field::storage_t,
+  template <typename Return_type = typename Base::Element::storage_type,
             typename InputSequence>
   std::vector<Return_type> correct(const InputSequence &b,
                                    const std::vector<unsigned> &erasures =

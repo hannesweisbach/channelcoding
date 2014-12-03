@@ -89,7 +89,7 @@ public:
   polynomial &operator=(polynomial &&) = default;
 
   explicit polynomial(
-      std::vector<typename Coefficient::storage_t> coefficients) {
+      std::vector<typename Coefficient::storage_type> coefficients) {
     for (const auto &element : coefficients) {
       this->push_back(Coefficient(element));
     }

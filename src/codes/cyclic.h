@@ -178,7 +178,7 @@ private:
     b_.reserve(n);
     std::transform(std::cbegin(b), std::cend(b), std::back_inserter(b_),
                    [](const auto &e) {
-      return Element(static_cast<typename Element::storage_t>(e));
+      return Element(static_cast<typename Element::storage_type>(e));
     });
     return b_;
   }
@@ -195,7 +195,7 @@ private:
   }
 
 protected:
-  template <typename Return_type = typename Galois_Field::storage_t,
+  template <typename Return_type = typename Element::storage_type,
             typename InputSequence>
   std::pair<Polynomial, size_t> correct_(const InputSequence &b,
                                          const std::vector<unsigned> &erasures,
@@ -246,7 +246,7 @@ protected:
   std::pair<Polynomial, size_t> correct_(const InputSequence &b,
                                          const std::vector<unsigned> &erasures,
                                          soft_decision_tag) const {
-    using Result_type = typename Galois_Field::storage_t;
+    using Result_type = typename Element::storage_type;
     auto copy(b);
 
     for (const auto &erasure : erasures)
@@ -324,7 +324,7 @@ public:
 
   /* TODO let Return_type be Galois_Field::element_t for RS codes, and anything
    * for (binary) BCH codes */
-  template <typename Return_type = typename Galois_Field::storage_t,
+  template <typename Return_type = typename Element::storage_type,
             typename InputSequence>
   std::vector<Return_type> correct(const InputSequence &b,
                                    const std::vector<unsigned> &erasures =
