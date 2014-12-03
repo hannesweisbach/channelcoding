@@ -9,6 +9,9 @@
 #include "codes/cyclic.h"
 #include "math/linear_equation_system.h"
 
+/* NOTE(hannes): padding warning, because class is empty */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
 namespace cyclic {
 template <unsigned q, typename Capability,
           typename Sigma = peterson_gorenstein_zierler_tag,
@@ -156,4 +159,5 @@ public:
     return correct<Return_type>(b, erasures, Sigma{});
   }
 };
+#pragma clang diagnostic pop
 }
