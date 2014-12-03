@@ -120,6 +120,15 @@ public:
     return *this;
   }
 
+  polynomial simplified() const {
+    polynomial copy;
+    copy.reserve(this->size());
+    std::copy(std::cbegin(*this), std::cbegin(*this) + this->degree() + 1,
+              std::back_inserter(copy));
+
+    return copy;
+  }
+
   const Coefficient &operator[](const size_t &index) const {
     return this->at(index);
   }
