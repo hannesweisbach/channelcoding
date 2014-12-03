@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cassert>
 
 namespace math {
 namespace detail {
@@ -165,6 +166,18 @@ public:
   template <typename Mp>
   constexpr explicit ef_element(const ef_element<2, 1, Mp> &e)
       : value(e ? 1 : 0) {}
+  /* TODO(hannes): add parial specialization for Power = 1 */
+  template <long Power_, typename Mp,
+            typename std::enable_if<(Power_ == Power_) &&
+                                    (Power == 1)>::type * = nullptr>
+  constexpr explicit ef_element(const ef_element<2, Power_, Mp> &e)
+      : value(e ? 1 : 0) {
+    using gef_type = ef_element<2, Power_, Mp>;
+    /* NOTE(hannes): The value from the extension field has to be one or zero to
+     * be representable in the 'base' galois field
+     */
+    assert(e == gef_type(0) || e == gef_type(1));
+  }
 
   static constexpr ef_element from_power(unsigned power) {
     return exp.at(power % size);
