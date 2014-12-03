@@ -18,11 +18,14 @@
 
 /* TODO: InputSequence concept. */
 
+#include "math/galois.h"
+
 class decoder {
+  using return_type = math::ef_element<2, 1>;
   class decoder_concept {
   public:
     virtual ~decoder_concept();
-    virtual std::vector<unsigned char>
+    virtual std::vector<return_type>
     correct(const std::vector<float> &b) const = 0;
     virtual std::string to_string() const = 0;
     virtual double rate() const = 0;
@@ -37,9 +40,9 @@ class decoder {
   public:
     decoder_model(T arg) : implementation(std::move(arg)) {}
     virtual ~decoder_model() = default;
-    std::vector<unsigned char> correct(const std::vector<float> &b) const
+    std::vector<return_type> correct(const std::vector<float> &b) const
         override {
-      return implementation.template correct<unsigned char>(b);
+      return implementation.template correct<return_type>(b);
     }
     std::string to_string() const override {
       return implementation.to_string();
@@ -57,7 +60,7 @@ public:
       : _self(std::make_shared<decoder_model<T> >(std::move(decoder))) {}
 
   template <typename InputSequence>
-  std::vector<unsigned char> correct(const InputSequence &b) const {
+  std::vector<return_type> correct(const InputSequence &b) const {
     return _self->correct(b);
   }
   std::string to_string() const { return _self->to_string(); }
