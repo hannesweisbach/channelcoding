@@ -160,18 +160,6 @@ std::vector<Result_t> likelihood(const std::vector<Q> &y, const matrix<U> &H,
   return result;
 }
 
-template <typename U = unsigned, typename T>
-std::vector<U> hard_decision(const std::vector<T> &L) {
-  static_assert(!std::is_signed<U>::value, "U has to be unsigned");
-  std::vector<U> b_hard;
-  b_hard.reserve(L.size());
-
-  std::transform(std::cbegin(L), std::cend(L), std::back_inserter(b_hard),
-                 [](const T &e) { return e < 0 ? 1 : 0; });
-
-  return b_hard;
-}
-
 template <unsigned iterations, typename U = unsigned, typename R, typename Q,
           typename Func_h, typename Func_v>
 std::tuple<std::vector<U>, std::vector<R>, unsigned>
@@ -182,6 +170,7 @@ min_sum__(const matrix<U> &H, const std::vector<Q> &y, Func_h &&hor,
   matrix<R> r(H.rows(), H.columns());
   std::vector<R> col_sums(y.size());
   std::vector<R> L(y.size());
+  std::vector<U> b(y.size());
 
   for (unsigned iteration = 0; iteration < iterations; iteration++) {
     vertical__(H, y, r, q, vert);
@@ -193,7 +182,7 @@ min_sum__(const matrix<U> &H, const std::vector<Q> &y, Func_h &&hor,
     std::transform(std::cbegin(col_sums), std::cend(col_sums), std::cbegin(y),
                    std::begin(L),
                    [](const R &lhs, const Q &rhs) { return lhs + R(rhs); });
-    std::vector<U> b(hard_decision<U>(L));
+    hard_decision<U>(std::cbegin(L), std::cend(L), std::begin(b));
 
     if (syndrome(H, b))
       return std::make_tuple(b, L, iteration);
