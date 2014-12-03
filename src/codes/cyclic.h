@@ -167,8 +167,8 @@ private:
                                     std::true_type) const {
     Polynomial b_;
     b_.reserve(n);
-    std::transform(std::cbegin(b), std::cend(b), std::back_inserter(b_),
-                   [](const auto &e) { return Element(e < 0); });
+    hard_decision<typename Polynomial::coefficient_type>(
+        std::cbegin(b), std::cend(b), std::back_inserter(b_));
     return b_;
   }
 
