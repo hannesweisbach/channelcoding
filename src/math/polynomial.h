@@ -149,20 +149,23 @@ public:
   polynomial operator*(const polynomial &rhs) const {
     if (!(*this && rhs))
       return polynomial({ Coefficient(0) });
-    /* The range based for loop below also loops over leading zero coefficients,
-     * so use size() instead of degree()
-     */
-    polynomial result(this->size() + rhs.size(), Coefficient(0));
+
+    auto rhs_ = rhs.simplified();
+    const size_t size = static_cast<size_t>(this->degree()) + rhs_.size();
+    polynomial result(size, Coefficient(0));
 
     auto coffset = std::cbegin(result);
     auto offset = std::begin(result);
     for (const auto &term : *this) {
-      auto copy = rhs * term;
+      if (term) {
+        auto copy = rhs_ * term;
 
-      // std::cout << "  rhs * term = " << rhs << " * " << term << " = " << copy
-      // << std::endl;
-      std::transform(std::cbegin(copy), std::cend(copy), coffset, offset,
-                     std::plus<Coefficient>{});
+        // std::cout << "  rhs * term = " << rhs << " * " << term << " = " <<
+        // copy
+        // << std::endl;
+        std::transform(std::cbegin(copy), std::cend(copy), coffset, offset,
+                       std::plus<Coefficient>{});
+      }
       ++coffset;
       ++offset;
     }
