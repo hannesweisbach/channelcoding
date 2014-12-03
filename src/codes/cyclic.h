@@ -106,18 +106,16 @@ protected:
   unsigned l;
   unsigned dmin;
 
-  using error_value_function = std::function<std::vector<Element>(
-      const std::vector<Element> &, const std::vector<Element> &)>;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpadded"
-  error_value_function error_values;
-#pragma clang diagnostic pop
-
 public:
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpadded"
   const double rate;
 #pragma clang diagnostic pop
+
+protected:
+  using error_value_function = std::function<std::vector<Element>(
+      const std::vector<Element> &, const std::vector<Element> &)>;
+  error_value_function error_values;
 
 private:
   static Polynomial init_f() {
@@ -264,8 +262,8 @@ public:
          error_value_function error_values_)
       : g(generator), h(f / g), roots(roots_),
         k(static_cast<unsigned>(g.degree())), l(n - k),
-        dmin(consecutive_zeroes(g) + 1), error_values(error_values_),
-        rate(static_cast<double>(l) / n) {
+        dmin(consecutive_zeroes(g) + 1), rate(static_cast<double>(l) / n),
+        error_values(error_values_) {
     if (dmin > n) {
       std::cout << "dmin error: " << dmin << std::endl;
       throw std::runtime_error("dmin > n");
