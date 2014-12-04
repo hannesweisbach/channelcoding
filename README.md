@@ -6,26 +6,24 @@ I originally started coding this because I kept making arithmetic errors when
 doing the exercises for my channel coding lecture.  I then re-used the code for
 simulating iterative soft-decoding algorithms on BCH parity check matrices.
 
-In the gf/ subfolder, Galois field arithmetic is implemented.
+In the math/ subfolder (and namespace), Galois field arithmetic, polynomial
+arithmetic, linear equation system and a matrix helper class is implemented.
 
-The 'gf' class implements Galois field arithmetic for GF(2^q). The class is
-templated for the power q and the modular polynomial used to construct the
-field.  The modular polynomial has defaults for a q of up to 8.
+The 'ef_element' (extension field) class is intended to implement Galois field
+arithmetic for GF(prime^power). The template class is is specialized for prime
+= 2. This is the only implementation. Additionally, ef_element is templated for
+the modular polynomial used to construct the field.  The modular polynomial has
+defaults for a power of up to 8.
 
-The Galois field element is implemented as inner class of the gf class.  In
-conjuction with the template parameters for the gf class, this ensures
-type-safety. Binary arithmetic operations can only be performed on elements of
-the same field (unless explicit casting, i.e. static_cast<>(), is used).
+The ef_element class has an inner field class. The field class is modelled as
+container, to allow iteration over the elements of the field.
 
-Alternatively, the field can be modelled as inner class of the field element.
-The only reason I need the field explicitly, is to iterate over all elements of
-the field. Therefore, the gf class provides [c|r]begin()/end() member
-functions. I decided against overloading pre- and/or post-increment
-operator++/(int) for the purpose of iterating over the field, because there
-would be a semantic disparity. On the one hand, one expects operator++ to be
-semantically equivalent to adding 1:
+I decided against overloading pre- and/or post-increment operator++/(int) for
+the purpose of iterating over the field, because there would be a semantic
+disparity. On the one hand, one expects operator++ to be semantically
+equivalent to adding 1:
 
-using Element = gf::gf<5>::element_t;
+using Element = math::ef_element<2, 5>;
 
 Element a(0); a++;
 
@@ -33,7 +31,7 @@ assert(a == Element(0) + Element(1));
 
 However, in Galois field arithmetic adding 1 repeatedly, gets you nowhere:
 
-using Element = gf::gf<5>::element_t;
+using Element = math::ef_element<2, 5>;
 
 Element a(0); a++; a++; a++; a++;
 
@@ -64,14 +62,28 @@ Polynomials
 
 The polynomial class is templated over the coefficient type. It is intended to
 be as general as possible. For this end, algorithms like finding roots are
-implemented as free standing functions.
+implemented as free standing functions. To find roots over a Galois field,
+math::gf::roots<>() can be used. The desired field over which to find the roots
+has to be specified explicitly:
+
+using GF2E = math::ef_element<2, 1>;
+using GF16E = math::ef_element<2, 4>;
+
+using Polynomial = math::polynomial<GF2E>;
+
+Polynomial g{ GF2E(1), GF2E(1), GF2E(0), GF2E(0), GF2E(1) };
+math::gf::roots<GF16E>(g);
+
+This way, roots in GF(2^4) can be found for a polynomial with coefficients from
+GF(2), for example. A polynomial of degree k has k roots, but not necessarily
+in the same field as its coefficients.
 
 The usual arithmetic operators for polynomial arithmetic are provided as well
 as the relational operators == and !=. Operator() is overloaded for evaluating
 the polynomial at a given point.
 
 The gcd and lcm are implemented as member functions but should be implemented
-as algorithms, with the same reasoning as for finding zeroes.
+as algorithms, to have a more clear API.
 
 The member function n(size_t k) is provided to construct the polynomial x^k. A
 more intuitive way to construct 'x^k + e'-literals is desirable.
@@ -160,7 +172,11 @@ as storage and the only requirement are the member functions at(size_t) and
 operator[] accordingly.
 
 Contrary to LDPC codes, the matrix class is not implemented as sparse matrix,
-since parity check matrices of BCH codes are not sparse.
+since parity check matrices of BCH codes are not sparse, so I saved the effort.
+
+I know of two methods to construct the control check matrix H, used by the
+Min-Sum algorithm, and both are implemented. Only one of the methods would be
+directly applicable to RS codes, but this was not tested.
 
 The uncoded class implements a no-op channel code to provide a reference.
 
@@ -192,7 +208,9 @@ http://www.inf.tu-dresden.de/content/institutes/sya/dud/lectures/2013wintersemes
 The tasks for admittance to the exam are available via 
 http://www.inf.tu-dresden.de/content/institutes/sya/dud/lectures/2014wintersemester/Kanalkodierung/leistungsnachweiseWS1415.pdf
 
-The reuslt is available in the iterative_soft_decoding_of_bch_codes.pdf in this repository.
+The reuslt is available in the iterative_soft_decoding_of_bch_codes.pdf in this
+repository. The results of a comparitive simulations with the different
+construction of H are presented in comparison_h.pdf in this repository.
 
 This implementation requires a C++14 (N3797) conformant compiler and standard
 library.  The only conformant library as of this writing is libc++. For OSX
