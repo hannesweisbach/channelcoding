@@ -7,7 +7,6 @@
 
 #include "codes.h"
 
-#include "gf/polynomial.h"
 #include "math/matrix.h"
 #include "math/polynomial.h"
 #include "math/galois.h"
@@ -125,7 +124,8 @@ private:
 
   /* TODO: implement & benchmark chien search */
   std::vector<Element> zeroes(const Polynomial &sigma) const {
-    auto zeroes = gf::roots<extension_field>(sigma, gf::brute_force_tag{});
+    auto zeroes =
+        math::gf::roots<extension_field>(sigma, math::gf::brute_force_tag{});
 
     std::sort(std::begin(zeroes), std::end(zeroes));
     auto last = std::unique(std::begin(zeroes), std::end(zeroes));
@@ -137,7 +137,7 @@ private:
          << zeroes.size() << "." << std::endl;
       os << sigma << " sigma(x) = 0: ";
       for (const auto &zero :
-           gf::roots<extension_field>(sigma, gf::brute_force_tag{}))
+           math::gf::roots<extension_field>(sigma, math::gf::brute_force_tag{}))
         os << zero << " ";
       throw decoding_failure(os.str());
     }
@@ -184,7 +184,8 @@ private:
   }
 
   static unsigned consecutive_zeroes(const Polynomial &g) {
-    auto zeroes = gf::roots<extension_field>(g, gf::brute_force_tag{});
+    auto zeroes =
+        math::gf::roots<extension_field>(g, math::gf::brute_force_tag{});
     auto it = std::remove(std::begin(zeroes), std::end(zeroes), Element(0));
     zeroes.erase(it, std::end(zeroes));
 
