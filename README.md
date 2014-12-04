@@ -216,3 +216,6 @@ This implementation requires a C++14 (N3797) conformant compiler and standard
 library.  The only conformant library as of this writing is libc++. For OSX
 Mountain Lion and later this works out-of-the-box. For Linux libc++ has to be
 installed and used.
+
+The code is licensed under CRAPL and BSD (see license_crapl.txt and
+license_bsd.txt).
