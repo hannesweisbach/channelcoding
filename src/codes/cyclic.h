@@ -276,10 +276,6 @@ public:
       std::cout << "dmin error: " << dmin << std::endl;
       throw std::runtime_error("dmin > n");
     }
-
-    std::cout << "f(x) = " << f << std::endl;
-    std::cout << "g(x) = " << g << std::endl;
-    std::cout << "h(x) = " << h << std::endl;
   }
 
   std::string to_string() const {
