@@ -184,14 +184,22 @@ private:
   }
 
   static unsigned consecutive_zeroes(const Polynomial &g) {
-    unsigned zeroes = 0;
-    for (auto it = std::cbegin(extension_field{}) + 1;
-         it != std::cend(extension_field{}); ++it) {
-      if (g(*it))
-        break;
-      zeroes++;
-    }
-    return zeroes;
+    auto zeroes = gf::roots<extension_field>(g, gf::brute_force_tag{});
+    auto it = std::remove(std::begin(zeroes), std::end(zeroes), Element(0));
+    zeroes.erase(it, std::end(zeroes));
+
+    std::vector<unsigned> powers;
+    powers.reserve(zeroes.size());
+    std::transform(std::cbegin(zeroes), std::cend(zeroes),
+                   std::back_inserter(powers),
+                   [](const auto &zero) { return zero.power(); });
+    std::sort(std::begin(powers), std::end(powers));
+
+    auto first = std::find(std::cbegin(powers), std::cend(powers), 1);
+    auto last = std::adjacent_find(
+        first, std::cend(powers),
+        [](const auto &lhs, const auto &rhs) { return lhs + 1 != rhs; });
+    return static_cast<unsigned>(std::distance(first, last)) + 1;
   }
 
 protected:
