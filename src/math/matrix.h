@@ -8,7 +8,14 @@ template <typename T> class matrix;
 template <typename T>
 std::ostream &operator<<(std::ostream &, const matrix<T> &);
 
-template <typename T> class matrix : public std::vector<std::vector<T> > {
+template <typename T> class matrix {
+  using row_type = std::vector<T>;
+  using rep_type = std::vector<row_type>;
+
+  using iterator = typename rep_type::iterator;
+  using const_iterator = typename rep_type::const_iterator;
+
+  rep_type data;
   size_t cols;
 
   template <typename A> void check_dimension(const std::vector<A> &rhs) const {
@@ -22,15 +29,30 @@ template <typename T> class matrix : public std::vector<std::vector<T> > {
   }
 
 public:
-  using std::vector<std::vector<T> >::vector;
-  matrix(const std::vector<T> &v)
-      : std::vector<std::vector<T> >(1, v), cols(v.size()) {}
+  using value_type = row_type;
+  using size_type = typename row_type::size_type;
+
+  matrix() = default;
+  matrix(const std::vector<T> &v) : data(1, v), cols(v.size()) {}
   matrix(const size_t rows, const size_t cols_)
-      : std::vector<std::vector<T> >(rows, std::vector<T>(cols_, T())),
-        cols(cols_) {}
+      : data(rows, std::vector<T>(cols_, T())), cols(cols_) {}
+  matrix(const matrix &) = default;
+  matrix(matrix &&) = default;
+
+  void push_back(const row_type &e) { data.push_back(e); }
+  void push_back(row_type &&e) { data.push_back(std::move(e)); }
+  row_type &at(size_type i) { return data.at(i); }
+  const row_type &at(size_type i) const { return data.at(i); }
+
+  iterator begin() noexcept { return data.begin(); }
+  iterator end() noexcept { return data.end(); }
+  const_iterator begin() const noexcept { return data.begin(); }
+  const_iterator end() const noexcept { return data.begin(); }
+  const_iterator cbegin() const noexcept { return data.cbegin(); }
+  const_iterator cend() const noexcept { return data.cend(); }
 
   size_t columns() const { return cols; }
-  size_t rows() const { return this->size(); }
+  size_t rows() const { return data.size(); }
 
   template <typename A, typename R = typename std::common_type<T, A>::type>
   std::vector<R> operator*(const std::vector<A> &rhs) const {
