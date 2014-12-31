@@ -74,7 +74,7 @@ private:
     auto solution = system.solution();
     std::cout << solution << std::endl << std::endl;
 
-    return solution;
+    return solution.to_vector();
   }
 
   static std::vector<Element>

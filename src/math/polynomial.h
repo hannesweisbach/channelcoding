@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <utility>
 #include <functional>
+#include <initializer_list>
 
 namespace math {
 
@@ -38,8 +39,15 @@ std::vector<Coefficient> roots(const Polynomial &p, brute_force_tag) {
 }
 }
 
-template <typename Coefficient>
-class polynomial : public std::vector<Coefficient> {
+template <typename Coefficient> class polynomial {
+  using rep_type = std::vector<Coefficient>;
+  using iterator = typename rep_type::iterator;
+  using const_iterator = typename rep_type::const_iterator;
+  using reverse_iterator = typename rep_type::reverse_iterator;
+  using const_reverse_iterator = typename rep_type::const_reverse_iterator;
+
+  rep_type data;
+
   /* return quotient and remainder */
   std::pair<polynomial, polynomial> division(const polynomial &lhs,
                                              const polynomial &rhs) const {
@@ -79,14 +87,15 @@ class polynomial : public std::vector<Coefficient> {
 
   template <typename Op>
   polynomial &element_wise(const polynomial &rhs, Op &&op) {
-    if (this->size() < rhs.size()) {
-      this->reserve(rhs.size());
-      std::fill_n(std::back_inserter(*this), rhs.size() - this->size(),
+    if (data.size() < rhs.data.size()) {
+      data.reserve(rhs.data.size());
+      std::fill_n(std::back_inserter(data), rhs.data.size() - data.size(),
                   Coefficient(0));
     }
 
-    std::transform(std::cbegin(rhs), std::cend(rhs), std::cbegin(*this),
-                   std::begin(*this), std::forward<Op &&>(op));
+    std::transform(std::cbegin(rhs.data), std::cend(rhs.data),
+                   std::cbegin(data), std::begin(data),
+                   std::forward<Op &&>(op));
 
     /* todo remove leading zeroes */
 
@@ -95,26 +104,29 @@ class polynomial : public std::vector<Coefficient> {
 
   typename std::vector<Coefficient>::const_reverse_iterator crlead() const
       noexcept {
-    return std::find_if(std::crbegin(*this), std::crend(*this),
+    return std::find_if(std::crbegin(data), std::crend(data),
                         [](const Coefficient &e) { return e; });
   }
 
   typename std::vector<Coefficient>::reverse_iterator rlead() {
-    auto lead = std::find_if(std::rbegin(*this), std::rend(*this),
+    auto lead = std::find_if(std::rbegin(data), std::rend(data),
                              [](const Coefficient &e) { return e; });
-    if (lead == std::rend(*this))
-      return std::rend(*this) - 1;
+    if (lead == std::rend(data))
+      return std::rend(data) - 1;
 
     return lead;
   }
 
 public:
-  using std::vector<Coefficient>::vector;
+  using size_type = typename rep_type::size_type;
   using coefficient_type = Coefficient;
+  using value_type = Coefficient;
 
   polynomial() = default;
-  polynomial(const Coefficient &e) : std::vector<Coefficient>::vector(1, e) {}
+  polynomial(const Coefficient &e) : data(1, e) {}
   polynomial(const polynomial &) = default;
+  polynomial(std::initializer_list<Coefficient> il) : data(std::move(il)) {}
+  polynomial(size_type size, Coefficient c) : data(size, c) {}
   polynomial(polynomial &&) = default;
   polynomial &operator=(const polynomial &rhs) = default;
   polynomial &operator=(polynomial &&) = default;
@@ -122,48 +134,74 @@ public:
   explicit polynomial(
       std::vector<typename Coefficient::storage_type> coefficients) {
     for (const auto &element : coefficients) {
-      this->push_back(Coefficient(element));
+      data.push_back(Coefficient(element));
     }
   }
-  explicit polynomial(const std::vector<Coefficient> &v)
-      : std::vector<Coefficient>::vector(v) {}
+  explicit polynomial(const std::vector<Coefficient> &v) : data(v) {}
 
   ssize_t degree() const noexcept {
-    auto it = std::find_if(std::crbegin(*this), std::crend(*this),
+    auto it = std::find_if(std::crbegin(data), std::crend(data),
                            [](const Coefficient &e) { return e; });
-    return std::distance(it, std::crend(*this)) - 1;
+    return std::distance(it, std::crend(data)) - 1;
   }
 
   typename std::vector<Coefficient>::size_type weight() const noexcept {
-    return std::count_if(std::cbegin(*this), std::cend(*this),
+    return std::count_if(std::cbegin(data), std::cend(data),
                          [](const auto &e) { return e; });
   }
 
+  size_type size() const { return data.size(); }
+
+  iterator begin() noexcept { return data.begin(); }
+  iterator end() noexcept { return data.end(); }
+  const_iterator begin() const noexcept { return data.begin(); }
+  const_iterator end() const noexcept { return data.end(); }
+  const_iterator cbegin() const noexcept { return data.cbegin(); }
+  const_iterator cend() const noexcept { return data.cend(); }
+  reverse_iterator rbegin() noexcept { return data.rbegin(); }
+  reverse_iterator rend() noexcept { return data.rend(); }
+  const_reverse_iterator rbegin() const noexcept { return data.rbegin(); }
+  const_reverse_iterator rend() const noexcept { return data.rend(); }
+  const_reverse_iterator crbegin() const noexcept { return data.crbegin(); }
+  const_reverse_iterator crend() const noexcept { return data.crend(); }
+
+  void reserve(size_type new_capacity) { data.reserve(new_capacity); }
+
+  void push_back(const value_type &v) { data.push_back(v); }
+  void push_back(value_type &&v) { data.push_back(std::move(v)); }
+
+  value_type &at(size_type i) { return data.at(i); }
+  const value_type &at(size_type i) const { return data.at(i); }
+
+  rep_type to_vector() const {
+    return data;
+  }
+
   Coefficient highest() const {
-    if (!this->size())
+    if (data.empty())
       throw std::out_of_range("Polynomial has no terms.");
 
-    return this->at(degree());
+    return data.at(degree());
   }
 
   polynomial &reverse() {
-    std::reverse(std::begin(*this), std::begin(*this) + degree() + 1);
+    std::reverse(std::begin(data), std::begin(data) + degree() + 1);
     return *this;
   }
 
   polynomial simplified() const {
     polynomial copy;
-    copy.reserve(this->size());
-    std::copy(std::cbegin(*this), std::cbegin(*this) + this->degree() + 1,
-              std::back_inserter(copy));
+    copy.data.reserve(data.size());
+    std::copy(std::cbegin(data), std::cbegin(data) + this->degree() + 1,
+              std::back_inserter(copy.data));
 
     return copy;
   }
 
   const Coefficient &operator[](const size_t &index) const {
-    return this->at(index);
+    return data.at(index);
   }
-  Coefficient &operator[](const size_t &index) { return this->at(index); }
+  Coefficient &operator[](const size_t &index) { return data.at(index); }
 
   polynomial operator+(const polynomial &rhs) const {
     auto copy(*this);
@@ -182,12 +220,12 @@ public:
       return polynomial({ Coefficient(0) });
 
     auto rhs_ = rhs.simplified();
-    const size_t size = static_cast<size_t>(this->degree()) + rhs_.size();
+    const size_t size = static_cast<size_t>(this->degree()) + rhs_.data.size();
     polynomial result(size, Coefficient(0));
 
     auto coffset = std::cbegin(result);
     auto offset = std::begin(result);
-    for (const auto &term : *this) {
+    for (const auto &term : data) {
       if (term) {
         auto copy = rhs_ * term;
 
@@ -231,7 +269,7 @@ public:
   }
 
   polynomial &operator*=(const Coefficient &rhs) {
-    for (auto &&term : *this)
+    for (auto &&term : data)
       term *= rhs;
     return *this;
   }
@@ -240,17 +278,16 @@ public:
     return rhs * lhs;
   }
 
-  bool operator==(const polynomial &rhs) { return this->operator==(rhs); }
-
-  bool operator!=(const polynomial &rhs) { return this->operator!=(rhs); }
+  bool operator==(const polynomial &rhs) { return data == rhs.data; }
+  bool operator!=(const polynomial &rhs) { return data != rhs.data; }
 
   template <typename T> T operator()(const T &x_) const {
-    if (this->empty() || x_ == T(0))
+    if (data.empty() || x_ == T(0))
       return T(0);
 
-    T result(*std::crbegin(*this));
+    T result(*std::crbegin(data));
 
-    std::for_each(std::crbegin(*this) + 1, std::crend(*this),
+    std::for_each(std::crbegin(data) + 1, std::crend(data),
                   [&](const Coefficient &coefficient) {
       result = (result * x_) + T(coefficient);
     });
@@ -269,7 +306,7 @@ public:
 
   polynomial lcm(const polynomial &other) const {
     if (!*this && !other)
-      return polynomial(0);
+      return polynomial(Coefficient(0));
     else
       return *this / this->gcd(other) * other;
   }
@@ -287,7 +324,7 @@ public:
   /* returns polynomial x^n */
   static polynomial n(size_t power) {
     polynomial p(power + 1, Coefficient(0));
-    p.back() = Coefficient(1);
+    p.data.back() = Coefficient(1);
     return p;
   }
 };
