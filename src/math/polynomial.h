@@ -13,17 +13,6 @@ namespace gf {
 struct brute_force_tag {};
 struct chien_tag {};
 
-template <typename PolyB, typename PolyA> PolyB convert(const PolyA &a) {
-  PolyB b;
-  b.reserve(a.size());
-
-  std::transform(
-      std::cbegin(a), std::cend(a), std::back_inserter(b),
-      [](const auto &e) { return typename PolyB::coefficient_type(e); });
-
-  return b;
-}
-
 template <typename Field, typename Coefficient = typename Field::element_type,
           typename Polynomial>
 std::vector<Coefficient> roots(const Polynomial &p, brute_force_tag) {
@@ -326,6 +315,17 @@ public:
     polynomial p(power + 1, Coefficient(0));
     p.data.back() = Coefficient(1);
     return p;
+  }
+
+  template <typename PolyA> static polynomial from(const PolyA &a) {
+    polynomial b;
+    b.data.reserve(a.data.size());
+
+    std::transform(std::cbegin(a.data), std::cend(a.data),
+                   std::back_inserter(b.data),
+                   [](const auto &e) { return value_type(e); });
+
+    return b;
   }
 };
 
