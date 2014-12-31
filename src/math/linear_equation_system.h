@@ -3,11 +3,14 @@
 namespace math {
 
 template <typename Polytype>
-class linear_equation_system : public std::vector<Polytype> {
+class linear_equation_system {
+  using row_type = std::vector<Polytype>;
+  using iterator = typename row_type::iterator;
+  using const_iterator = typename row_type::const_iterator;
   std::vector<Polytype> rows;
 
   linear_equation_system reduced_echelon_form() const {
-    std::vector<Polytype> nrows(*this);
+    std::vector<Polytype> nrows(this->rows);
 
     /* make sure rows are sorted with the left-most elements at the top */
     std::sort(std::begin(nrows), std::end(nrows),
@@ -42,17 +45,24 @@ class linear_equation_system : public std::vector<Polytype> {
       }
     }
 
-    return linear_equation_system(nrows);
+    return linear_equation_system(std::move(nrows));
   }
 
 public:
-  using std::vector<Polytype>::vector;
-
   linear_equation_system() = default;
-  linear_equation_system(const std::vector<Polytype> &v)
-      : std::vector<Polytype>::vector(v) {}
-  linear_equation_system(std::vector<Polytype> &&v)
-      : std::vector<Polytype>::vector(std::move(v)) {}
+  linear_equation_system(const std::vector<Polytype> &v) : rows(v) {}
+  linear_equation_system(std::vector<Polytype> &&v) : rows(std::move(v)) {}
+  linear_equation_system(linear_equation_system &&) = default;
+
+  void push_back(const Polytype &row) { rows.push_back(row); }
+  void push_back(Polytype &&row) { rows.push_back(std::move(row)); }
+  Polytype &back() { return rows.back(); }
+  const Polytype &back() const { return rows.back(); }
+
+  iterator begin() noexcept { return rows.begin(); }
+  const_iterator begin() const noexcept { return rows.begin(); }
+  iterator end() noexcept { return rows.end(); }
+  const_iterator end() const noexcept { return rows.end(); }
 
   Polytype solution() const {
     linear_equation_system copy(reduced_echelon_form());
